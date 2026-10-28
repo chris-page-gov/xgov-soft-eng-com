@@ -35,7 +35,7 @@ class HistoryTests(unittest.TestCase):
     def test_pending_statistics_are_checkpointed_and_deferred(self):
         from test_catalogue import fixture
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);h.c.write(root/'config/catalogue.json',{'source_url':'https://example.invalid/repos.json','max_bytes':10000})
+            root=Path(directory);h.c.write(root/'config/catalogue.json',{'source_url':'https://example.invalid/repos.json','max_bytes':10000,'minimum_records':1,'maximum_removal_fraction':0.2})
             response=MagicMock();response.__enter__.return_value=response
             response.geturl.return_value='https://example.invalid/repos.json';response.read.return_value=json.dumps([fixture()]).encode()
             client=MagicMock();client.calls=2
@@ -53,13 +53,27 @@ class HistoryTests(unittest.TestCase):
     def test_budget_stop_keeps_a_valid_empty_checkpoint(self):
         from test_catalogue import fixture
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);h.c.write(root/'config/catalogue.json',{'source_url':'https://example.invalid/repos.json','max_bytes':10000})
+            root=Path(directory);h.c.write(root/'config/catalogue.json',{'source_url':'https://example.invalid/repos.json','max_bytes':10000,'minimum_records':1,'maximum_removal_fraction':0.2})
             response=MagicMock();response.__enter__.return_value=response
             response.geturl.return_value='https://example.invalid/repos.json';response.read.return_value=json.dumps([fixture()]).encode()
             client=MagicMock();client.calls=1;client.get.side_effect=h.BudgetStop()
             with patch.object(h.urllib.request,'urlopen',return_value=response),patch.object(h,'Client',return_value=client):
                 result=h.collect(root)
                 self.assertTrue(result['budget_checkpoint']);self.assertEqual(h.verify(root)['repositories'],{})
+
+    def test_small_or_mass_removal_feed_cannot_replace_checkpoint(self):
+        from test_catalogue import fixture
+        for minimum in (1,2):
+            with self.subTest(minimum=minimum),tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);h.c.write(root/'config/catalogue.json',{'source_url':'https://example.invalid/repos.json','max_bytes':10000,'minimum_records':minimum,'maximum_removal_fraction':0.2})
+                h.c.write(root/'source/history/index.json',{'catalogue_records':2000,'repositories':{}})
+                previous=(root/'source/history/index.json').read_bytes()
+                response=MagicMock();response.__enter__.return_value=response
+                response.geturl.return_value='https://example.invalid/repos.json';response.read.return_value=json.dumps([fixture()]).encode()
+                with patch.object(h.urllib.request,'urlopen',return_value=response),patch.object(h,'Client') as client:
+                    with self.assertRaisesRegex(ValueError,'retained'):h.collect(root)
+                    client.assert_not_called()
+                self.assertEqual((root/'source/history/index.json').read_bytes(),previous)
 
     def test_contribution_count_and_provenance_survive_both_projections(self):
         from test_catalogue import fixture

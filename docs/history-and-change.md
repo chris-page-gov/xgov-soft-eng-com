@@ -47,6 +47,8 @@ six hours; unavailable results are retried later. Available results are normally
 rechecked after seven days, or earlier when the source push date changes.
 There is no claim that the initial backfill is instant or complete: it requires
 multiple runs and its exact completion time depends on GitHub’s responses.
+The collector applies the catalogue's minimum-size and large-removal tripwires
+before changing a prior checkpoint. A rejected feed leaves that checkpoint intact.
 
 Validated checkpoints are committed to the separate history-data branch using
 Conventional Commit subjects. Updates are ordinary fast-forward commits, not

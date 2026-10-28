@@ -89,12 +89,16 @@ def collect(root,limit=500,budget=1800,max_seconds=1500,repositories=None):
         raw=response.read(cfg['max_bytes']+1)
         if response.geturl()!=cfg['source_url'] or len(raw)>cfg['max_bytes']:raise ValueError('Unexpected catalogue response')
     rows,_=c.validate_source(json.loads(raw));targets={str(row['owner']+'/'+row['name']).casefold():row for row,_ in rows}
+    if len(rows)<cfg['minimum_records']:raise ValueError('Source unexpectedly small; prior history checkpoint retained')
     catalogue_identities=set(targets)
     if repositories:
         wanted={r.casefold() for r in repositories}
         if wanted-set(targets):raise ValueError('History targets must be in the admitted public catalogue')
         targets={k:v for k,v in targets.items() if k in wanted}
-    index=load_index(root);now=c.now();entries=index['repositories'];client=Client(budget,max_seconds)
+    index=load_index(root);now=c.now();entries=index['repositories']
+    previous_count=index.get('catalogue_records',0)
+    if previous_count and (len(rows)<previous_count*(1-cfg['maximum_removal_fraction']) or len(set(entries)-catalogue_identities)/previous_count>cfg['maximum_removal_fraction']):raise ValueError('Large removal requires curator review; prior history checkpoint retained')
+    client=Client(budget,max_seconds)
     for identity in set(entries)-catalogue_identities:del entries[identity]
     due=[]
     for identity,row in targets.items():

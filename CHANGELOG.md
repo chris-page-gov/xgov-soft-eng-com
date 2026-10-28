@@ -12,6 +12,8 @@ daily dataset snapshots have separate identifiers.
 
 - Check actual pull-request commits without rejecting GitHub's temporary test
   merge. Actual commits and published merges still require conventional subjects.
+- Retain history checkpoints when a source feed is unexpectedly small or loses
+  more than the configured removal threshold.
 
 ## [0.2.0] - 2026-10-28
 
