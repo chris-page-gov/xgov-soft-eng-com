@@ -1,0 +1,553 @@
+{
+  "observed_at": "2026-10-28T19:09:30.365740+00:00",
+  "method": "Public GitHub default-branch contributor counts; bots separate; fork counts may include inherited history. No inference of maintainership or scan authorisation.",
+  "repositories": [
+    {
+      "repository": "uk-x-gov-software-community/xgov-opensource-repo-scraper",
+      "url": "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper",
+      "fork": false,
+      "parent": null,
+      "contributors": [
+        {
+          "login": "chrisns",
+          "contributions": 70,
+          "type": "User",
+          "html_url": "https://github.com/chrisns"
+        },
+        {
+          "login": "dependabot[bot]",
+          "contributions": 9,
+          "type": "Bot",
+          "html_url": "https://github.com/apps/dependabot"
+        },
+        {
+          "login": "asmith-nhsx",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/asmith-nhsx"
+        },
+        {
+          "login": "chrishylanduk",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/chrishylanduk"
+        }
+      ],
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/uk-x-gov-software-community.github.io",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io",
+      "fork": false,
+      "parent": null,
+      "contributors": [
+        {
+          "login": "sdh100shaun",
+          "contributions": 203,
+          "type": "User",
+          "html_url": "https://github.com/sdh100shaun"
+        },
+        {
+          "login": "heathd",
+          "contributions": 60,
+          "type": "User",
+          "html_url": "https://github.com/heathd"
+        },
+        {
+          "login": "Sparrow0hawk",
+          "contributions": 29,
+          "type": "User",
+          "html_url": "https://github.com/Sparrow0hawk"
+        },
+        {
+          "login": "dependabot[bot]",
+          "contributions": 10,
+          "type": "Bot",
+          "html_url": "https://github.com/apps/dependabot"
+        },
+        {
+          "login": "asmith-nhsx",
+          "contributions": 9,
+          "type": "User",
+          "html_url": "https://github.com/asmith-nhsx"
+        },
+        {
+          "login": "marcotranchino",
+          "contributions": 7,
+          "type": "User",
+          "html_url": "https://github.com/marcotranchino"
+        },
+        {
+          "login": "tobylyte",
+          "contributions": 5,
+          "type": "User",
+          "html_url": "https://github.com/tobylyte"
+        },
+        {
+          "login": "ampypoole",
+          "contributions": 5,
+          "type": "User",
+          "html_url": "https://github.com/ampypoole"
+        },
+        {
+          "login": "jremes-ho",
+          "contributions": 5,
+          "type": "User",
+          "html_url": "https://github.com/jremes-ho"
+        },
+        {
+          "login": "ClaudiaChiurlia",
+          "contributions": 4,
+          "type": "User",
+          "html_url": "https://github.com/ClaudiaChiurlia"
+        },
+        {
+          "login": "lukecarr",
+          "contributions": 2,
+          "type": "User",
+          "html_url": "https://github.com/lukecarr"
+        },
+        {
+          "login": "hw469",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/hw469"
+        },
+        {
+          "login": "OllieJC",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/OllieJC"
+        },
+        {
+          "login": "naqvinayyab",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/naqvinayyab"
+        },
+        {
+          "login": "lwlsns",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/lwlsns"
+        },
+        {
+          "login": "TheDoubleK",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/TheDoubleK"
+        },
+        {
+          "login": "JosephKelly",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/JosephKelly"
+        },
+        {
+          "login": "james-gordon-dwp",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/james-gordon-dwp"
+        },
+        {
+          "login": "gstevenson",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/gstevenson"
+        },
+        {
+          "login": "ezramorris",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/ezramorris"
+        },
+        {
+          "login": "furnivall",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/furnivall"
+        },
+        {
+          "login": "Copilot",
+          "contributions": 1,
+          "type": "Bot",
+          "html_url": "https://github.com/apps/copilot-swe-agent"
+        },
+        {
+          "login": "chrisjameswright",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/chrisjameswright"
+        }
+      ],
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/software-developer-learning-pathways-old",
+      "url": "https://github.com/uk-x-gov-software-community/software-developer-learning-pathways-old",
+      "fork": false,
+      "parent": null,
+      "contributors": [
+        {
+          "login": "heathd",
+          "contributions": 5,
+          "type": "User",
+          "html_url": "https://github.com/heathd"
+        },
+        {
+          "login": "agamurdoch",
+          "contributions": 2,
+          "type": "User",
+          "html_url": "https://github.com/agamurdoch"
+        }
+      ],
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/software-developer-learning-pathways",
+      "url": "https://github.com/uk-x-gov-software-community/software-developer-learning-pathways",
+      "fork": true,
+      "parent": "alphagov/gds-tech-learning-pathway",
+      "contributors": [
+        {
+          "login": "MatMoore",
+          "contributions": 113,
+          "type": "User",
+          "html_url": "https://github.com/MatMoore"
+        },
+        {
+          "login": "deborahchua",
+          "contributions": 98,
+          "type": "User",
+          "html_url": "https://github.com/deborahchua"
+        },
+        {
+          "login": "heathd",
+          "contributions": 69,
+          "type": "User",
+          "html_url": "https://github.com/heathd"
+        },
+        {
+          "login": "chao-xian",
+          "contributions": 10,
+          "type": "User",
+          "html_url": "https://github.com/chao-xian"
+        },
+        {
+          "login": "galund",
+          "contributions": 7,
+          "type": "User",
+          "html_url": "https://github.com/galund"
+        },
+        {
+          "login": "rboulton",
+          "contributions": 6,
+          "type": "User",
+          "html_url": "https://github.com/rboulton"
+        },
+        {
+          "login": "jonodrew",
+          "contributions": 6,
+          "type": "User",
+          "html_url": "https://github.com/jonodrew"
+        },
+        {
+          "login": "KyleMacPherson",
+          "contributions": 4,
+          "type": "User",
+          "html_url": "https://github.com/KyleMacPherson"
+        },
+        {
+          "login": "philandstuff",
+          "contributions": 4,
+          "type": "User",
+          "html_url": "https://github.com/philandstuff"
+        },
+        {
+          "login": "kevindew",
+          "contributions": 4,
+          "type": "User",
+          "html_url": "https://github.com/kevindew"
+        },
+        {
+          "login": "jonheslop",
+          "contributions": 3,
+          "type": "User",
+          "html_url": "https://github.com/jonheslop"
+        },
+        {
+          "login": "alexbishop1",
+          "contributions": 2,
+          "type": "User",
+          "html_url": "https://github.com/alexbishop1"
+        },
+        {
+          "login": "DanailMinchev",
+          "contributions": 2,
+          "type": "User",
+          "html_url": "https://github.com/DanailMinchev"
+        },
+        {
+          "login": "boffbowsh",
+          "contributions": 2,
+          "type": "User",
+          "html_url": "https://github.com/boffbowsh"
+        },
+        {
+          "login": "tijmenb",
+          "contributions": 2,
+          "type": "User",
+          "html_url": "https://github.com/tijmenb"
+        },
+        {
+          "login": "bevanloon",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/bevanloon"
+        },
+        {
+          "login": "Davidslv",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/Davidslv"
+        },
+        {
+          "login": "46bit",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/46bit"
+        },
+        {
+          "login": "binaryberry",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/binaryberry"
+        },
+        {
+          "login": "kentsanggds",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/kentsanggds"
+        }
+      ],
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/uk-x-gov-cloud-community",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-cloud-community",
+      "fork": false,
+      "parent": null,
+      "contributors": [
+        {
+          "login": "bendbennett",
+          "contributions": 19,
+          "type": "User",
+          "html_url": "https://github.com/bendbennett"
+        },
+        {
+          "login": "CPHesketh",
+          "contributions": 2,
+          "type": "User",
+          "html_url": "https://github.com/CPHesketh"
+        },
+        {
+          "login": "heathd",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/heathd"
+        }
+      ],
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/lean-coffee-hackmd-generator",
+      "url": "https://github.com/uk-x-gov-software-community/lean-coffee-hackmd-generator",
+      "fork": false,
+      "parent": null,
+      "contributors": [
+        {
+          "login": "heathd",
+          "contributions": 10,
+          "type": "User",
+          "html_url": "https://github.com/heathd"
+        },
+        {
+          "login": "dependabot[bot]",
+          "contributions": 1,
+          "type": "Bot",
+          "html_url": "https://github.com/apps/dependabot"
+        }
+      ],
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/eleventy-plugin-toc",
+      "url": "https://github.com/uk-x-gov-software-community/eleventy-plugin-toc",
+      "fork": true,
+      "parent": "uncenter/eleventy-plugin-toc",
+      "contributors": [
+        {
+          "login": "uncenter",
+          "contributions": 36,
+          "type": "User",
+          "html_url": "https://github.com/uncenter"
+        },
+        {
+          "login": "jdsteinbach",
+          "contributions": 7,
+          "type": "User",
+          "html_url": "https://github.com/jdsteinbach"
+        },
+        {
+          "login": "JordanShurmer",
+          "contributions": 5,
+          "type": "User",
+          "html_url": "https://github.com/JordanShurmer"
+        },
+        {
+          "login": "JonUK",
+          "contributions": 3,
+          "type": "User",
+          "html_url": "https://github.com/JonUK"
+        },
+        {
+          "login": "pdehaan",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/pdehaan"
+        },
+        {
+          "login": "Princesseuh",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/Princesseuh"
+        },
+        {
+          "login": "kotoyama",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/kotoyama"
+        }
+      ],
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/uk-x-gov-qa-community.github.io",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-qa-community.github.io",
+      "fork": false,
+      "parent": null,
+      "contributors": [
+        {
+          "login": "ibrahimjassat",
+          "contributions": 1,
+          "type": "User",
+          "html_url": "https://github.com/ibrahimjassat"
+        }
+      ],
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/uk-x-gov-repo-query",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-repo-query",
+      "fork": false,
+      "parent": null,
+      "contributors": [
+        {
+          "login": "Copilot",
+          "contributions": 3,
+          "type": "Bot",
+          "html_url": "https://github.com/apps/copilot-swe-agent"
+        },
+        {
+          "login": "sdh100shaun",
+          "contributions": 2,
+          "type": "User",
+          "html_url": "https://github.com/sdh100shaun"
+        }
+      ],
+      "complete_first_page": true
+    }
+  ],
+  "public_display_names": {
+    "CPHesketh": {
+      "name": null,
+      "url": "https://github.com/CPHesketh"
+    },
+    "JonUK": {
+      "name": "Jon Keeping",
+      "url": "https://github.com/JonUK"
+    },
+    "JordanShurmer": {
+      "name": "Jordan Shurmer",
+      "url": "https://github.com/JordanShurmer"
+    },
+    "MatMoore": {
+      "name": "Mat",
+      "url": "https://github.com/MatMoore"
+    },
+    "Sparrow0hawk": {
+      "name": "Alex Coleman",
+      "url": "https://github.com/Sparrow0hawk"
+    },
+    "agamurdoch": {
+      "name": null,
+      "url": "https://github.com/agamurdoch"
+    },
+    "asmith-nhsx": {
+      "name": "Alex Smith",
+      "url": "https://github.com/asmith-nhsx"
+    },
+    "bendbennett": {
+      "name": "Benjamin Bennett",
+      "url": "https://github.com/bendbennett"
+    },
+    "chao-xian": {
+      "name": "Kelvin Gan",
+      "url": "https://github.com/chao-xian"
+    },
+    "chrishylanduk": {
+      "name": "Chris Hyland",
+      "url": "https://github.com/chrishylanduk"
+    },
+    "chrisns": {
+      "name": "Chris Nesbitt-Smith",
+      "url": "https://github.com/chrisns"
+    },
+    "deborahchua": {
+      "name": null,
+      "url": "https://github.com/deborahchua"
+    },
+    "galund": {
+      "name": "George Lund",
+      "url": "https://github.com/galund"
+    },
+    "heathd": {
+      "name": "David Heath",
+      "url": "https://github.com/heathd"
+    },
+    "ibrahimjassat": {
+      "name": "Ibrahim Jassat",
+      "url": "https://github.com/ibrahimjassat"
+    },
+    "jdsteinbach": {
+      "name": "James Steinbach",
+      "url": "https://github.com/jdsteinbach"
+    },
+    "marcotranchino": {
+      "name": null,
+      "url": "https://github.com/marcotranchino"
+    },
+    "pdehaan": {
+      "name": "Peter deHaan",
+      "url": "https://github.com/pdehaan"
+    },
+    "sdh100shaun": {
+      "name": "Shaun Hare",
+      "url": "https://github.com/sdh100shaun"
+    },
+    "uncenter": {
+      "name": "leah",
+      "url": "https://github.com/uncenter"
+    }
+  }
+}

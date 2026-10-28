@@ -18,7 +18,7 @@ explicit; stars and recent activity do not establish quality or support.
 [SBOMs, security helpers and issues](docs/security-and-sbom-review.md) ·
 [Operations](docs/operations.md) · [Scope](REPOSITORY_STATUS.md) ·
 [Permission and disclosure](docs/permission-and-disclosure.md) ·
-[Private-system beginner guide](docs/private-system-starter.md)
+[Private-system beginner guide](docs/private-system-starter.md) · [Credits](CREDITS.md)
 
 ## Try it
 

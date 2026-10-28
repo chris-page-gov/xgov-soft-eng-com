@@ -8,6 +8,8 @@ daily dataset snapshots have separate identifiers.
 
 ### Added
 
+- Linked contributor credits across the nine community repositories, with
+  automated accounts and inherited fork history distinguished.
 - An offline metadata-only starter and beginner guide for private systems,
   with publication, source-code ingestion, models and scanning disabled.
 - Private, unsent scan-permission requests with exact-input approval, expiry,
