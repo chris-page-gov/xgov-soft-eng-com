@@ -41,9 +41,9 @@ def main():
     for shard in c.read(out/"semantic/manifest.json")["shards"]:
         raw=(out/shard["path"]).read_bytes()
         if c.digest(raw)!=shard["sha256"]:raise ValueError("RDF shard checksum mismatch")
-        document=json.loads(raw)
+        document=c.read(out/shard['path'])
         if "@context" in document:raise ValueError("Unexpected context: expanded IRIs required")
-        graph=Graph().parse(data=raw.decode(),format="json-ld")
+        graph=Graph().parse(data=json.dumps(document),format="json-ld")
         triples+=len(graph)
     result.update({"draft_2020_12_assertions_validated":total,"rdf_triples_parsed_across_shards":triples,"remote_contexts":0})
     print(json.dumps(result,indent=2))

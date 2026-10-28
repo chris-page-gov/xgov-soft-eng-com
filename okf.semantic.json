@@ -23,7 +23,7 @@
     ],
     "outputs": [
       {
-        "path": "generated/semantic/*.jsonld",
+        "path": "generated/semantic/*.jsonld.gz",
         "role": "semantic-json-ld-shards",
         "generated": true
       },
@@ -38,7 +38,7 @@
         "generated": true
       },
       {
-        "path": "generated/data/assertions-*.json",
+        "path": "generated/data/assertions-*.json.gz",
         "role": "relationship-runtime",
         "generated": true
       }
@@ -48,7 +48,6 @@
     "limitations": [
       "Custom experimental profile; no canonical Bundle Wiki v1 conformance claim.",
       "Rules describe names and descriptions, not repository code; labels are unreviewed.",
-      "Reader acceptance remains pending.",
       "Historical and recent contributor relationships describe available GitHub default-branch statistics, not ownership or maintainership."
     ]
   },

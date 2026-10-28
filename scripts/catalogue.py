@@ -19,6 +19,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import facets as facet_tools
+import explorer_projection
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = "urn:okf:xgov:"
@@ -41,11 +42,14 @@ def digest(value):
 
 
 def read(path):
-    return json.loads(Path(path).read_bytes())
+    return explorer_projection.read(path)
 
 
 def write(path, value):
     path = Path(path)
+    if path.suffix == '.gz':
+        explorer_projection.write_gzip(path,value)
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(encoded(value))
 
@@ -63,7 +67,7 @@ def iri(kind, value):
 
 
 def route(kind, value):
-    return kind + "/" + urllib.parse.quote(str(value).casefold(), safe="") + ".md"
+    return kind.replace('_','-') + "/" + urllib.parse.quote(str(value).casefold(), safe="") + ".md"
 
 
 def ref(value):
@@ -137,7 +141,7 @@ def classify(row, taxonomy):
 
 
 def controlled_inputs(root):
-    patterns = ["config/**/*", "scripts/**/*.py", "tests/**/*.py", "schemas/**/*", "docs/**/*", "*.md", "okf.*.json", "pyproject.toml", "uv.lock", "requirements-assurance.txt", "LICENSE", ".gitignore", ".python-version", ".github/workflows/*", ".githooks/*", "source/README.md", "source/security-helper-inventory.json", "source/contributors-inventory.json", "source/history/index.json", "source/upstream/*", "source/sbom-review/*"]
+    patterns = ["config/**/*", "scripts/**/*.py", "scripts/**/*.js", "tests/**/*.py", "schemas/**/*", "docs/**/*", "*.md", "okf.*.json", "pyproject.toml", "uv.lock", "requirements-assurance.txt", "LICENSE", ".gitignore", ".python-version", ".github/workflows/*", ".githooks/*", "source/README.md", "source/security-helper-inventory.json", "source/contributors-inventory.json", "source/history/index.json", "source/upstream/*", "source/sbom-review/*"]
     return {p.relative_to(root).as_posix(): digest(p.read_bytes()) for pattern in patterns for p in sorted(root.glob(pattern)) if p.is_file() and "__pycache__" not in p.parts and p.name!=".DS_Store"}
 
 
@@ -268,7 +272,7 @@ def build(root, output, receipt, previous=None):
         if activity:
             count=activity['recent_reported_commits'];rec['recent_commit_band']='0' if count==0 else '1-10' if count<=10 else '11-50' if count<=50 else '51-200' if count<=200 else 'over-200'
             rec['recent_contributors']=rec['recent_contributors'] or ['no-mapped-account' if count else 'none-reported-in-window'];rec['historical_contributors']=rec['historical_contributors'] or ['no-mapped-account']
-            rec['churn_availability']=activity['line_count_status'];rec['activity']={k:v for k,v in activity.items() if k not in ('contributors','weekly_totals')}|{'source':history_item,'contributors':[ {k:v for k,v in a.items() if k!='weeks'} for a in activity['contributors']]}
+            rec['churn_availability']=activity['line_count_status'];rec['activity']=explorer_projection.reader_activity(activity)|{'source':history_item|{'observed_at':history_observation['observed_at']}}
             n[PROV+'wasDerivedFrom']=[ref(snapshot),ref(NS+'snapshot:'+history_item['sha256'])]
             for key,value in {'reportedRecentCommitCount':activity['recent_reported_commits'],'reportedHistoricalCommitCount':activity['historical_reported_commits'],'activityWindowStart':activity['window']['start'],'activityWindowEndExclusive':activity['window']['end_exclusive'],'activityObservedAt':history_observation['observed_at'],'lineCountStatus':activity['line_count_status']}.items():n[NS+key]=value
             if activity['recent_reported_line_changes'] is not None:n[NS+'reportedRecentLineChanges']=activity['recent_reported_line_changes']
@@ -278,6 +282,7 @@ def build(root, output, receipt, previous=None):
         rec['metadata_changed_fields']=changed
         rec['metadata_change']='baseline-unavailable' if not prior_summary else 'added' if older is None else 'changed' if changed else 'unchanged'
         rec['metadata_change_degree']='baseline-unavailable' if not prior_summary else 'new-record' if older is None else '0-fields' if not changed else '1-field' if len(changed)==1 else '2-4-fields' if len(changed)<=4 else '5-or-more-fields'
+        rec['narrative']=explorer_projection.narrative(rec)
         for key, values in {"publisher": [rec["publisher"]], "language": [rec["language"]], "license": [licence], "archived": [str(row["archived"]).lower()], "is_fork": ["unknown" if row.get("isFork") is None else str(row["isFork"]).lower()], "domain": domains, "capability": capabilities, "sbom": [rec["sbom"]]}.items():
             facets[key].update(values)
         for key in ("description", "language", "license", "isFork"):
@@ -289,14 +294,14 @@ def build(root, output, receipt, previous=None):
     chunk_paths = []
     semantic_paths, edge_paths = [], []
     for part, offset in enumerate(range(0, len(records), size)):
-        p = f"data/records-{part:03d}.json"
+        p = f"data/records-{part:03d}.json.gz"
         write(output / p, records[offset:offset + size]); chunk_paths.append(p)
-        p = f"semantic/repositories-{part:03d}.jsonld"
+        p = f"semantic/repositories-{part:03d}.jsonld.gz"
         write(output / p, {"@graph": record_nodes[offset:offset + size]}); semantic_paths.append(p)
     # Reification and direct triples originate from the same edge rows; planes remain explicit.
     for part, offset in enumerate(range(0, len(edges), size)):
         batch = edges[offset:offset + size]
-        p = f"data/assertions-{part:03d}.json"
+        p = f"data/assertions-{part:03d}.json.gz"
         write(output / p, batch); edge_paths.append(p)
         graph = []
         for e in batch:
@@ -304,19 +309,19 @@ def build(root, output, receipt, previous=None):
             if e.get('measurement'):
                 graph[-1][NS+'reportedCommitCount']=e['measurement']['reported_commits']
                 graph[-1][NS+'measurement']={'@value':e['measurement'],'@type':RDF+'JSON'}
-        p = f"semantic/assertions-{part:03d}.jsonld"
+        p = f"semantic/assertions-{part:03d}.jsonld.gz"
         write(output / p, {"@graph": graph}); semantic_paths.append(p)
     rdfs="http://www.w3.org/2000/01/rdf-schema#"
     definitions=[{"@id":NS+name,"@type":rdfs+"Class",rdfs+"label":label} for name,label in (("Repository","Source-reported GitHub repository"),("HostingAccount","Source-reported hosting account"),("ContributorAccount","Public contributor account reported by GitHub"),("SbomReference","Source-reported SBOM reference"),("RelationshipAssertion","Evidence-bearing relationship assertion"))]
     definitions += [{"@id":p,"@type":RDF+"Property",rdfs+"label":label} for p,label,_,_ in predicates.values() if p.startswith(NS)]
-    write(output / "semantic/vocabulary.jsonld", {"@graph": list(concepts.values())+definitions})
+    write(output / "semantic/vocabulary.jsonld.gz", {"@graph": list(concepts.values())+definitions})
     write(output / "semantic/catalogue.jsonld", {"@graph": [{"@id": NS + "catalogue", "@type": DCAT + "Catalog", DCT + "title": "Experimental cross-government software catalogue", PROV + "wasDerivedFrom": ref(snapshot)}, {"@id": snapshot, "@type": [DCAT + "Dataset", PROV + "Entity"], DCT + "source": ref(cfg["source_url"]), PROV + "generatedAtTime": observed, NS + "sha256": receipt["sha256"], NS + "httpLastModified": receipt.get("last_modified")}, {"@id": NS + "build:" + build_id, "@type": PROV + "Activity", PROV + "used": ref(snapshot), NS + "inputHashes": {"@value": inputs, "@type": RDF + "JSON"}}]})
     source_graph=read(output/'semantic/catalogue.jsonld')['@graph']
     for extra in ([quality_receipt] if quality_receipt else [])+history_sources:
         source_graph.append({'@id':NS+'snapshot:'+extra['sha256'],'@type':PROV+'Entity',NS+'sha256':extra['sha256'],NS+'sourceArtifact':extra['path']})
     write(output/'semantic/catalogue.jsonld',{'@graph':source_graph})
-    semantic_paths += ["semantic/vocabulary.jsonld", "semantic/catalogue.jsonld"]
-    write(output / "semantic/manifest.json", {"profile": PROFILE, "snapshot": snapshot, "context_policy": "fully-expanded-IRIs-no-remote-contexts", "shards": [{"path": p, "sha256": digest((output / p).read_bytes())} for p in semantic_paths]})
+    semantic_paths += ["semantic/vocabulary.jsonld.gz", "semantic/catalogue.jsonld"]
+    write(output / "semantic/manifest.json", {"profile": PROFILE, "snapshot": snapshot, "context_policy": "fully-expanded-IRIs-no-remote-contexts", "shards": [{"path": p, "sha256": digest((output / p).read_bytes()), "bytes": (output/p).stat().st_size, "media_type": "application/ld+json", **({"compression":"gzip"} if p.endswith(".gz") else {})} for p in semantic_paths]})
     counts.update({"raw_rows": len(rows), "records": len(records), "datasets": len(records), "duplicate_rows": len(rows)-len(records), "organisations": len(facets["publisher"]), "relationships": len(edges), "resources": 0, "publishers": len(facets["publisher"]), "unclassified_domains": facets["domain"]["unclassified"], "unclassified_capabilities": facets["capability"]["unclassified"]})
     warnings = ["Experimental metadata discovery; classifications are unreviewed term matches.", "Hosting accounts are not verified legal organisations or service owners.", "Missing licences and NOASSERTION do not establish reuse permission.", "Pushed dates, stars, SBOM paths and archive flags do not establish quality, security or support.", "The repository feed does not contain all guidance linked from the community resources page.", "The source fetch time and HTTP Last-Modified do not verify every upstream record was refreshed."]
     for spec in facet_specs:
@@ -324,7 +329,7 @@ def build(root, output, receipt, previous=None):
         if scheme:spec["value_labels"]={c["id"]:c["label"] for c in tax.get(scheme,[])}|{"unclassified":"Unclassified"}
     facet_payload=facet_tools.counts(records,facet_specs)
     facet_tools.validate(records,facet_specs,facet_payload)
-    write(output/"data/facet-definitions.json",{"schema":"xgov-facet-contract.v1","facets":facet_specs,"consumer":"catalogue.py search/facets; Explorer acceptance pending"})
+    write(output/"data/facet-definitions.json",{"schema":"xgov-facet-contract.v1","facets":facet_specs,"consumer":"catalogue.py search/facets; OKF Explorer with recorded Chrome acceptance"})
     write(output/"data/presentation.json",{"schema":"okf-explorer-presentation.v1","status":"experimental","facets":[{"key":s["key"],"label":s["label"],"description":s["description"],"value_type":"nominal","order":i*10,"default_state":"pinned" if s.get("required_task_dimension") else "shown","open_control":"search" if s["key"] in ("publisher","language","license") else "distribution","value_order":"count-desc","examples":[r["label"] for r in facet_payload[s["key"]][:3]]} for i,s in enumerate(facet_specs)]})
     write(output / "data/facets.json", facet_payload)
     overview = {"schema": "okf-large-overview.v1", "title": "Cross-government software discovery", "generated_at": observed, "counts": dict(counts), "warnings": warnings, "facet_previews": {k: v[:15] for k,v in facet_payload.items()}, "recent_datasets": sorted(records, key=lambda r: r["timestamp"] or "", reverse=True)[:10]}
@@ -358,6 +363,7 @@ def build(root, output, receipt, previous=None):
             links.append(f'- [{c["label"]}]({scheme}/{c["id"]}.md)')
     (output / "concepts/index.md").write_text("# Domains and tasks\n\n"+"\n".join(links)+"\n")
     (output / "README.md").write_text("# Generated catalogue\n\nRebuild with `python scripts/catalogue.py build`. Do not edit these files by hand.\n")
+    explorer_projection.project(output,records,concepts,edges,build_id,observed,PROFILE)
     write(output / "build-manifest.json", {"schema": "xgov-build.v1", "build_id": build_id, "baseline_sha256":digest(previous or {}), "generated_at": observed, "source": receipt, "history_sources":history_sources, "controlled_inputs": inputs, "outputs": {p.relative_to(output).as_posix(): digest(p.read_bytes()) for p in sorted(output.rglob("*")) if p.is_file() and p.name!='.DS_Store'}})
     return dict(counts)
 
@@ -368,10 +374,10 @@ def build_search(output, records, facets, size):
     filter_values = collections.defaultdict(lambda: collections.defaultdict(list))
     specifications=read(output/"data/facet-definitions.json")["facets"]
     for ordinal, record in enumerate(records):
-        doc = {**record, "ordinal": ordinal, "quality_score": None}
+        doc = {**{key:value for key,value in record.items() if key not in ('body','narrative','activity','sbom_quality','classification_evidence')}, "ordinal": ordinal, "quality_score": None}
         docs.append(doc)
         for field, text, weight, mask in (("title", record["title"], 16, 1), ("publisher", record["publisher_title"], 8, 2), ("description", record["notes"], 5, 8), ("topics", " ".join(record["domains"]), 3, 16), ("tags", " ".join(record["capabilities"]), 3, 32)):
-            for token in set(normalise(text).split()):
+            for token in explorer_projection.search_tokens(text):
                 if len(token) >= 2:
                     old = postings[token].get(ordinal, [0, 0])
                     postings[token][ordinal] = [old[0]+weight, old[1]|mask]
@@ -393,9 +399,9 @@ def build_search(output, records, facets, size):
         write(output / f"data/search/prefixes/{shard}.json", {p:sorted(v,key=lambda r:(-r['df'],r['token']))[:16] for p,v in prefixes[shard].items()})
     paths=[]
     for part, offset in enumerate(range(0,len(docs),size)):
-        p=f"data/search/results-{part:03d}.json";write(output/p,docs[offset:offset+size]);paths.append(p)
+        p=f"data/search/results-{part:03d}.json.gz";write(output/p,docs[offset:offset+size]);paths.append(p)
     write(output/"data/search/doc-map.json",{str(i):r["route"] for i,r in enumerate(records)})
-    write(output/"data/search/sort-values.json",[[r["timestamp"],r["title"],None] for r in records])
+    write(output/"data/search/sort-values.json",[[r["timestamp"] or '',r["title"],None] for r in records])
     for key, values in filter_values.items():
         write(output/f"data/search/filters/{key}.json",{"schema":"okf-static-filter-postings.v1","key":key,"values":dict(values)})
     write(output/"data/search/manifest.json",{"schema":"okf-static-search.v2","token_min_length":2,"prefix_min_length":3,"lexicon_shard_length":2,"result_limit":200,"result_doc_chunk_size":size,"weights":{"title":16,"publisher":8,"description":5,"topics":3,"tags":3},"field_masks":{"title":1,"publisher":2,"description":8,"topics":16,"tags":32},"counts":{"documents":len(records),"tokens":len(postings),"postings":sum(len(v) for v in postings.values())},"entrypoints":{"lexicon":{s:f"data/search/lexicon/{s}.json" for s in lex},"prefixes":{s:f"data/search/prefixes/{s}.json" for s in lex},"postings":[f"data/search/postings/{s}.json" for s in lex],"result_docs":paths,"facets":"data/facets.json","doc_map":"data/search/doc-map.json","sort_values":"data/search/sort-values.json","filter_postings":{key:f"data/search/filters/{key}.json" for key in filter_values}}})
@@ -454,21 +460,24 @@ def check_output(output):
     records=records_from(output)
     facet_tools.validate(records,read(output/"data/facet-definitions.json")["facets"],read(output/"data/facets.json"))
     routes={r["route"]:r["id"] for r in records}
-    concepts=read(output/"semantic/vocabulary.jsonld")["@graph"]
+    concepts=read(output/"semantic/vocabulary.jsonld.gz")["@graph"]
     routes.update({c[NS+"route"]:c["@id"] for c in concepts if NS+"route" in c})
     nodes={n["@id"]:n for p in read(output/"semantic/manifest.json")["shards"] if p["path"].startswith("semantic/repositories-") for n in read(output/p["path"])["@graph"]}
     seen=set()
+    all_edges=[]
     data_manifest=read(output/"data/manifest.json")
     for p in data_manifest["chunks"]["relationships"]:
         for edge in read(output/p):
             if edge["id"] in seen:raise ValueError("Duplicate assertion ID")
             seen.add(edge["id"])
+            all_edges.append(edge)
             if routes.get(edge["source"])!=edge["source_iri"] or routes.get(edge["target"])!=edge["target_iri"]:raise ValueError("Unresolved semantic route")
             if ref(edge["target_iri"]) not in nodes[edge["source_iri"]].get(edge["predicate"],[]):raise ValueError("Direct triple and assertion disagree")
             if edge["assertion_status"] not in ("normalized","inferred"):raise ValueError("Unexpected authority plane")
             if not edge["evidence"] or not edge["rights"]:raise ValueError("Missing evidence or rights")
     if len(records)!=len({r['id'] for r in records}):raise ValueError("Duplicate repository identity")
     if len(seen)!=read(output/"quality.json")["counts"]["relationships"]:raise ValueError("Assertion total mismatch")
+    explorer_projection.validate(output,records,all_edges)
     return {"records":len(records),"assertions":len(seen),"outputs":len(manifest["outputs"])}
 
 
@@ -590,7 +599,7 @@ def main():
         elif args.command=="status":
             receipt=load_receipt(root);cfg=read(root/"config/catalogue.json")
             last=read(root/"source/last-check.json") if (root/"source/last-check.json").exists() else {}
-            result={"source":receipt,"last_check":last,"retrieval_stale":stale({"retrieved_at":last.get("checked_at",receipt["retrieved_at"])},cfg["stale_after_hours"]),"upstream_record_freshness":"not-independently-verified","publication":"configured-github-releases-remote-state-not-checked","scheduler":"configured-daily-1643-UTC-remote-state-not-checked"}
+            result={"source":receipt,"last_check":last,"retrieval_stale":stale({"retrieved_at":last.get("checked_at",receipt["retrieved_at"])},cfg["stale_after_hours"]),"upstream_record_freshness":"not-independently-verified","publication":"configured-github-releases-and-pages-remote-state-not-checked","scheduler":"configured-daily-1643-UTC-remote-state-not-checked"}
         else:
             filters={k:v for k,v in {"publisher":args.organisation,"language":args.language,"license_id":args.licence,"domains":args.domain,"capabilities":args.capability,"archived":args.archived,"is_fork":args.is_fork,"sbom":args.sbom}.items() if v is not None}
             filters.pop("is_fork",None)

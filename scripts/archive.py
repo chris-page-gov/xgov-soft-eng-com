@@ -65,7 +65,7 @@ def main():
         shutil.copyfile(root/"generated"/name,dist/name)
     names=["xgov-okf.tar.gz","record-hashes.json","record-summary.json","build-manifest.json","quality.json"]
     (dist/"SHA256SUMS").write_text("".join(hashlib.sha256((dist/name).read_bytes()).hexdigest()+"  "+name+"\n" for name in names))
-    (dist/"release-notes.md").write_text("Experimental cross-government software discovery pack.\n\nSource SHA-256: "+manifest["source"]["sha256"]+"\n\nBuild identity: "+manifest["build_id"]+"\n\nUnreviewed classification rules; no vulnerability scan or complete Explorer consumer acceptance. See the included evidence and documentation.\n")
+    (dist/"release-notes.md").write_text("Experimental cross-government software discovery pack.\n\nSource SHA-256: "+manifest["source"]["sha256"]+"\n\nBuild identity: "+manifest["build_id"]+"\n\nUnreviewed classification rules; no vulnerability scan. Browser acceptance is bounded to the recorded consumer version, snapshot and journeys. See the included evidence and documentation.\n")
     print(archive)
 
 

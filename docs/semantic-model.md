@@ -58,3 +58,13 @@ recent window, observation time and line-count availability. Contributor
 assertions carry their reported count and period in both the runtime and RDF
 projection. These are provider observations, not an assessment of contribution
 value, software quality or maintainer authority.
+
+Explorer consumes snapshot-bound record locators and per-route assertion
+adjacency, with a digest-bound endpoint-label index for readable navigation.
+These indexes preserve the custom assertion schema and its authority/evidence
+fields; they do not assert canonical rich-runtime conformance. Browser
+acceptance and the Pages delivery boundary are described in
+[browser acceptance](browser-acceptance.md).
+RDF shard paths in the semantic manifest end in .jsonld.gz. Their SHA-256
+digests cover the exact compressed bytes; decompress before JSON-LD parsing.
+The manifest declares compression, media type and byte length for each shard.

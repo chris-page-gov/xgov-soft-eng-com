@@ -47,7 +47,8 @@ A licence filter reflects a reported identifier, not permission to reuse code.
 
 Outputs include `generated/okf-explorer.json`, lazy search and record shards,
 OKF 0.2 Markdown concept pages, RDF JSON-LD, evidence assertions, quality and
-change reports and checksums. Consumer acceptance in OKF Explorer is pending.
+change reports and checksums. See [browser acceptance](docs/browser-acceptance.md)
+for the tested consumer version, journeys and limitations.
 
 ## Daily updates
 

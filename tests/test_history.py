@@ -97,13 +97,20 @@ class HistoryTests(unittest.TestCase):
             self.assertEqual(anonymous_record['activity']['recent_reported_commits'],2)
             manifest=h.c.read(root/'generated/data/manifest.json')
             assertions=[row for path in manifest['chunks']['relationships'] for row in h.c.read(root/'generated'/path)]
+            self.assertTrue(h.c.explorer_projection.validate(root/'generated',h.c.records_from(root/'generated'),assertions))
+            descriptor=h.c.read(root/'generated/okf-explorer.json')
+            labels=h.c.read(root/'generated'/descriptor['entrypoints']['endpoint_labels']['path'])
+            self.assertIn('publisher/examplegov',{row['route'] for row in labels['entries']})
+            self.assertEqual(descriptor['snapshot_id'],h.c.read(root/'generated/data/search/manifest.json')['snapshot'])
             recent=next(row for row in assertions if row['kind']=='recent_contributor')
             self.assertEqual(recent['measurement']['reported_commits'],3)
             self.assertEqual(recent['evidence'][0]['source_sha256'],checksum)
-            shard=h.c.read(root/'generated/semantic/assertions-000.jsonld')['@graph']
+            shard=h.c.read(root/'generated/semantic/assertions-000.jsonld.gz')['@graph']
             rdf=next(node for node in shard if node['@id']==recent['id'])
             self.assertEqual(rdf[h.c.PROV+'wasDerivedFrom'],h.c.ref(h.c.NS+'snapshot:'+checksum))
             self.assertEqual(rdf[h.c.NS+'reportedCommitCount'],3)
+            search=h.c.read(root/'generated/data/search/manifest.json');search.pop('snapshot');h.c.write(root/'generated/data/search/manifest.json',search)
+            with self.assertRaisesRegex(ValueError,'snapshot mismatch'):h.c.explorer_projection.validate(root/'generated',h.c.records_from(root/'generated'),assertions)
 
 
 if __name__=='__main__':unittest.main()

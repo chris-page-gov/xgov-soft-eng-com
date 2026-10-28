@@ -61,9 +61,31 @@ from changes to derived classification or observation metadata. See
 The first checkpoint uses git switch --orphan in a fresh runner worktree, so
 the data branch starts empty and never stages the producer code or source feed.
 
+## Pages publication
+
+The Pages workflow runs after a successful daily refresh, or by manual
+dispatch for the current producer commit. It selects that exact snapshot tag,
+verifies its commit, asset checksums, archive members and controlled producer
+inputs, then extracts only generated data. It never runs code from an archive.
+The candidate is copied without rebuilding and must fit within 1 GiB including
+its landing page and publication receipt. The deployment uses standard public
+GitHub-hosted runners with only contents-read, Pages-write and OIDC permissions.
+
+The static page links to the descriptor, source repository, semantic manifest
+and publication receipt. A new snapshot replaces the Pages data; immutable
+release archives remain the reproduction route for older snapshots. Browser
+integrity bindings reject mixed data after an update rather than combining
+different snapshots. Private grants and private starter outputs are excluded.
+
+Run python scripts/pages.py for a local copy, or pass --release with a directory
+containing all six assets from one snapshot. An existing destination is never
+overwritten. Browser acceptance must verify the deployed Pages descriptor in
+the actual public Explorer before its opening link is advertised as working.
+
 ## Consumer limits
 
 The descriptor and shards follow Explorer's documented large-corpus shapes.
-Browser journeys, rich semantic drawers and performance remain unverified.
+Chrome acceptance covers the declared facets, search, semantic evidence and
+contributor-history journeys; see the dated browser report for exact evidence.
 The JSON-LD manifest is for RDF tools, not a canonical YAML-LD descriptor.
-Do not advertise this as a verified hosted Explorer publication.
+A successful Python build alone does not establish browser acceptance.

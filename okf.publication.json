@@ -321,6 +321,18 @@
           "check",
           "assure"
         ]
+      },
+      {
+        "path": "validation/browser/**",
+        "role": "browser-receipt",
+        "plane": "browser",
+        "required": false,
+        "build_command_ids": [
+          "browser"
+        ],
+        "check_command_ids": [
+          "browser"
+        ]
       }
     ]
   },
@@ -380,6 +392,33 @@
       ],
       "command_ids": [
         "archive"
+      ]
+    },
+    {
+      "id": "browser",
+      "depends_on": [
+        "runtime"
+      ],
+      "paths": [
+        "scripts/browser_acceptance.js",
+        "output/playwright/**",
+        "validation/browser/**"
+      ],
+      "command_ids": [
+        "browser"
+      ]
+    },
+    {
+      "id": "deployment",
+      "depends_on": [
+        "release"
+      ],
+      "paths": [
+        "dist/pages/**",
+        ".github/workflows/pages.yml"
+      ],
+      "command_ids": [
+        "pages-candidate"
       ]
     }
   ],
@@ -475,6 +514,31 @@
         "network": "acquisition",
         "mutates": "source-and-generated",
         "timeout_minutes": 30
+      },
+      {
+        "id": "pages-candidate",
+        "kind": "build",
+        "planes": [
+          "release",
+          "deployment"
+        ],
+        "command": "uv run --locked python scripts/pages.py",
+        "source": "scripts/pages.py",
+        "review_status": "reviewed-local-guidance",
+        "network": "none",
+        "mutates": "generated-only"
+      },
+      {
+        "id": "browser",
+        "kind": "verify",
+        "planes": [
+          "browser"
+        ],
+        "command": "playwright-cli --session xgov-acceptance run-code --filename scripts/browser_acceptance.js",
+        "source": "docs/browser-acceptance.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "bounded-read",
+        "mutates": "generated-only"
       }
     ]
   },
@@ -505,16 +569,21 @@
     "workflow_paths": [
       ".github/workflows/validate.yml",
       ".github/workflows/refresh.yml",
-      ".github/workflows/history.yml"
+      ".github/workflows/history.yml",
+      ".github/workflows/pages.yml"
     ],
     "impact_routing": "full-suite",
     "parallelism": "serial",
     "unknown_path_policy": "full-suite",
     "browser": {
       "ordinary": {
-        "policy": "not-applicable",
-        "engines": [],
-        "command_ids": []
+        "policy": "installed-chrome",
+        "engines": [
+          "chrome"
+        ],
+        "command_ids": [
+          "browser"
+        ]
       },
       "cross_engine": {
         "policy": "not-applicable",
@@ -545,31 +614,54 @@
         "public_base_url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases",
         "exact_commit_required": true,
         "promote_without_rebuild": true
+      },
+      {
+        "id": "github-pages",
+        "kind": "github-pages",
+        "workflow_path": ".github/workflows/pages.yml",
+        "public_base_url": "https://chris-page-gov.github.io/xgov-soft-eng-com/",
+        "exact_commit_required": true,
+        "promote_without_rebuild": true
       }
     ]
   },
   "verification": {
-    "required": false,
-    "browser": "not-applicable",
+    "required": true,
+    "browser": "real-browser",
     "exact_commit_required": true,
     "identity_checks": [
       "commit",
       "snapshot",
       "sha256",
-      "record-count"
+      "record-count",
+      "descriptor",
+      "route"
     ],
-    "journeys": [],
-    "console_policy": "not-applicable",
+    "journeys": [
+      {
+        "id": "public-catalogue",
+        "url": "https://chris-page-gov.github.io/okf-explorer/explore/?bundle=https%3A%2F%2Fchris-page-gov.github.io%2Fxgov-soft-eng-com%2Fokf-explorer.json",
+        "expected_identity": "The assured producer descriptor, snapshot, record count and deployed Explorer application tree",
+        "steps": [
+          "Load the exact Pages descriptor in ordinary Chrome.",
+          "Select All facets and verify each of the 25 dimensions against the checked catalogue distributions.",
+          "Verify exact-name and zero-result search, semantic links, inverse navigation, source provenance and repository history.",
+          "Confirm no browser errors or failed requests."
+        ]
+      }
+    ],
+    "console_policy": "no-errors",
     "command_ids": [
       "tests",
       "check",
-      "assure"
+      "assure",
+      "browser"
     ]
   },
   "limitations": [
-    "Consumer/browser acceptance remains pending.",
     "No vulnerability scan or private report access.",
     "Scheduled executions may be delayed by GitHub.",
-    "Publication-method v1 has no scheduled-release mode: manual denotes invocation of reviewed release commands; the separate CI workflow declares the automatic schedule. No repository branch protection is claimed."
+    "Publication-method v1 has no scheduled-release mode: manual denotes invocation of reviewed release commands; the separate CI workflow declares the automatic schedule. No repository branch protection is claimed.",
+    "Browser verification is a separately recorded acceptance step; the Python CI jobs do not execute Chrome. Cross-engine testing is not claimed."
   ]
 }

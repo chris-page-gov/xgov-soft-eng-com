@@ -1,6 +1,6 @@
 {
   "schema": "xgov-facet-contract.v1",
-  "consumer": "catalogue.py search and facets; Explorer browser acceptance pending",
+  "consumer": "catalogue.py search and facets; OKF Explorer with recorded Chrome acceptance",
   "count_policy": "Distinct repositories per value; overlapping values are not additive; counts reflect the selected search and filters.",
   "facets": [
     {

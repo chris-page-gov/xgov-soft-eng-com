@@ -61,6 +61,10 @@ pending data are never converted into zero activity. The dated credits page
 remains separate from the continuously collected activity data.
 Reported commits without a mapped GitHub account retain their counts and an
 explicit no-mapped-account value; no person is invented to fill the gap.
+The repository Narrative view includes contributor counts, recent weekly
+totals and historical annual totals. Annual rows use the year of each week's
+UTC start, rather than pretending to have individual commit dates. Missing
+provider line counts remain unknown in the displayed tables.
 
 ```sh
 uv run --locked python scripts/history.py status

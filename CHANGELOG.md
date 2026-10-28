@@ -6,6 +6,36 @@ daily dataset snapshots have separate identifiers.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-28
+
+### Added
+
+- A separate generated boundary for reviewed browser acceptance receipts.
+- Repeatable Chrome acceptance for all 25 facet dimensions, combined filtering,
+  value search and paging, and exact-name search.
+- Snapshot-bound Explorer search, targeted record lookup, semantic endpoint
+  labels and compressed per-route relationship indexes.
+- Repository narratives with recent and historical contributor counts, weekly
+  and annual change summaries, explicit coverage and source evidence.
+- A checked Pages candidate containing only admitted generated public files.
+- Pages publication from an immutable assured snapshot, with matching producer
+  code and all archive checksums verified before deployment.
+
+### Changed
+
+- Store record, assertion, result and RDF shards as deterministic gzip; search
+  summaries hydrate full narratives only when a record is opened. Semantic
+  manifests declare each shard's compression, media type and byte length.
+
+### Fixed
+
+- Supply the complete experimental-publication notice expected by Explorer.
+- Use canonical hyphenated content-type routes and preserve missing dates as
+  empty sort values rather than invalid null values.
+- Match the browser's declared tokeniser for hyphenated names and accented
+  words, and replay every record location against its actual chunk as well as
+  validating every incident relationship.
+
 ## [0.2.1] - 2026-10-28
 
 ### Fixed
@@ -67,7 +97,8 @@ daily dataset snapshots have separate identifiers.
 - Pin a runner that supports the governed Python version.
 - Exclude Finder metadata from reproducibility checks.
 
-[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/f7eaed15feaa11941b8fa95e1c66aa400f421483...v0.2.0
 [0.1.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40749128667-1
