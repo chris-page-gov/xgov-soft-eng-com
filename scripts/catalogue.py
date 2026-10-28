@@ -13,6 +13,7 @@ import re
 import shutil
 import sys
 import tempfile
+import tomllib
 import unicodedata
 import urllib.error
 import urllib.parse
@@ -341,7 +342,7 @@ def build(root, output, receipt, previous=None):
     write(output / "data/accounts.json", publishers)
     manifest = {"title": "Experimental cross-government software catalogue", "generated_at": observed, "counts": dict(counts), "indexes": {"overview": "data/overview.json", "search": "data/search/manifest.json", "facets": "data/facets.json"}, "chunks": {"datasets": chunk_paths, "resources": [], "publishers": ["data/accounts.json"], "relationships": edge_paths}}
     write(output / "data/manifest.json", manifest)
-    descriptor = {"schema": "okf-explorer-large-corpus.v1", "kind": "okf-large-corpus", "okf_version": "0.2", "title": "Experimental cross-government software OKF+", "description": "Source-reported repository metadata with explicit gaps and unreviewed domain and task suggestions.", "version": "0.1.0", "publication_state": "exploratory", "status": "local-experiment", "profile": PROFILE, "snapshot_id": build_id, "generated_at": observed, "counts": dict(counts), "entrypoints": {"data_manifest": "data/manifest.json", "overview_index": "data/overview.json", "search_manifest": "data/search/manifest.json", "markdown_index": "index.md"}, "source": {"url": cfg["source_url"], "source_sha256": receipt["sha256"], "observed_at": observed}, "semantic_descriptor": "semantic/manifest.json", "vocabulary": {"record_singular": "repository", "record_plural": "repositories", "publisher_singular": "hosting account", "publisher_plural": "hosting accounts", "format_plural": "languages"}, "warnings": warnings}
+    descriptor = {"schema": "okf-explorer-large-corpus.v1", "kind": "okf-large-corpus", "okf_version": "0.2", "title": "Experimental cross-government software OKF+", "description": "Source-reported repository metadata with explicit gaps and unreviewed domain and task suggestions.", "version": tomllib.loads((root/'pyproject.toml').read_text())['project']['version'], "publication_state": "exploratory", "status": "local-experiment", "profile": PROFILE, "snapshot_id": build_id, "generated_at": observed, "counts": dict(counts), "entrypoints": {"data_manifest": "data/manifest.json", "overview_index": "data/overview.json", "search_manifest": "data/search/manifest.json", "markdown_index": "index.md"}, "source": {"url": cfg["source_url"], "source_sha256": receipt["sha256"], "observed_at": observed}, "semantic_descriptor": "semantic/manifest.json", "vocabulary": {"record_singular": "repository", "record_plural": "repositories", "publisher_singular": "hosting account", "publisher_plural": "hosting accounts", "format_plural": "languages"}, "warnings": warnings}
     write(output / "okf-explorer.json", descriptor)
     descriptor["entrypoints"].update(presentation="data/presentation.json",facet_definitions="data/facet-definitions.json")
     descriptor["extensions"]={"okf-explorer-presentation.v1":{"mode":"external","entrypoint":"presentation"}}

@@ -6,6 +6,8 @@ daily dataset snapshots have separate identifiers.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-28
+
 ### Added
 
 - Twenty-five authored discovery facets, including content types, dependency
@@ -54,5 +56,6 @@ daily dataset snapshots have separate identifiers.
 - Pin a runner that supports the governed Python version.
 - Exclude Finder metadata from reproducibility checks.
 
-[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/f7eaed15feaa11941b8fa95e1c66aa400f421483...HEAD
+[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/f7eaed15feaa11941b8fa95e1c66aa400f421483...v0.2.0
 [0.1.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40749128667-1

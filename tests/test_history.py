@@ -65,6 +65,7 @@ class HistoryTests(unittest.TestCase):
         from test_catalogue import fixture
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);shutil.copytree(h.c.ROOT/'config',root/'config')
+            shutil.copyfile(h.c.ROOT/'pyproject.toml',root/'pyproject.toml')
             rows=[{**fixture(),'description':'Health service accessible application'}, {**fixture(),'name':'geospatial-library','url':'https://github.com/ExampleGov/geospatial-library','description':'Map geometry data library API'}]
             raw=json.dumps(rows).encode();source_path='source/snapshots/'+h.c.digest(raw)+'.json';(root/source_path).parent.mkdir(parents=True);(root/source_path).write_bytes(raw)
             receipt={'path':source_path,'sha256':h.c.digest(raw),'retrieved_at':'2026-10-28T12:00:00Z'}
