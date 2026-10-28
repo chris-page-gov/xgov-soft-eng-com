@@ -34,6 +34,7 @@ def main():
         for row,node in zip(rows,semantic):
             validator.validate(row)
             expected={"@id":row["id"],c.RDF+"subject":c.ref(row["source_iri"]),c.RDF+"predicate":c.ref(row["predicate"]),c.RDF+"object":c.ref(row["target_iri"]),c.NS+"assertionStatus":row["assertion_status"],c.PROV+"wasDerivedFrom":c.ref(c.NS+'snapshot:'+row['evidence'][0]['source_sha256'])}
+            if row.get('measurement'):expected[c.NS+'reportedCommitCount']=row['measurement']['reported_commits']
             if any(node[k]!=v for k,v in expected.items()):raise ValueError("RDF reification and runtime assertion disagree")
             total+=1
     triples=0

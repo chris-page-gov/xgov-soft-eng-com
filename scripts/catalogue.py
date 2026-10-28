@@ -247,6 +247,8 @@ def build(root, output, receipt, previous=None):
                 edge['authority']['source']=history_observation['source_url'];edge['observed_at']=history_observation['observed_at']
                 edge['evidence']=[{'url':history_observation['source_url'],'source_artifact':history_item['path'],'source_sha256':history_item['sha256'],'rows':[position],'source_field':'profile.contributors','source_value_sha256':digest(actor),'matched_terms':[]}]
                 edge['rights']={'source':'https://docs.github.com/en/site-policy/github-terms/github-terms-of-service','assertion':'Public GitHub statistics; no ownership, maintainership, endorsement or scan authority asserted.'}
+                edge['measurement']={'reported_commits':actor['recent_reported_commits'] if kind=='recent_contributor' else actor['historical_reported_commits'],'period':'recent-complete-weeks' if kind=='recent_contributor' else 'available-provider-history'}
+                if kind=='recent_contributor':edge['measurement'].update(window_start=activity['window']['start'],window_end_exclusive=activity['window']['end_exclusive'])
             edges.append(edge)
             n.setdefault(pred, []).append(ref(target))
         domains = [h["id"] for h in matches["domains"]] or ["unclassified"]
@@ -266,6 +268,9 @@ def build(root, output, receipt, previous=None):
             count=activity['recent_reported_commits'];rec['recent_commit_band']='0' if count==0 else '1-10' if count<=10 else '11-50' if count<=50 else '51-200' if count<=200 else 'over-200'
             rec['recent_contributors']=rec['recent_contributors'] or ['none-reported-in-window'];rec['historical_contributors']=rec['historical_contributors'] or ['no-mapped-account']
             rec['churn_availability']=activity['line_count_status'];rec['activity']={k:v for k,v in activity.items() if k not in ('contributors','weekly_totals')}|{'source':history_item,'contributors':[ {k:v for k,v in a.items() if k!='weeks'} for a in activity['contributors']]}
+            n[PROV+'wasDerivedFrom']=[ref(snapshot),ref(NS+'snapshot:'+history_item['sha256'])]
+            for key,value in {'reportedRecentCommitCount':activity['recent_reported_commits'],'reportedHistoricalCommitCount':activity['historical_reported_commits'],'activityWindowStart':activity['window']['start'],'activityWindowEndExclusive':activity['window']['end_exclusive'],'activityObservedAt':history_observation['observed_at'],'lineCountStatus':activity['line_count_status']}.items():n[NS+key]=value
+            if activity['recent_reported_line_changes'] is not None:n[NS+'reportedRecentLineChanges']=activity['recent_reported_line_changes']
         else:rec.update(recent_commit_band='not-collected',churn_availability='not-collected',activity=None)
         record_summary[ri]=row
         older=prior_summary.get(ri);changed=[k for k in sorted(set(row)|set(older or {})) if older is not None and row.get(k)!=older.get(k)]
@@ -295,6 +300,9 @@ def build(root, output, receipt, previous=None):
         graph = []
         for e in batch:
             graph.append({"@id": e["id"], "@type": [RDF + "Statement", PROV + "Entity", NS + "RelationshipAssertion"], RDF + "subject": ref(e["source_iri"]), RDF + "predicate": ref(e["predicate"]), RDF + "object": ref(e["target_iri"]), PROV + "wasDerivedFrom": ref(NS+'snapshot:'+e['evidence'][0]['source_sha256']), PROV + "wasGeneratedBy": ref(NS + "build:" + build_id), NS + "assertionStatus": e["assertion_status"], NS + "assertionScope": e["assertion_scope"], NS + "evidence": {"@value": e["evidence"], "@type": RDF + "JSON"}, NS + "rights": e['rights']["assertion"]})
+            if e.get('measurement'):
+                graph[-1][NS+'reportedCommitCount']=e['measurement']['reported_commits']
+                graph[-1][NS+'measurement']={'@value':e['measurement'],'@type':RDF+'JSON'}
         p = f"semantic/assertions-{part:03d}.jsonld"
         write(output / p, {"@graph": graph}); semantic_paths.append(p)
     rdfs="http://www.w3.org/2000/01/rdf-schema#"

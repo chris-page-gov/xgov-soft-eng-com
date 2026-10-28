@@ -51,8 +51,9 @@ jobs:
             git worktree add --detach "$history_tree" FETCH_HEAD
           else
             git worktree add --detach "$history_tree" "$GITHUB_SHA"
-            git -C "$history_tree" checkout --orphan history-data
-            git -C "$history_tree" rm -r --ignore-unmatch -- .
+            # This fresh, owned worktree contains only the checked-out commit.
+            # switch --orphan clears its tracked copies and index together.
+            git -C "$history_tree" switch --orphan history-data
           fi
           mkdir -p "$history_tree/source/history"
           cp -R source/history/. "$history_tree/source/history/"

@@ -58,6 +58,8 @@ on history-data. The daily pack restores that branch before building. It also
 restores the preceding record summary to distinguish actual source-field changes
 from changes to derived classification or observation metadata. See
 [collection and recovery limits](history-and-change.md).
+The first checkpoint uses git switch --orphan in a fresh runner worktree, so
+the data branch starts empty and never stages the producer code or source feed.
 
 ## Consumer limits
 

@@ -10,6 +10,8 @@ daily dataset snapshots have separate identifiers.
 
 - Twenty-five authored discovery facets, including content types, dependency
   context, metadata change, contributor accounts and explicit history coverage.
+- Queryable historical/recent contribution counts and periods in the semantic
+  graph, bound to the same evidence as the runtime assertions.
 - A bounded hourly history collector targeting every catalogued repository,
   with minimal public account data, provider-pending states, selectable checkpoint
   sizes and a separate data branch.
@@ -30,6 +32,7 @@ daily dataset snapshots have separate identifiers.
 
 ### Fixed
 
+- Initialise the history data branch with an empty index and working tree.
 - Retry cleanup when Finder recreates only its metadata in a retired build.
 - Include every declared build input in release archives, including hidden
   inputs, and reject undeclared or private archive members.

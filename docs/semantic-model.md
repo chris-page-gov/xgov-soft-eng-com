@@ -52,3 +52,9 @@ GitHub observation, account row, date and checksum. Their RDF provenance points
 to that observation rather than to the repository feed. The source entities
 record both origins. See [history limits](history-and-change.md) and
 [facet definitions](rich-facets.md).
+
+Repository graph nodes expose reported historical/recent commit counts, the
+recent window, observation time and line-count availability. Contributor
+assertions carry their reported count and period in both the runtime and RDF
+projection. These are provider observations, not an assessment of contribution
+value, software quality or maintainer authority.

@@ -1,6 +1,7 @@
 import datetime as dt
 import json
 from pathlib import Path
+import shutil
 import sys
 import tempfile
 import unittest
@@ -59,6 +60,29 @@ class HistoryTests(unittest.TestCase):
             with patch.object(h.urllib.request,'urlopen',return_value=response),patch.object(h,'Client',return_value=client):
                 result=h.collect(root)
                 self.assertTrue(result['budget_checkpoint']);self.assertEqual(h.verify(root)['repositories'],{})
+
+    def test_contribution_count_and_provenance_survive_both_projections(self):
+        from test_catalogue import fixture
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);shutil.copytree(h.c.ROOT/'config',root/'config')
+            rows=[{**fixture(),'description':'Health service accessible application'}, {**fixture(),'name':'geospatial-library','url':'https://github.com/ExampleGov/geospatial-library','description':'Map geometry data library API'}]
+            raw=json.dumps(rows).encode();source_path='source/snapshots/'+h.c.digest(raw)+'.json';(root/source_path).parent.mkdir(parents=True);(root/source_path).write_bytes(raw)
+            receipt={'path':source_path,'sha256':h.c.digest(raw),'retrieved_at':'2026-10-28T12:00:00Z'}
+            week=int(dt.datetime(2026,10,18,tzinfo=dt.timezone.utc).timestamp())
+            profile=h.weekly_profile([{'total':3,'author':{'login':'ExampleUser','type':'User'},'weeks':[{'w':week,'a':2,'d':1,'c':3}]}],receipt['retrieved_at'])
+            observation={'profile':profile,'source_url':'https://api.github.com/repos/examplegov/accessible-forms/stats/contributors','observed_at':receipt['retrieved_at']}
+            checksum=h.c.digest(observation);path='source/history/observations/'+checksum+'.json';h.c.write(root/path,observation)
+            h.c.write(root/'source/history/index.json',{'repositories':{'examplegov/accessible-forms':{'path':path,'sha256':checksum,'state':'available'}}})
+            h.c.build(root,root/'generated',receipt)
+            manifest=h.c.read(root/'generated/data/manifest.json')
+            assertions=[row for path in manifest['chunks']['relationships'] for row in h.c.read(root/'generated'/path)]
+            recent=next(row for row in assertions if row['kind']=='recent_contributor')
+            self.assertEqual(recent['measurement']['reported_commits'],3)
+            self.assertEqual(recent['evidence'][0]['source_sha256'],checksum)
+            shard=h.c.read(root/'generated/semantic/assertions-000.jsonld')['@graph']
+            rdf=next(node for node in shard if node['@id']==recent['id'])
+            self.assertEqual(rdf[h.c.PROV+'wasDerivedFrom'],h.c.ref(h.c.NS+'snapshot:'+checksum))
+            self.assertEqual(rdf[h.c.NS+'reportedCommitCount'],3)
 
 
 if __name__=='__main__':unittest.main()
