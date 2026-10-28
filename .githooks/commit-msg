@@ -1,0 +1,2 @@
+#!/bin/sh
+exec uv run --locked --offline python scripts/check_release_hygiene.py --message-file "$1"
