@@ -23,3 +23,5 @@
   lifecycle contract validation in independent assurance.
 - Match Explorer's static filter-postings key and retain consumer acceptance
   as an explicit outstanding gate.
+- Pin Ubuntu 24.04 after the first hosted runs established that Ubuntu 26.04
+  does not supply the governed Python 3.12.11 build.

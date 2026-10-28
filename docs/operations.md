@@ -24,6 +24,11 @@ Before release run tests, build, check and scripts/assure.py. The last command
 uses the pinned direct dependencies in requirements-assurance.txt in a
 disposable environment; production build/search remain standard-library-only.
 
+Workflows pin Ubuntu 24.04 and Python 3.12.11. GitHub's Ubuntu 26.04 runner
+does not provide that exact Python build, as confirmed by the initial run and
+the official actions/python-versions manifest. Changing the runner or runtime
+requires an explicit compatibility check and documentation update.
+
 ## Release policy
 
 At 16:43 UTC daily, or manual dispatch, the workflow validates the public feed,
