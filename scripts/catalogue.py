@@ -135,7 +135,7 @@ def classify(row, taxonomy):
 
 def controlled_inputs(root):
     patterns = ["config/**/*", "scripts/**/*.py", "tests/**/*.py", "schemas/**/*", "docs/**/*", "*.md", "okf.*.json", "pyproject.toml", "uv.lock", "requirements-assurance.txt", "LICENSE", ".gitignore", ".python-version", ".github/workflows/*", "source/README.md", "source/security-helper-inventory.json", "source/upstream/*", "source/sbom-review/*"]
-    return {p.relative_to(root).as_posix(): digest(p.read_bytes()) for pattern in patterns for p in sorted(root.glob(pattern)) if p.is_file() and "__pycache__" not in p.parts}
+    return {p.relative_to(root).as_posix(): digest(p.read_bytes()) for pattern in patterns for p in sorted(root.glob(pattern)) if p.is_file() and "__pycache__" not in p.parts and p.name!=".DS_Store"}
 
 
 def stale(receipt, hours, at=None):

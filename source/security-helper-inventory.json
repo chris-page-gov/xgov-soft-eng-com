@@ -525,5 +525,14 @@
     "conclusion": "success",
     "completed_at": "2026-10-28T14:37:28Z",
     "scope": "SBOM collection and publication, not advisory matching"
+  },
+  "prior_vulnerability_pilot": {
+    "url": "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/pull/40",
+    "merged_at": "2026-06-29T16:20:06Z",
+    "merge_commit_sha": "21d40c08cc33b47de9dccee0fa9ee27c2bf0793c",
+    "tool": "Grype",
+    "reported_sample_repositories": 10,
+    "evidence_status": "maintainer-reported-historical-test-not-rerun",
+    "checked_at": "2026-10-28T18:51:31.228306+00:00"
   }
 }

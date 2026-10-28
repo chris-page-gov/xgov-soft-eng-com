@@ -50,7 +50,16 @@ The inspected workflows collect and prepare inventory. No step matching this
 whole inventory against OSV or another advisory database was found. This does
 not establish that nobody runs separate checks elsewhere.
 
-Use a bounded pilot before an estate-wide check:
+There is evidence of a prior vulnerability-checking pilot. [Merged PR #40](https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/pull/40),
+merged on 29 June 2026, reports Grype A/B checks on consolidated SBOMs from
+10 repositories. The maintainer reports that filtering removed a name-only
+false-positive class while retaining version-pinned runtime matches. This is
+a maintainer-reported historical test, not an independently rerun result or
+current full-catalogue assessment. The PR discusses use for estate-wide CVE
+scanning, so absence of a matching workflow is not evidence that scanning has
+never occurred.
+
+Reproduce and extend that pilot before a continuous full-catalogue check:
 
 1. Select named repositories; freeze their exact SBOM bytes, document dates,
    repository revisions where supplied, generator versions and hashes.

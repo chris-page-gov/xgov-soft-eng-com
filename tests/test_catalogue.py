@@ -54,5 +54,13 @@ class CatalogueTests(unittest.TestCase):
         self.assertEqual(c.search([record],"accessible",taxonomy,include_inferred=False),[])
         self.assertEqual(c.search([record],"accessible payments",taxonomy),[])
 
+    def test_finder_metadata_cannot_change_controlled_inputs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);folder=root/"source/upstream";folder.mkdir(parents=True)
+            (folder/"evidence.txt").write_text("Public source evidence")
+            before=c.controlled_inputs(root)
+            (folder/".DS_Store").write_bytes(b"Finder metadata")
+            self.assertEqual(c.controlled_inputs(root),before)
+
 
 if __name__=="__main__":unittest.main()

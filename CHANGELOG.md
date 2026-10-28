@@ -25,3 +25,6 @@
   as an explicit outstanding gate.
 - Pin Ubuntu 24.04 after the first hosted runs established that Ubuntu 26.04
   does not supply the governed Python 3.12.11 build.
+- Record the maintainer-reported Grype pilot in merged upstream PR #40;
+  distinguish historical tests from scheduled inventory collection and current
+  applicability. Exclude Finder metadata from all controlled-input hashes.
