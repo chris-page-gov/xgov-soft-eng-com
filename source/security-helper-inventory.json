@@ -1,0 +1,529 @@
+{
+  "checked_at": "2026-10-28T18:41:13.637383+00:00",
+  "scope": "Nine public repositories under uk-x-gov-software-community; default branch trees, workflow/manifests and focused indexed code searches. Read-only helper inventory, not a vulnerability audit.",
+  "repositories": [
+    {
+      "name": "uk-x-gov-software-community/xgov-opensource-repo-scraper",
+      "url": "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper",
+      "default_branch": "master",
+      "archived": false,
+      "tree_sha": "0abef623c1c52f7b381d3166ff72a88c9e3b93c5",
+      "tree_truncated": false
+    },
+    {
+      "name": "uk-x-gov-software-community/uk-x-gov-software-community.github.io",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io",
+      "default_branch": "main",
+      "archived": false,
+      "tree_sha": "a01eb2e19fab1e565e23572e5fa2e35aba4762f2",
+      "tree_truncated": false
+    },
+    {
+      "name": "uk-x-gov-software-community/software-developer-learning-pathways-old",
+      "url": "https://github.com/uk-x-gov-software-community/software-developer-learning-pathways-old",
+      "default_branch": "main",
+      "archived": true,
+      "tree_sha": "4648237899f86f12c1a71b93171e084f6530c869",
+      "tree_truncated": false
+    },
+    {
+      "name": "uk-x-gov-software-community/software-developer-learning-pathways",
+      "url": "https://github.com/uk-x-gov-software-community/software-developer-learning-pathways",
+      "default_branch": "main",
+      "archived": false,
+      "tree_sha": "0b93246a6ae54d1e9a83d4bb144e0060e205b915",
+      "tree_truncated": false
+    },
+    {
+      "name": "uk-x-gov-software-community/uk-x-gov-cloud-community",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-cloud-community",
+      "default_branch": "main",
+      "archived": false,
+      "tree_sha": "af5ca8fbd3de20899bb5fddc5473ad1ed57b8612",
+      "tree_truncated": false
+    },
+    {
+      "name": "uk-x-gov-software-community/lean-coffee-hackmd-generator",
+      "url": "https://github.com/uk-x-gov-software-community/lean-coffee-hackmd-generator",
+      "default_branch": "main",
+      "archived": false,
+      "tree_sha": "f24b0bc2f0add074042281d6c689d292eb5e75b9",
+      "tree_truncated": false
+    },
+    {
+      "name": "uk-x-gov-software-community/eleventy-plugin-toc",
+      "url": "https://github.com/uk-x-gov-software-community/eleventy-plugin-toc",
+      "default_branch": "main",
+      "archived": false,
+      "tree_sha": "2295ad097f94f7e07728425d5ad83a10a1360dc7",
+      "tree_truncated": false
+    },
+    {
+      "name": "uk-x-gov-software-community/uk-x-gov-qa-community.github.io",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-qa-community.github.io",
+      "default_branch": "main",
+      "archived": false,
+      "tree_sha": "432eecb78d881497593b282499f164862ce30ced",
+      "tree_truncated": false
+    },
+    {
+      "name": "uk-x-gov-software-community/uk-x-gov-repo-query",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-repo-query",
+      "default_branch": "main",
+      "archived": false,
+      "tree_sha": "12ea0d82a06d6940c81aaa4c187bf67bb35889c9",
+      "tree_truncated": false
+    }
+  ],
+  "workflow_manifest_review": [
+    {
+      "repo": "uk-x-gov-software-community/xgov-opensource-repo-scraper",
+      "path": ".github/workflows/main.yml",
+      "sha": "584f41056f1402cd095d007cff6529f2ad78c1c2",
+      "url": "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/blob/master/.github/workflows/main.yml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/xgov-opensource-repo-scraper",
+      "path": ".github/workflows/sbom.yml",
+      "sha": "ae3125b2fb2d9d162a88f492bce6513753b8fcbe",
+      "url": "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/blob/master/.github/workflows/sbom.yml",
+      "matches": [
+        {
+          "line": 1,
+          "text": "name: SBOM Collection"
+        },
+        {
+          "line": 14,
+          "text": "  group: \"sbom\""
+        },
+        {
+          "line": 18,
+          "text": "  sbom:"
+        },
+        {
+          "line": 34,
+          "text": "      - name: Restore SBOM cache"
+        },
+        {
+          "line": 37,
+          "text": "          path: sbom-cache/"
+        },
+        {
+          "line": 38,
+          "text": "          key: sbom-cache-${{ github.run_id }}"
+        },
+        {
+          "line": 40,
+          "text": "            sbom-cache-"
+        },
+        {
+          "line": 41,
+          "text": "      - name: Merge supplementary SBOM cache (if available)"
+        },
+        {
+          "line": 43,
+          "text": "          if gh release download sbom-supplement -p 'sbom-supplement.tar.gz' -D /tmp 2>/dev/null; then"
+        },
+        {
+          "line": 45,
+          "text": "            mkdir -p /tmp/sbom-supplement"
+        },
+        {
+          "line": 46,
+          "text": "            tar -xzf /tmp/sbom-supplement.tar.gz -C /tmp/sbom-supplement"
+        },
+        {
+          "line": 47,
+          "text": "            node index.js merge-sbom-cache --primary ./sbom-cache --supplement /tmp/sbom-supplement"
+        },
+        {
+          "line": 48,
+          "text": "            rm -rf /tmp/sbom-supplement /tmp/sbom-supplement.tar.gz"
+        },
+        {
+          "line": 54,
+          "text": "      - name: Fetch SBOMs (incremental)"
+        },
+        {
+          "line": 55,
+          "text": "        run: node index.js fetch-sboms --repos-file ./repos.json --cache-dir ./sbom-cache --budget 95 --max-hours 1"
+        },
+        {
+          "line": 61,
+          "text": "          node index.js publish-sboms --repos-file ./public/repos.json --cache-dir ./sbom-cache --output-dir ./public"
+        }
+      ],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/xgov-opensource-repo-scraper",
+      "path": ".github/workflows/security.yml",
+      "sha": "5c4cbd8fdc0fe18333557cc71bb0fc8fe4c07b2d",
+      "url": "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/blob/master/.github/workflows/security.yml",
+      "matches": [
+        {
+          "line": 1,
+          "text": "name: \"Security Scanning\""
+        },
+        {
+          "line": 12,
+          "text": "      security-events: write"
+        },
+        {
+          "line": 13,
+          "text": "    name: Security Scan"
+        },
+        {
+          "line": 14,
+          "text": "    uses: chrisns/.github/.github/workflows/security-scan.yml@main"
+        }
+      ],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/xgov-opensource-repo-scraper",
+      "path": "package.json",
+      "sha": "133b768b49fbe5867840c4ad61ecc5a928ace028",
+      "url": "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/blob/master/package.json",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/uk-x-gov-software-community.github.io",
+      "path": ".github/workflows/build.yaml",
+      "sha": "2d2d8fca8024b8c1568948c3de62731978d90f24",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/blob/main/.github/workflows/build.yaml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/uk-x-gov-software-community.github.io",
+      "path": ".github/workflows/deploy-cloudflare-worker.yaml",
+      "sha": "7905f7cb375cddcdbb462d840af12590264887fa",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/blob/main/.github/workflows/deploy-cloudflare-worker.yaml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/uk-x-gov-software-community.github.io",
+      "path": ".github/workflows/newsletter-dispatch.yaml",
+      "sha": "05b961c1de0d64ae18eb9d16059a92b19ab0c79c",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/blob/main/.github/workflows/newsletter-dispatch.yaml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/uk-x-gov-software-community.github.io",
+      "path": "package.json",
+      "sha": "db126cc8d6fc20812263ad28e6545656b6ad617b",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/blob/main/package.json",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/uk-x-gov-cloud-community",
+      "path": ".github/workflows/build.yaml",
+      "sha": "0de4b574c7f6304e5e99297d573a8c28f1638e27",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-cloud-community/blob/main/.github/workflows/build.yaml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/uk-x-gov-cloud-community",
+      "path": "package.json",
+      "sha": "ecf4c82439e69158b9215c1c6e2c1bec14fa8b49",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-cloud-community/blob/main/package.json",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/lean-coffee-hackmd-generator",
+      "path": ".github/workflows/ruby.yml",
+      "sha": "412b7730c60d228738e6ae040ad7de345a65ca68",
+      "url": "https://github.com/uk-x-gov-software-community/lean-coffee-hackmd-generator/blob/main/.github/workflows/ruby.yml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/lean-coffee-hackmd-generator",
+      "path": "Gemfile",
+      "sha": "0bf6f4c1ac4884e02b314ed60b62f432a47ddeee",
+      "url": "https://github.com/uk-x-gov-software-community/lean-coffee-hackmd-generator/blob/main/Gemfile",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/eleventy-plugin-toc",
+      "path": ".github/workflows/release.yml",
+      "sha": "5458d385ca1e4eec5893d72d36898caa837d00f6",
+      "url": "https://github.com/uk-x-gov-software-community/eleventy-plugin-toc/blob/main/.github/workflows/release.yml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/eleventy-plugin-toc",
+      "path": ".github/workflows/test.yml",
+      "sha": "69f6e3a87cc34592a7d1c8ffd27e6da0741a326a",
+      "url": "https://github.com/uk-x-gov-software-community/eleventy-plugin-toc/blob/main/.github/workflows/test.yml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/eleventy-plugin-toc",
+      "path": "package.json",
+      "sha": "993f49965d762ce1552c927410b80b88c744aba3",
+      "url": "https://github.com/uk-x-gov-software-community/eleventy-plugin-toc/blob/main/package.json",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/uk-x-gov-repo-query",
+      "path": ".github/workflows/ci.yml",
+      "sha": "f2aa9c9195e328789ede23e888568e07d4a7b911",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-repo-query/blob/main/.github/workflows/ci.yml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/uk-x-gov-repo-query",
+      "path": ".github/workflows/docs.yml",
+      "sha": "c08fe972ad0ba92ff59b4eba9c53f47ab12f10be",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-repo-query/blob/main/.github/workflows/docs.yml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/uk-x-gov-repo-query",
+      "path": ".github/workflows/lint-fix.yml",
+      "sha": "897b43ff01239e48d7e82bbe1679d914a8eec7ea",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-repo-query/blob/main/.github/workflows/lint-fix.yml",
+      "matches": [],
+      "error": false
+    },
+    {
+      "repo": "uk-x-gov-software-community/uk-x-gov-repo-query",
+      "path": "package.json",
+      "sha": "b6ac5118db16848d15f8330cd60aee343c6b09f3",
+      "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-repo-query/blob/main/package.json",
+      "matches": [],
+      "error": false
+    }
+  ],
+  "open_issues": [
+    {
+      "repository": "uk-x-gov-software-community/xgov-opensource-repo-scraper",
+      "issues": [],
+      "open_issue_count": 0,
+      "open_pull_requests_in_response": 1,
+      "response_rows": 1,
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/uk-x-gov-software-community.github.io",
+      "issues": [
+        {
+          "number": 164,
+          "title": "Cookie banner",
+          "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/issues/164",
+          "state": "open",
+          "created_at": "2026-10-11T20:03:19Z",
+          "updated_at": "2026-10-11T20:03:55Z",
+          "labels": [],
+          "comments": 0
+        },
+        {
+          "number": 155,
+          "title": "Add GovDev Midlands 2026 page",
+          "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/issues/155",
+          "state": "open",
+          "created_at": "2026-09-10T08:16:02Z",
+          "updated_at": "2026-09-10T08:16:02Z",
+          "labels": [],
+          "comments": 0
+        },
+        {
+          "number": 127,
+          "title": "Update Objectives for 2025-2026",
+          "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/issues/127",
+          "state": "open",
+          "created_at": "2025-12-15T18:20:53Z",
+          "updated_at": "2025-12-15T18:20:53Z",
+          "labels": [],
+          "comments": 0
+        },
+        {
+          "number": 66,
+          "title": "Discuss reporting of bugs in gov.uk services by the public",
+          "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/issues/66",
+          "state": "open",
+          "created_at": "2024-07-09T14:39:57Z",
+          "updated_at": "2026-08-14T14:41:07Z",
+          "labels": [],
+          "comments": 3
+        },
+        {
+          "number": 49,
+          "title": "add contibuting guide ",
+          "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/issues/49",
+          "state": "open",
+          "created_at": "2023-11-24T12:16:35Z",
+          "updated_at": "2023-11-24T12:16:45Z",
+          "labels": [],
+          "comments": 0
+        },
+        {
+          "number": 48,
+          "title": "Accessibility testing ",
+          "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/issues/48",
+          "state": "open",
+          "created_at": "2023-11-24T12:14:38Z",
+          "updated_at": "2024-01-10T14:22:02Z",
+          "labels": [],
+          "comments": 1
+        },
+        {
+          "number": 47,
+          "title": "Add analytics ",
+          "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/issues/47",
+          "state": "open",
+          "created_at": "2023-11-24T12:13:17Z",
+          "updated_at": "2023-11-24T12:13:51Z",
+          "labels": [],
+          "comments": 0
+        },
+        {
+          "number": 46,
+          "title": "package json build ",
+          "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/issues/46",
+          "state": "open",
+          "created_at": "2023-11-24T12:10:34Z",
+          "updated_at": "2023-11-24T12:10:34Z",
+          "labels": [],
+          "comments": 0
+        },
+        {
+          "number": 29,
+          "title": "Add facilitators roles open ",
+          "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/issues/29",
+          "state": "open",
+          "created_at": "2023-01-10T14:52:43Z",
+          "updated_at": "2023-01-10T14:52:43Z",
+          "labels": [],
+          "comments": 0
+        },
+        {
+          "number": 12,
+          "title": "Github Action - run gulp",
+          "url": "https://github.com/uk-x-gov-software-community/uk-x-gov-software-community.github.io/issues/12",
+          "state": "open",
+          "created_at": "2021-11-02T21:19:07Z",
+          "updated_at": "2021-11-02T21:19:07Z",
+          "labels": [],
+          "comments": 0
+        }
+      ],
+      "open_issue_count": 10,
+      "open_pull_requests_in_response": 6,
+      "response_rows": 16,
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/software-developer-learning-pathways-old",
+      "issues": [],
+      "open_issue_count": 0,
+      "open_pull_requests_in_response": 0,
+      "response_rows": 0,
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/software-developer-learning-pathways",
+      "issues": [
+        {
+          "number": 1,
+          "title": "Developer Roadmap",
+          "url": "https://github.com/uk-x-gov-software-community/software-developer-learning-pathways/issues/1",
+          "state": "open",
+          "created_at": "2022-08-11T12:51:09Z",
+          "updated_at": "2022-12-06T11:01:05Z",
+          "labels": [],
+          "comments": 0
+        },
+        {
+          "number": 2,
+          "title": "Hackathons",
+          "url": "https://github.com/uk-x-gov-software-community/software-developer-learning-pathways/issues/2",
+          "state": "open",
+          "created_at": "2022-03-24T21:17:08Z",
+          "updated_at": "2022-12-06T11:01:26Z",
+          "labels": [],
+          "comments": 1
+        }
+      ],
+      "open_issue_count": 2,
+      "open_pull_requests_in_response": 0,
+      "response_rows": 2,
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/uk-x-gov-cloud-community",
+      "issues": [],
+      "open_issue_count": 0,
+      "open_pull_requests_in_response": 0,
+      "response_rows": 0,
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/lean-coffee-hackmd-generator",
+      "issues": [
+        {
+          "number": 2,
+          "title": "Automate sending of lean coffee reminder emails using the mailchimp API",
+          "url": "https://github.com/uk-x-gov-software-community/lean-coffee-hackmd-generator/issues/2",
+          "state": "open",
+          "created_at": "2025-05-23T09:22:13Z",
+          "updated_at": "2025-05-23T09:25:03Z",
+          "labels": [],
+          "comments": 0
+        }
+      ],
+      "open_issue_count": 1,
+      "open_pull_requests_in_response": 2,
+      "response_rows": 3,
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/eleventy-plugin-toc",
+      "issues": [],
+      "open_issue_count": 0,
+      "open_pull_requests_in_response": 0,
+      "response_rows": 0,
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/uk-x-gov-qa-community.github.io",
+      "issues": [],
+      "open_issue_count": 0,
+      "open_pull_requests_in_response": 0,
+      "response_rows": 0,
+      "complete_first_page": true
+    },
+    {
+      "repository": "uk-x-gov-software-community/uk-x-gov-repo-query",
+      "issues": [],
+      "open_issue_count": 0,
+      "open_pull_requests_in_response": 1,
+      "response_rows": 1,
+      "complete_first_page": true
+    }
+  ],
+  "sbom_scheduled_run": {
+    "id": 40697967591,
+    "url": "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/actions/runs/40697967591",
+    "event": "schedule",
+    "conclusion": "success",
+    "completed_at": "2026-10-28T14:37:28Z",
+    "scope": "SBOM collection and publication, not advisory matching"
+  }
+}

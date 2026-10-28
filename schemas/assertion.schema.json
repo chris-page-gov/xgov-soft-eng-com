@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:okf:xgov:schema:assertion:1",
+  "title": "Experimental cross-government evidence assertion",
+  "type": "object",
+  "required": ["id","source","target","source_iri","target_iri","predicate","kind","label","inverse_label","assertion_status","assertion_scope","authority","derivation","observed_at","evidence","rights","review_status"],
+  "properties": {
+    "id": {"type":"string","format":"uri"},
+    "source": {"type":"string","pattern":"^[a-z]+/[^/]+\\.md$"},
+    "target": {"type":"string","pattern":"^[a-z]+/[^/]+\\.md$"},
+    "source_iri": {"type":"string","format":"uri"},
+    "target_iri": {"type":"string","format":"uri"},
+    "predicate": {"type":"string","format":"uri"},
+    "kind": {"enum":["account","language","licence","sbom","domains","capabilities"]},
+    "label": {"type":"string","minLength":1},
+    "inverse_label": {"type":"string","minLength":1},
+    "assertion_status": {"enum":["normalized","inferred"]},
+    "assertion_scope": {"const":"real-world"},
+    "authority": {"type":"object","required":["class","label","source"],"properties":{"class":{"const":"derived"},"label":{"type":"string"},"source":{"type":"string","format":"uri"}},"additionalProperties":false},
+    "derivation": {"type":"string","format":"uri"},
+    "observed_at": {"type":"string","format":"date-time"},
+    "evidence": {"type":"array","minItems":1,"items":{"type":"object","required":["url","source_artifact","source_sha256","rows","source_field","source_value_sha256","matched_terms"],"properties":{"url":{"type":"string","format":"uri"},"source_artifact":{"type":"string"},"source_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"rows":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"integer","minimum":0}},"source_field":{"type":"string"},"source_value_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"matched_terms":{"type":"array","items":{"type":"string"}}},"additionalProperties":false}},
+    "rights": {"type":"object","required":["source","assertion"],"properties":{"source":{"type":"string","format":"uri"},"assertion":{"type":"string","minLength":1}},"additionalProperties":false},
+    "review_status": {"type":"string","minLength":1}
+  },
+  "additionalProperties": false
+}

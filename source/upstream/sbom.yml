@@ -1,0 +1,68 @@
+name: SBOM Collection
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "sbom"
+  cancel-in-progress: false
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/checkout@v7.0.0
+      - uses: actions/setup-node@v6.4.0
+        with:
+          node-version-file: '.nvm'
+          cache: 'npm'
+      - run: npm ci --omit=dev
+      - name: Download published repos.json
+        run: |
+          curl -sSfL https://uk-x-gov-software-community.github.io/xgov-opensource-repo-scraper/repos.json -o repos.json
+          node -e "const r = JSON.parse(require('fs').readFileSync('repos.json','utf8')); console.log(r.length + ' repos loaded')"
+      - name: Restore SBOM cache
+        uses: actions/cache@v6.1.0
+        with:
+          path: sbom-cache/
+          key: sbom-cache-${{ github.run_id }}
+          restore-keys: |
+            sbom-cache-
+      - name: Merge supplementary SBOM cache (if available)
+        run: |
+          if gh release download sbom-supplement -p 'sbom-supplement.tar.gz' -D /tmp 2>/dev/null; then
+            echo "Downloaded supplementary cache, merging..."
+            mkdir -p /tmp/sbom-supplement
+            tar -xzf /tmp/sbom-supplement.tar.gz -C /tmp/sbom-supplement
+            node index.js merge-sbom-cache --primary ./sbom-cache --supplement /tmp/sbom-supplement
+            rm -rf /tmp/sbom-supplement /tmp/sbom-supplement.tar.gz
+          else
+            echo "No supplementary cache release found, skipping merge"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch SBOMs (incremental)
+        run: node index.js fetch-sboms --repos-file ./repos.json --cache-dir ./sbom-cache --budget 95 --max-hours 1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build public directory
+        run: |
+          cp repos.json public/repos.json
+          node index.js publish-sboms --repos-file ./public/repos.json --cache-dir ./sbom-cache --output-dir ./public
+      - uses: actions/configure-pages@v6.0.0
+      - uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: public
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5.0.0

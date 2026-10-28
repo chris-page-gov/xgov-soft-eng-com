@@ -1,0 +1,439 @@
+{
+  "schema": "okf-repository-publication-contract.v1",
+  "modified": "2026-10-28",
+  "locale": "en-GB",
+  "time_zone": "Europe/London",
+  "repository": {
+    "name": "xgov-soft-eng-com",
+    "url": "https://github.com/chris-page-gov/xgov-soft-eng-com",
+    "role": "governed-producer",
+    "root_index": "README.md",
+    "lifecycle": "active"
+  },
+  "semantic_contract": {
+    "path": "okf.semantic.json",
+    "profile": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/docs/semantic-model.md"
+  },
+  "source_families": [
+    {
+      "id": "public-repository-feed",
+      "label": "Public community repository feed",
+      "description": "Frozen public repository metadata; classifications are derived and unreviewed.",
+      "kind": "json",
+      "paths": [
+        "source/current.json",
+        "source/snapshots/*.json"
+      ],
+      "formats": [
+        "application/json"
+      ],
+      "origin": "acquired",
+      "authority": "external-reference",
+      "snapshot_policy": "immutable-checksummed",
+      "inventory": {
+        "method": "content-addressed-manifest",
+        "manifest_path": "source/current.json",
+        "identity": [
+          "relative-path",
+          "sha256",
+          "source-identifier",
+          "observed-at"
+        ]
+      },
+      "rights": {
+        "status": "mixed",
+        "evidence": [
+          "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/blob/master/LICENSE",
+          "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/LICENSE_DECISIONS.md"
+        ]
+      },
+      "sensitivity": {
+        "status": "potentially-sensitive",
+        "assessment": "Public GitHub identifiers and descriptions may refer to individuals. Only the requested public sources and minimal review metadata are admitted.",
+        "evidence": [
+          "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/source/README.md"
+        ]
+      },
+      "extraction": {
+        "mode": "versioned-adapter",
+        "network_access": "separate-authorised-step",
+        "command_ids": [
+          "refresh"
+        ],
+        "limitations": [
+          "No catalogued code execution.",
+          "Optional SBOM paths do not establish completeness or freshness."
+        ]
+      },
+      "invalidates": [
+        "source",
+        "semantic",
+        "runtime",
+        "documentation"
+      ],
+      "limitations": [
+        "Not all community guidance is in this feed."
+      ]
+    },
+    {
+      "id": "public-review-evidence",
+      "label": "Dated security helper and issue review",
+      "kind": "mixed",
+      "paths": [
+        "source/security-helper-inventory.json",
+        "source/upstream/**",
+        "source/sbom-review/**"
+      ],
+      "formats": [
+        "application/json",
+        "text/plain"
+      ],
+      "origin": "acquired",
+      "authority": "external-reference",
+      "snapshot_policy": "immutable-checksummed",
+      "extraction": {
+        "mode": "manual-reviewed",
+        "network_access": "prohibited",
+        "command_ids": []
+      },
+      "limitations": [
+        "Not automatically refreshed; not a vulnerability audit."
+      ],
+      "inventory": {
+        "method": "pinned-source-register",
+        "manifest_path": "source/security-helper-inventory.json",
+        "identity": [
+          "relative-path",
+          "sha256",
+          "source-identifier",
+          "observed-at"
+        ]
+      },
+      "rights": {
+        "status": "mixed",
+        "evidence": [
+          "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/blob/master/LICENSE",
+          "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/LICENSE_DECISIONS.md"
+        ]
+      },
+      "sensitivity": {
+        "status": "potentially-sensitive",
+        "assessment": "Public GitHub identifiers and descriptions may refer to individuals. Only the requested public sources and minimal review metadata are admitted.",
+        "evidence": [
+          "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/source/README.md"
+        ]
+      },
+      "invalidates": [
+        "source",
+        "semantic",
+        "runtime",
+        "documentation"
+      ]
+    }
+  ],
+  "boundaries": {
+    "authored": [
+      {
+        "path": "README.md",
+        "role": "documentation"
+      },
+      {
+        "path": "docs/**",
+        "role": "documentation"
+      },
+      {
+        "path": "CHANGELOG.md",
+        "role": "changelog"
+      },
+      {
+        "path": "config/**",
+        "role": "policy"
+      },
+      {
+        "path": "schemas/**",
+        "role": "schema"
+      },
+      {
+        "path": "scripts/**",
+        "role": "generator"
+      },
+      {
+        "path": "tests/**",
+        "role": "test"
+      },
+      {
+        "path": "okf.*.json",
+        "role": "policy"
+      },
+      {
+        "path": ".github/workflows/**",
+        "role": "workflow"
+      },
+      {
+        "path": "source/**",
+        "role": "source-envelope"
+      }
+    ],
+    "generated": [
+      {
+        "path": "generated/**",
+        "role": "explorer-runtime",
+        "plane": "runtime",
+        "required": true,
+        "build_command_ids": [
+          "build"
+        ],
+        "check_command_ids": [
+          "check",
+          "assure"
+        ]
+      },
+      {
+        "path": "dist/**",
+        "role": "release-pack",
+        "plane": "release",
+        "required": false,
+        "build_command_ids": [
+          "archive"
+        ],
+        "check_command_ids": [
+          "check",
+          "assure"
+        ]
+      }
+    ]
+  },
+  "planes": [
+    {
+      "id": "source",
+      "depends_on": [],
+      "paths": [
+        "source/**"
+      ],
+      "command_ids": [
+        "refresh"
+      ]
+    },
+    {
+      "id": "runtime",
+      "depends_on": [
+        "source"
+      ],
+      "paths": [
+        "config/**",
+        "scripts/**",
+        "schemas/**",
+        "tests/**",
+        "generated/**"
+      ],
+      "command_ids": [
+        "tests",
+        "build",
+        "check",
+        "assure"
+      ]
+    },
+    {
+      "id": "documentation",
+      "depends_on": [
+        "runtime"
+      ],
+      "paths": [
+        "*.md",
+        "docs/**"
+      ],
+      "command_ids": [
+        "check"
+      ]
+    },
+    {
+      "id": "release",
+      "depends_on": [
+        "runtime",
+        "documentation"
+      ],
+      "paths": [
+        "dist/**",
+        ".github/workflows/**"
+      ],
+      "command_ids": [
+        "archive"
+      ]
+    }
+  ],
+  "tooling": {
+    "commands": [
+      {
+        "id": "refresh",
+        "kind": "build",
+        "planes": [
+          "source"
+        ],
+        "command": "uv run --locked python scripts/catalogue.py refresh",
+        "source": "AGENTS.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "acquisition",
+        "mutates": "source-and-generated",
+        "timeout_minutes": 10
+      },
+      {
+        "id": "build",
+        "kind": "build",
+        "planes": [
+          "runtime"
+        ],
+        "command": "uv run --locked python scripts/catalogue.py build",
+        "source": "AGENTS.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "none",
+        "mutates": "generated-only",
+        "timeout_minutes": 10
+      },
+      {
+        "id": "check",
+        "kind": "check",
+        "planes": [
+          "runtime"
+        ],
+        "command": "uv run --locked python scripts/catalogue.py check",
+        "source": "AGENTS.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "none",
+        "mutates": "none",
+        "timeout_minutes": 10
+      },
+      {
+        "id": "tests",
+        "kind": "check",
+        "planes": [
+          "runtime"
+        ],
+        "command": "uv run --locked python -m unittest discover -s tests -v",
+        "source": "AGENTS.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "none",
+        "mutates": "none",
+        "timeout_minutes": 10
+      },
+      {
+        "id": "assure",
+        "kind": "check",
+        "planes": [
+          "runtime"
+        ],
+        "command": "python scripts/assure.py",
+        "source": "AGENTS.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "none",
+        "mutates": "none",
+        "timeout_minutes": 10
+      },
+      {
+        "id": "archive",
+        "kind": "build",
+        "planes": [
+          "release"
+        ],
+        "command": "uv run --locked python scripts/archive.py",
+        "source": "AGENTS.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "none",
+        "mutates": "generated-only",
+        "timeout_minutes": 10
+      }
+    ]
+  },
+  "lockstep": {
+    "controlled_paths": [
+      "source/**",
+      "config/**",
+      "scripts/**",
+      "schemas/**",
+      "tests/**",
+      ".github/workflows/**",
+      "okf.*.json",
+      "requirements-assurance.txt"
+    ],
+    "documentation_paths": [
+      "README.md",
+      "docs/**",
+      "REPOSITORY_STATUS.md",
+      "CHANGELOG.md"
+    ],
+    "changelog_path": "CHANGELOG.md",
+    "check_command_id": "check",
+    "dependency_update_policy": "assess-release-bound-bytes-no-blanket-exemption",
+    "unknown_path_policy": "fail-closed"
+  },
+  "ci": {
+    "provider": "github-actions",
+    "workflow_paths": [
+      ".github/workflows/validate.yml",
+      ".github/workflows/refresh.yml"
+    ],
+    "impact_routing": "full-suite",
+    "parallelism": "serial",
+    "unknown_path_policy": "full-suite",
+    "browser": {
+      "ordinary": {
+        "policy": "not-applicable",
+        "engines": [],
+        "command_ids": []
+      },
+      "cross_engine": {
+        "policy": "not-applicable",
+        "engines": [],
+        "command_ids": [],
+        "installation": {
+          "policy": "none",
+          "command_ids": []
+        }
+      }
+    }
+  },
+  "publication": {
+    "mode": "manual",
+    "scope": "public-release",
+    "authority": {
+      "decision": "Owner explicitly authorised a public GitHub repository and regularly updated experiment on 28 October 2026.",
+      "evidence_paths": [
+        "REPOSITORY_STATUS.md"
+      ]
+    },
+    "candidate_policy": "promote-exact-assured-bytes-without-rebuild",
+    "targets": [
+      {
+        "id": "github-snapshots",
+        "kind": "github-release",
+        "workflow_path": ".github/workflows/refresh.yml",
+        "public_base_url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases",
+        "exact_commit_required": true,
+        "promote_without_rebuild": true
+      }
+    ]
+  },
+  "verification": {
+    "required": false,
+    "browser": "not-applicable",
+    "exact_commit_required": true,
+    "identity_checks": [
+      "commit",
+      "snapshot",
+      "sha256",
+      "record-count"
+    ],
+    "journeys": [],
+    "console_policy": "not-applicable",
+    "command_ids": [
+      "tests",
+      "check",
+      "assure"
+    ]
+  },
+  "limitations": [
+    "Consumer/browser acceptance remains pending.",
+    "No vulnerability scan or private report access.",
+    "Scheduled executions may be delayed by GitHub.",
+    "Publication-method v1 has no scheduled-release mode: manual denotes invocation of reviewed release commands; the separate CI workflow declares the automatic schedule. No repository branch protection is claimed."
+  ]
+}

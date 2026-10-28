@@ -1,0 +1,108 @@
+{
+  "schema": "okf-repository-semantic-contract.v1",
+  "repository": {
+    "name": "xgov-soft-eng-com",
+    "role": "large-corpus-producer",
+    "root_index": "README.md"
+  },
+  "okf_core": {
+    "version": "0.2",
+    "specification": "https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md",
+    "status": "migration"
+  },
+  "semantic_layer": {
+    "profile": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/docs/semantic-model.md",
+    "state": "generated-json-ld-graph",
+    "authoritative_inputs": [
+      "source/current.json",
+      "source/snapshots/*.json",
+      "config/*.json",
+      "schemas/*.json"
+    ],
+    "outputs": [
+      {
+        "path": "generated/semantic/*.jsonld",
+        "role": "semantic-json-ld-shards",
+        "generated": true
+      },
+      {
+        "path": "generated/semantic/manifest.json",
+        "role": "semantic-manifest",
+        "generated": true
+      },
+      {
+        "path": "generated/okf-explorer.json",
+        "role": "explorer-runtime",
+        "generated": true
+      },
+      {
+        "path": "generated/data/assertions-*.json",
+        "role": "relationship-runtime",
+        "generated": true
+      }
+    ],
+    "context_policy": "pinned-local-contexts-no-browser-remote-expansion",
+    "identity_policy": "absolute-semantic-iri-plus-validated-local-route",
+    "limitations": [
+      "Custom experimental profile; no canonical Bundle Wiki v1 conformance claim.",
+      "Rules describe names and descriptions, not repository code; labels are unreviewed.",
+      "Reader acceptance remains pending."
+    ]
+  },
+  "relationship_contract": {
+    "schema": "urn:okf:xgov:schema:assertion:1",
+    "authoring": "generated-rdf-graph-with-runtime-assertions",
+    "direct_triple_policy": "generated-from-one-assertion-source-across-pinned-shards",
+    "predicate_policy": "absolute-iri",
+    "required_fields": [
+      "id",
+      "source",
+      "target",
+      "source_iri",
+      "target_iri",
+      "predicate",
+      "kind",
+      "label",
+      "inverse_label",
+      "assertion_status",
+      "assertion_scope",
+      "authority",
+      "derivation",
+      "observed_at",
+      "evidence",
+      "rights"
+    ]
+  },
+  "tooling": {
+    "setup": [],
+    "build": [
+      "uv run --locked python scripts/catalogue.py build"
+    ],
+    "check": [
+      "uv run --locked python scripts/catalogue.py check",
+      "uv run --locked python -m unittest discover -s tests -v"
+    ]
+  },
+  "reader": {
+    "consumer": "https://chris-page-gov.github.io/okf-explorer/",
+    "delivery": "json-large-corpus-chunks",
+    "preserves": [
+      "direction",
+      "semantic-identities",
+      "local-routes",
+      "predicate",
+      "relationship-kind",
+      "preferred-and-inverse-labels",
+      "assertion-status-and-scope",
+      "authority",
+      "derivation",
+      "supporting-assertions",
+      "confidence",
+      "review-status",
+      "evidence",
+      "rights",
+      "freshness",
+      "lifecycle"
+    ]
+  }
+}

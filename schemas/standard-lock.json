@@ -1,0 +1,13 @@
+{
+  "source": "https://github.com/chris-page-gov/okf-explorer",
+  "policy": "byte-exact-contract-schemas-only-not-full-profile-conformance",
+  "files": {
+    "schemas/standard/repository-contract.schema.json": "783f81c5c785b3a13cfdedce3a89dd1e5c3f64a007cfe370bc82e37e2caa5ba8",
+    "schemas/standard/repository-publication.schema.json": "04c5d229a2900616d7a194d256ae1edb162d2c18beec7e2354723ce711b4eec3",
+    "schemas/standard/source-family.schema.json": "8c4734f554920fd34157ce90172a53ced492198d3761e7a62ebebf51036b3f6b"
+  },
+  "contracts": {
+    "okf.semantic.json": "schemas/standard/repository-contract.schema.json",
+    "okf.publication.json": "schemas/standard/repository-publication.schema.json"
+  }
+}

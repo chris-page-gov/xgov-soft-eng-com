@@ -1,0 +1,41 @@
+name: Refresh daily OKF pack
+on:
+  schedule:
+    - cron: '43 16 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: daily-catalogue-release
+  cancel-in-progress: false
+jobs:
+  refresh:
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12.11'
+      - run: python -m pip install -r requirements-assurance.txt
+      - run: python -m unittest discover -s tests -v
+      - name: Restore prior published comparison baseline
+        run: |
+          mkdir -p generated
+          if gh release view --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release download --repo "$GITHUB_REPOSITORY" --pattern record-hashes.json --dir generated
+          fi
+      - run: python scripts/catalogue.py refresh
+      - run: python scripts/catalogue.py check
+      - run: python scripts/assure.py
+      - run: python scripts/archive.py
+      - name: Publish the assured candidate
+        run: |
+          tag="snapshot-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" dist/xgov-okf.tar.gz dist/SHA256SUMS dist/record-hashes.json dist/build-manifest.json dist/quality.json --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --draft --title "Daily experimental OKF pack" --notes-file dist/release-notes.md
+          gh release edit "$tag" --repo "$GITHUB_REPOSITORY" --draft=false --latest

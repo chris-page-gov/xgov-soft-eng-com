@@ -1,0 +1,16 @@
+{
+  "schema": "xgov-catalogue-config.v1",
+  "source_url": "https://www.uk-x-gov-software-community.org.uk/xgov-opensource-repo-scraper/repos.json",
+  "source_repository": "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper",
+  "source_licence": "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/blob/master/LICENSE",
+  "max_bytes": 100000000,
+  "timeout_seconds": 60,
+  "minimum_records": 1000,
+  "maximum_removal_fraction": 0.2,
+  "stale_after_hours": 48,
+  "chunk_size": 500,
+  "classification_fields": ["name", "description"],
+  "default_archived": "include",
+  "identity_policy": "case-insensitive GitHub owner/name; conflicting duplicates fail closed",
+  "licence_policy": "source-reported metadata only; unknown and NOASSERTION remain unresolved"
+}

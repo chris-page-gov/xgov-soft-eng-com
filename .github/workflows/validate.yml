@@ -1,0 +1,21 @@
+name: Validate OKF producer
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12.11'
+      - run: python -m pip install -r requirements-assurance.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python scripts/catalogue.py build
+      - run: python scripts/catalogue.py check
+      - run: python scripts/assure.py
