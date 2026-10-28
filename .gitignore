@@ -15,3 +15,5 @@ release-assurance/tmp/
 .build/
 dist/
 source/last-check.json
+.consent/
+source/history/

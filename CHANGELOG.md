@@ -8,6 +8,8 @@ daily dataset snapshots have separate identifiers.
 
 ### Added
 
+- Private, unsent scan-permission requests with exact-input approval, expiry,
+  revocation and agreed private reporting terms.
 - Offline checks for Conventional Commit subjects and release-note structure.
 - A contribution guide defining public interfaces, versioning and release rules.
 
