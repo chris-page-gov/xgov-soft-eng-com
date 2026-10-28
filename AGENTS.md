@@ -23,3 +23,11 @@
   Bundle Wiki v1 conformance, human acceptance or exhaustive domain coverage.
 - External schema fields such as license, normalized, and assertion_status,
   upstream evidence, titles and MIT notices are intentional language exceptions.
+
+- Hourly public history acquisition is authorised for all catalogued repositories,
+  with one serial worker and bounded GitHub request/time budgets. Preserve
+  explicit coverage, default-branch limitations and minimal account data.
+- Never admit .consent/, private starters, private reports or approval evidence
+  into a public build/archive. Permission tooling creates unsent drafts only.
+- Use Conventional Commits and Keep a Changelog; see CONTRIBUTING.md. Preserve
+  the published legacy baseline rather than rewriting remote history.

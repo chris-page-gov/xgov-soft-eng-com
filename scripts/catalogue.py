@@ -17,6 +17,7 @@ import unicodedata
 import urllib.error
 import urllib.parse
 import urllib.request
+import facets as facet_tools
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = "urn:okf:xgov:"
@@ -27,6 +28,7 @@ PROV = "http://www.w3.org/ns/prov#"
 DCAT = "http://www.w3.org/ns/dcat#"
 DCT = "http://purl.org/dc/terms/"
 PROFILE = "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/docs/semantic-model.md"
+SCHEMES=("domains","capabilities","content_types")
 
 
 def encoded(value):
@@ -124,9 +126,9 @@ def parse_date(value):
 def classify(row, taxonomy):
     text = " " + normalise(row["name"] + " " + (row.get("description") or "")) + " "
     matches = {}
-    for scheme in ("domains", "capabilities"):
+    for scheme in SCHEMES:
         matches[scheme] = []
-        for concept in taxonomy[scheme]:
+        for concept in taxonomy.get(scheme,[]):
             hits = [term for term in concept["terms"] if " " + normalise(term) + " " in text]
             if hits:
                 matches[scheme].append({"id": concept["id"], "label": concept["label"], "matched_terms": hits})
@@ -134,7 +136,7 @@ def classify(row, taxonomy):
 
 
 def controlled_inputs(root):
-    patterns = ["config/**/*", "scripts/**/*.py", "tests/**/*.py", "schemas/**/*", "docs/**/*", "*.md", "okf.*.json", "pyproject.toml", "uv.lock", "requirements-assurance.txt", "LICENSE", ".gitignore", ".python-version", ".github/workflows/*", "source/README.md", "source/security-helper-inventory.json", "source/upstream/*", "source/sbom-review/*"]
+    patterns = ["config/**/*", "scripts/**/*.py", "tests/**/*.py", "schemas/**/*", "docs/**/*", "*.md", "okf.*.json", "pyproject.toml", "uv.lock", "requirements-assurance.txt", "LICENSE", ".gitignore", ".python-version", ".github/workflows/*", ".githooks/*", "source/README.md", "source/security-helper-inventory.json", "source/contributors-inventory.json", "source/history/index.json", "source/upstream/*", "source/sbom-review/*"]
     return {p.relative_to(root).as_posix(): digest(p.read_bytes()) for pattern in patterns for p in sorted(root.glob(pattern)) if p.is_file() and "__pycache__" not in p.parts and p.name!=".DS_Store"}
 
 
@@ -151,6 +153,25 @@ def build(root, output, receipt, previous=None):
     rows = json.loads(raw_bytes)
     unique, duplicates = validate_source(rows)
     observed, snapshot = receipt["retrieved_at"], NS + "snapshot:" + receipt["sha256"]
+    quality_receipt=receipt.get("supplements",{}).get("sbom-quality")
+    quality_report=None;quality_index={}
+    if quality_receipt:
+        quality_bytes=(root/quality_receipt["path"]).read_bytes()
+        if digest(quality_bytes)!=quality_receipt["sha256"]:raise ValueError("SBOM quality source checksum mismatch")
+        quality_report=json.loads(quality_bytes);quality_index=facet_tools.quality_rows(quality_report)
+    facet_specs=read(root/"config/facets.json")["facets"]
+    facet_observed=max(parse_date(observed),parse_date(quality_receipt["retrieved_at"]) if quality_receipt else parse_date(observed))
+    history_index=read(root/'source/history/index.json') if (root/'source/history/index.json').exists() else {'repositories':{}}
+    history_sources=[]
+    for item in history_index['repositories'].values():
+        if not re.fullmatch(r'source/history/observations/[0-9a-f]{64}\.json',item['path']) or digest((root/item['path']).read_bytes())!=item['sha256']:raise ValueError('Invalid history source binding')
+        history_sources.append({'path':item['path'],'sha256':item['sha256']})
+    prior_summary={}
+    if receipt.get('baseline_summary'):
+        baseline=receipt['baseline_summary'];data=(root/baseline['path']).read_bytes()
+        if digest(data)!=baseline['sha256']:raise ValueError('Metadata baseline checksum mismatch')
+        prior_summary=json.loads(data)
+    record_summary={}
     inputs = controlled_inputs(root)
     build_id = digest({"inputs": inputs, "receipt": receipt, "baseline_sha256": digest(previous or {})})
     output.mkdir(parents=True, exist_ok=True)
@@ -165,17 +186,24 @@ def build(root, output, receipt, previous=None):
         "sbom": (NS + "reportedSbom", "reports SBOM reference", "reported SBOM reference of", "sbom"),
         "domains": (SCHEMA + "about", "suggested domain", "suggested domain of", "name+description"),
         "capabilities": (NS + "suggestedCapability", "suggested capability", "suggested capability of", "name+description")}
+    predicates["content_types"]=(NS+"suggestedContentType","suggested content type","suggested content type of","name+description")
+    predicates["historical_contributor"]=(NS+'reportedHistoricalContributor','historical contributor reported by GitHub','reported historical contributor to','profile.contributors')
+    predicates["recent_contributor"]=(NS+'reportedRecentContributor','recent contributor reported by GitHub','reported recent contributor to','profile.contributors')
     predicates["domain-parent"] = (SKOS + "broader", "broader concept", "narrower concept", "config/taxonomy.json")
-    for scheme in ("domains", "capabilities"):
+    for scheme in SCHEMES:
         scheme_id = iri("scheme", scheme)
         concepts[scheme_id] = {"@id": scheme_id, "@type": SKOS + "ConceptScheme", SKOS + "prefLabel": scheme.capitalize()}
-        for c in tax[scheme]:
+        for c in tax.get(scheme,[]):
             ci = iri(scheme, c["id"])
             concepts[ci] = {"@id": ci, "@type": SKOS + "Concept", SKOS + "prefLabel": c["label"], SKOS + "altLabel": c["terms"], SKOS + "inScheme": ref(scheme_id), SKOS + "scopeNote": tax["policy"], NS + "route": route(scheme, c["id"])}
     for row, positions in unique:
         identity = row["owner"] + "/" + row["name"]
         ri, rr = iri("repository", identity), route("repositories", identity)
         matches = classify(row, tax)
+        history_item=history_index['repositories'].get(identity.casefold())
+        history_observation=read(root/history_item['path']) if history_item else None
+        activity=history_observation.get('profile') if history_observation else None
+        actor_evidence={}
         licence = (row.get("license") or {}).get("spdxId") or "unknown"
         n = {"@id": ri, "@type": NS + "Repository", SCHEMA + "name": identity, SCHEMA + "codeRepository": ref(row["url"]), PROV + "wasDerivedFrom": ref(snapshot), NS + "route": rr, NS + "archived": row["archived"], NS + "isFork": row.get("isFork"), NS + "sourceRows": positions}
         if row.get("description"):
@@ -189,23 +217,36 @@ def build(root, output, receipt, previous=None):
             related.append(("licence", licence, licence, []))
         if row.get("sbom"):
             related.append(("sbom", row["sbom"], "SBOM reference for "+identity, []))
-        for scheme in ("domains", "capabilities"):
+        for scheme in SCHEMES:
             for hit in matches[scheme]:
                 related.append((scheme, hit["id"], hit["label"], hit["matched_terms"]))
+        if activity:
+            for position,actor in enumerate(activity['contributors']):
+                if not actor.get('login'):continue
+                for kind,count in (('historical_contributor',actor['historical_reported_commits']),('recent_contributor',actor['recent_reported_commits'])):
+                    if count:
+                        related.append((kind,actor['login'],'@'+actor['login'],[]));actor_evidence[(kind,actor['login'])]=(position,actor)
         for kind, value, label, terms in related:
             target, tr = iri(kind, value), route(kind, value)
+            if kind in ('historical_contributor','recent_contributor'):target,tr=iri('contributor',value),route('contributors',value)
             if target not in concepts:
                 concepts[target] = {"@id": target, "@type": NS + "HostingAccount" if kind == "account" else NS + "SbomReference" if kind == "sbom" else SKOS + "Concept", SKOS + "prefLabel": label, NS + "route": tr}
                 if kind == "sbom":
                     concepts[target][SCHEMA+"contentUrl"] = ref(urllib.parse.urljoin(cfg["source_url"],value))
                     concepts[target][NS+"verificationStatus"] = "source-reported-reference-not-fetched-by-build"
+                if kind in ('historical_contributor','recent_contributor'):concepts[target]['@type']=NS+'ContributorAccount'
             pred, preferred, inverse, field = predicates[kind]
-            inferred = kind in ("domains", "capabilities")
+            inferred = kind in SCHEMES
             status = "inferred" if inferred else "normalized"
             assertion_id = NS + "assertion:" + digest([ri, pred, target])
             evidence_value = {k: row.get(k) for k in ("name", "description")} if inferred else row.get(field)
             evidence = {"url": cfg["source_url"], "source_artifact": receipt["path"], "source_sha256": receipt["sha256"], "rows": positions, "source_field": field, "source_value_sha256": digest(evidence_value), "matched_terms": terms}
             edge = {"id": assertion_id, "source": rr, "target": tr, "source_iri": ri, "target_iri": target, "predicate": pred, "kind": kind, "label": preferred, "inverse_label": inverse, "assertion_status": status, "assertion_scope": "real-world", "authority": {"class": "derived", "label": "Experimental catalogue projection", "source": cfg["source_url"]}, "derivation": iri("rule", "term-match-v1" if inferred else "source-field-v1"), "observed_at": observed, "evidence": [evidence], "rights": rights, "review_status": "unreviewed" if inferred else "source-reported-not-independently-verified"}
+            if (kind,value) in actor_evidence:
+                position,actor=actor_evidence[(kind,value)]
+                edge['authority']['source']=history_observation['source_url'];edge['observed_at']=history_observation['observed_at']
+                edge['evidence']=[{'url':history_observation['source_url'],'source_artifact':history_item['path'],'source_sha256':history_item['sha256'],'rows':[position],'source_field':'profile.contributors','source_value_sha256':digest(actor),'matched_terms':[]}]
+                edge['rights']={'source':'https://docs.github.com/en/site-policy/github-terms/github-terms-of-service','assertion':'Public GitHub statistics; no ownership, maintainership, endorsement or scan authority asserted.'}
             edges.append(edge)
             n.setdefault(pred, []).append(ref(target))
         domains = [h["id"] for h in matches["domains"]] or ["unclassified"]
@@ -214,6 +255,23 @@ def build(root, output, receipt, previous=None):
         records.append(rec)
         record_nodes.append(n)
         rec["sbom"] = "present" if row.get("sbom") else "not-reported"
+        rec["content_types"]=[h["id"] for h in matches["content_types"]] or ["unclassified"]
+        quality_row=quality_index.get(identity.casefold())
+        rec.update(facet_tools.analysis_values(rec,quality_row,facet_observed,quality_report["generatedAt"] if quality_report else None))
+        rec["sbom_quality"]={"counts":quality_row,"generated_at":quality_report["generatedAt"],"source":quality_receipt} if quality_row else None
+        rec['history_coverage']=history_item['state'] if history_item else 'not-collected'
+        rec['historical_contributors']=[a['login'] for a in activity['contributors'] if a.get('login') and a['historical_reported_commits']] if activity else ['not-collected']
+        rec['recent_contributors']=[a['login'] for a in activity['contributors'] if a.get('login') and a['recent_reported_commits']] if activity else ['not-collected']
+        if activity:
+            count=activity['recent_reported_commits'];rec['recent_commit_band']='0' if count==0 else '1-10' if count<=10 else '11-50' if count<=50 else '51-200' if count<=200 else 'over-200'
+            rec['recent_contributors']=rec['recent_contributors'] or ['none-reported-in-window'];rec['historical_contributors']=rec['historical_contributors'] or ['no-mapped-account']
+            rec['churn_availability']=activity['line_count_status'];rec['activity']={k:v for k,v in activity.items() if k not in ('contributors','weekly_totals')}|{'source':history_item,'contributors':[ {k:v for k,v in a.items() if k!='weeks'} for a in activity['contributors']]}
+        else:rec.update(recent_commit_band='not-collected',churn_availability='not-collected',activity=None)
+        record_summary[ri]=row
+        older=prior_summary.get(ri);changed=[k for k in sorted(set(row)|set(older or {})) if older is not None and row.get(k)!=older.get(k)]
+        rec['metadata_changed_fields']=changed
+        rec['metadata_change']='baseline-unavailable' if not prior_summary else 'added' if older is None else 'changed' if changed else 'unchanged'
+        rec['metadata_change_degree']='baseline-unavailable' if not prior_summary else 'new-record' if older is None else '0-fields' if not changed else '1-field' if len(changed)==1 else '2-4-fields' if len(changed)<=4 else '5-or-more-fields'
         for key, values in {"publisher": [rec["publisher"]], "language": [rec["language"]], "license": [licence], "archived": [str(row["archived"]).lower()], "is_fork": ["unknown" if row.get("isFork") is None else str(row["isFork"]).lower()], "domain": domains, "capability": capabilities, "sbom": [rec["sbom"]]}.items():
             facets[key].update(values)
         for key in ("description", "language", "license", "isFork"):
@@ -236,19 +294,29 @@ def build(root, output, receipt, previous=None):
         write(output / p, batch); edge_paths.append(p)
         graph = []
         for e in batch:
-            graph.append({"@id": e["id"], "@type": [RDF + "Statement", PROV + "Entity", NS + "RelationshipAssertion"], RDF + "subject": ref(e["source_iri"]), RDF + "predicate": ref(e["predicate"]), RDF + "object": ref(e["target_iri"]), PROV + "wasDerivedFrom": ref(snapshot), PROV + "wasGeneratedBy": ref(NS + "build:" + build_id), NS + "assertionStatus": e["assertion_status"], NS + "assertionScope": e["assertion_scope"], NS + "evidence": {"@value": e["evidence"], "@type": RDF + "JSON"}, NS + "rights": rights["assertion"]})
+            graph.append({"@id": e["id"], "@type": [RDF + "Statement", PROV + "Entity", NS + "RelationshipAssertion"], RDF + "subject": ref(e["source_iri"]), RDF + "predicate": ref(e["predicate"]), RDF + "object": ref(e["target_iri"]), PROV + "wasDerivedFrom": ref(NS+'snapshot:'+e['evidence'][0]['source_sha256']), PROV + "wasGeneratedBy": ref(NS + "build:" + build_id), NS + "assertionStatus": e["assertion_status"], NS + "assertionScope": e["assertion_scope"], NS + "evidence": {"@value": e["evidence"], "@type": RDF + "JSON"}, NS + "rights": e['rights']["assertion"]})
         p = f"semantic/assertions-{part:03d}.jsonld"
         write(output / p, {"@graph": graph}); semantic_paths.append(p)
     rdfs="http://www.w3.org/2000/01/rdf-schema#"
-    definitions=[{"@id":NS+name,"@type":rdfs+"Class",rdfs+"label":label} for name,label in (("Repository","Source-reported GitHub repository"),("HostingAccount","Source-reported hosting account"),("SbomReference","Source-reported SBOM reference"),("RelationshipAssertion","Evidence-bearing relationship assertion"))]
+    definitions=[{"@id":NS+name,"@type":rdfs+"Class",rdfs+"label":label} for name,label in (("Repository","Source-reported GitHub repository"),("HostingAccount","Source-reported hosting account"),("ContributorAccount","Public contributor account reported by GitHub"),("SbomReference","Source-reported SBOM reference"),("RelationshipAssertion","Evidence-bearing relationship assertion"))]
     definitions += [{"@id":p,"@type":RDF+"Property",rdfs+"label":label} for p,label,_,_ in predicates.values() if p.startswith(NS)]
     write(output / "semantic/vocabulary.jsonld", {"@graph": list(concepts.values())+definitions})
     write(output / "semantic/catalogue.jsonld", {"@graph": [{"@id": NS + "catalogue", "@type": DCAT + "Catalog", DCT + "title": "Experimental cross-government software catalogue", PROV + "wasDerivedFrom": ref(snapshot)}, {"@id": snapshot, "@type": [DCAT + "Dataset", PROV + "Entity"], DCT + "source": ref(cfg["source_url"]), PROV + "generatedAtTime": observed, NS + "sha256": receipt["sha256"], NS + "httpLastModified": receipt.get("last_modified")}, {"@id": NS + "build:" + build_id, "@type": PROV + "Activity", PROV + "used": ref(snapshot), NS + "inputHashes": {"@value": inputs, "@type": RDF + "JSON"}}]})
+    source_graph=read(output/'semantic/catalogue.jsonld')['@graph']
+    for extra in ([quality_receipt] if quality_receipt else [])+history_sources:
+        source_graph.append({'@id':NS+'snapshot:'+extra['sha256'],'@type':PROV+'Entity',NS+'sha256':extra['sha256'],NS+'sourceArtifact':extra['path']})
+    write(output/'semantic/catalogue.jsonld',{'@graph':source_graph})
     semantic_paths += ["semantic/vocabulary.jsonld", "semantic/catalogue.jsonld"]
     write(output / "semantic/manifest.json", {"profile": PROFILE, "snapshot": snapshot, "context_policy": "fully-expanded-IRIs-no-remote-contexts", "shards": [{"path": p, "sha256": digest((output / p).read_bytes())} for p in semantic_paths]})
     counts.update({"raw_rows": len(rows), "records": len(records), "datasets": len(records), "duplicate_rows": len(rows)-len(records), "organisations": len(facets["publisher"]), "relationships": len(edges), "resources": 0, "publishers": len(facets["publisher"]), "unclassified_domains": facets["domain"]["unclassified"], "unclassified_capabilities": facets["capability"]["unclassified"]})
     warnings = ["Experimental metadata discovery; classifications are unreviewed term matches.", "Hosting accounts are not verified legal organisations or service owners.", "Missing licences and NOASSERTION do not establish reuse permission.", "Pushed dates, stars, SBOM paths and archive flags do not establish quality, security or support.", "The repository feed does not contain all guidance linked from the community resources page.", "The source fetch time and HTTP Last-Modified do not verify every upstream record was refreshed."]
-    facet_payload = {k: [{"value": v, "label": v, "count": c} for v, c in sorted(values.items(), key=lambda item: (-item[1], item[0]))] for k, values in facets.items()}
+    for spec in facet_specs:
+        scheme={"domain":"domains","capability":"capabilities","content_type":"content_types"}.get(spec["key"])
+        if scheme:spec["value_labels"]={c["id"]:c["label"] for c in tax.get(scheme,[])}|{"unclassified":"Unclassified"}
+    facet_payload=facet_tools.counts(records,facet_specs)
+    facet_tools.validate(records,facet_specs,facet_payload)
+    write(output/"data/facet-definitions.json",{"schema":"xgov-facet-contract.v1","facets":facet_specs,"consumer":"catalogue.py search/facets; Explorer acceptance pending"})
+    write(output/"data/presentation.json",{"schema":"okf-explorer-presentation.v1","status":"experimental","facets":[{"key":s["key"],"label":s["label"],"description":s["description"],"value_type":"nominal","order":i*10,"default_state":"pinned" if s.get("required_task_dimension") else "shown","open_control":"search" if s["key"] in ("publisher","language","license") else "distribution","value_order":"count-desc","examples":[r["label"] for r in facet_payload[s["key"]][:3]]} for i,s in enumerate(facet_specs)]})
     write(output / "data/facets.json", facet_payload)
     overview = {"schema": "okf-large-overview.v1", "title": "Cross-government software discovery", "generated_at": observed, "counts": dict(counts), "warnings": warnings, "facet_previews": {k: v[:15] for k,v in facet_payload.items()}, "recent_datasets": sorted(records, key=lambda r: r["timestamp"] or "", reverse=True)[:10]}
     write(output / "data/overview.json", overview)
@@ -259,6 +327,7 @@ def build(root, output, receipt, previous=None):
     changes = {"baseline_available": bool(previous_map), "added": sorted(set(current_map)-set(previous_map)) if previous_map else [], "removed": sorted(set(previous_map)-set(current_map)), "changed": sorted(k for k in set(current_map)&set(previous_map) if current_map[k]!=previous_map[k])}
     write(output / "changes.json", changes)
     write(output / "record-hashes.json", current_map)
+    write(output/'record-summary.json',record_summary)
     build_search(output, records, facet_payload, size)
     publishers = [{"id": c["@id"], "name": c[SKOS+"prefLabel"].casefold(), "title": c[SKOS+"prefLabel"], "concept_id": c[NS+"route"], "type": "Hosting account"} for c in concepts.values() if c["@type"] == NS+"HostingAccount"]
     write(output / "data/accounts.json", publishers)
@@ -266,18 +335,21 @@ def build(root, output, receipt, previous=None):
     write(output / "data/manifest.json", manifest)
     descriptor = {"schema": "okf-explorer-large-corpus.v1", "kind": "okf-large-corpus", "okf_version": "0.2", "title": "Experimental cross-government software OKF+", "description": "Source-reported repository metadata with explicit gaps and unreviewed domain and task suggestions.", "version": "0.1.0", "publication_state": "exploratory", "status": "local-experiment", "profile": PROFILE, "snapshot_id": build_id, "generated_at": observed, "counts": dict(counts), "entrypoints": {"data_manifest": "data/manifest.json", "overview_index": "data/overview.json", "search_manifest": "data/search/manifest.json", "markdown_index": "index.md"}, "source": {"url": cfg["source_url"], "source_sha256": receipt["sha256"], "observed_at": observed}, "semantic_descriptor": "semantic/manifest.json", "vocabulary": {"record_singular": "repository", "record_plural": "repositories", "publisher_singular": "hosting account", "publisher_plural": "hosting accounts", "format_plural": "languages"}, "warnings": warnings}
     write(output / "okf-explorer.json", descriptor)
+    descriptor["entrypoints"].update(presentation="data/presentation.json",facet_definitions="data/facet-definitions.json")
+    descriptor["extensions"]={"okf-explorer-presentation.v1":{"mode":"external","entrypoint":"presentation"}}
+    write(output/"okf-explorer.json",descriptor)
     (output / "index.md").write_text('---\nokf_version: "0.2"\n---\n# Experimental cross-government software OKF+\n\n'+f'{len(records):,} distinct repositories from {len(facets["publisher"])} hosting accounts.\n\n'+"\n".join("- "+w for w in warnings)+"\n\n[Domains and tasks](concepts/index.md) · [Source quality](quality.json) · [Semantic graph](semantic/manifest.json)\n")
     links = []
-    for scheme in ("domains", "capabilities"):
-        for c in tax[scheme]:
+    for scheme in SCHEMES:
+        for c in tax.get(scheme,[]):
             p = output / "concepts" / scheme / (c["id"]+".md")
             p.parent.mkdir(parents=True, exist_ok=True)
-            count = facets["domain" if scheme == "domains" else "capability"][c["id"]]
+            count=next((r["count"] for r in facet_payload[{"domains":"domain","capabilities":"capability","content_types":"content_type"}[scheme]] if r["value"]==c["id"]),0)
             p.write_text('---\ntype: Concept\ntitle: '+json.dumps(c["label"])+ '\nstatus: experimental\n---\n# '+c["label"]+f'\n\n{count:,} repositories match the experimental name/description rules.\n\nTerms: '+", ".join(c["terms"])+".\n\nMatches are suggestions, with evidence in each record. A zero count does not establish absence.\n")
             links.append(f'- [{c["label"]}]({scheme}/{c["id"]}.md)')
     (output / "concepts/index.md").write_text("# Domains and tasks\n\n"+"\n".join(links)+"\n")
     (output / "README.md").write_text("# Generated catalogue\n\nRebuild with `python scripts/catalogue.py build`. Do not edit these files by hand.\n")
-    write(output / "build-manifest.json", {"schema": "xgov-build.v1", "build_id": build_id, "generated_at": observed, "source": receipt, "controlled_inputs": inputs, "outputs": {p.relative_to(output).as_posix(): digest(p.read_bytes()) for p in sorted(output.rglob("*")) if p.is_file()}})
+    write(output / "build-manifest.json", {"schema": "xgov-build.v1", "build_id": build_id, "baseline_sha256":digest(previous or {}), "generated_at": observed, "source": receipt, "history_sources":history_sources, "controlled_inputs": inputs, "outputs": {p.relative_to(output).as_posix(): digest(p.read_bytes()) for p in sorted(output.rglob("*")) if p.is_file() and p.name!='.DS_Store'}})
     return dict(counts)
 
 
@@ -285,6 +357,7 @@ def build_search(output, records, facets, size):
     postings = collections.defaultdict(dict)
     docs = []
     filter_values = collections.defaultdict(lambda: collections.defaultdict(list))
+    specifications=read(output/"data/facet-definitions.json")["facets"]
     for ordinal, record in enumerate(records):
         doc = {**record, "ordinal": ordinal, "quality_score": None}
         docs.append(doc)
@@ -293,8 +366,9 @@ def build_search(output, records, facets, size):
                 if len(token) >= 2:
                     old = postings[token].get(ordinal, [0, 0])
                     postings[token][ordinal] = [old[0]+weight, old[1]|mask]
-        for key, value in (("publisher", record["publisher"]), ("language", record["language"]), ("license", record["license_id"]), ("archived", str(record["archived"]).lower()), ("domain", record["domains"]), ("capability", record["capabilities"])):
-            for v in value if isinstance(value,list) else [value]:
+        for spec in specifications:
+            key=spec["key"]
+            for v in facet_tools.facet_values(record,spec):
                 filter_values[key][v].append(ordinal)
     lex, shards, prefixes = collections.defaultdict(list), collections.defaultdict(dict), collections.defaultdict(dict)
     for token, matches in sorted(postings.items()):
@@ -327,6 +401,19 @@ def records_from(output):
     return [r for p in manifest["chunks"]["datasets"] for r in read(output/p)]
 
 
+def remove_build_tree(path):
+    """Retry only a Finder-metadata race; propagate other cleanup failures."""
+    for attempt in range(3):
+        try:
+            shutil.rmtree(path)
+            return
+        except OSError as exc:
+            if exc.errno not in (39,66) or attempt==2:raise
+            if any(p.is_file() and p.name!='.DS_Store' for p in path.rglob('*')):raise
+            for metadata in path.rglob('.DS_Store'):
+                metadata.unlink(missing_ok=True)
+
+
 def promote(root, receipt, baseline=None):
     if (root/"generated/build-manifest.json").exists():
         old_inputs=read(root/"generated/build-manifest.json")["controlled_inputs"]
@@ -341,13 +428,13 @@ def promote(root, receipt, baseline=None):
         build(root,candidate,receipt,baseline)
         check_output(candidate)
         old=root/".build/previous-generated"
-        if old.exists():shutil.rmtree(old)
+        if old.exists():remove_build_tree(old)
         if (root/"generated").exists():os.replace(root/"generated",old)
         try:os.replace(candidate,root/"generated")
         except BaseException:
             if old.exists():os.replace(old,root/"generated")
             raise
-        if old.exists():shutil.rmtree(old)
+        if old.exists():remove_build_tree(old)
     write(root/"source/current.json",receipt)
 
 
@@ -356,6 +443,7 @@ def check_output(output):
     for path, checksum in manifest["outputs"].items():
         if digest((output/path).read_bytes())!=checksum:raise ValueError(f"Output checksum mismatch: {path}")
     records=records_from(output)
+    facet_tools.validate(records,read(output/"data/facet-definitions.json")["facets"],read(output/"data/facets.json"))
     routes={r["route"]:r["id"] for r in records}
     concepts=read(output/"semantic/vocabulary.jsonld")["@graph"]
     routes.update({c[NS+"route"]:c["@id"] for c in concepts if NS+"route" in c})
@@ -399,9 +487,33 @@ def fetch(root):
         else:
             receipt["baseline_path"]=f"source/baselines/{checksum}.json"
             write(root/receipt["baseline_path"],previous)
+        receipt=dict(receipt)
+        if (root/'generated/record-summary.json').exists():
+            summary=read(root/'generated/record-summary.json');summary_hash=digest(summary);path=f'source/baselines/{summary_hash}.summaries.json';write(root/path,summary)
+            receipt['baseline_summary']={'path':path,'sha256':summary_hash}
+        if cfg.get("sbom_quality_url"):
+            old=load_receipt(root).get("supplements",{}).get("sbom-quality") if (root/"source/current.json").exists() else None
+            receipt["supplements"]={"sbom-quality":fetch_quality(root,cfg,old)}
         promote(root,receipt,previous)
         write(root/"source/last-check.json",{"checked_at":now(),"source_sha256":checksum,"result":"validated-and-promoted"})
         return {"source_sha256":checksum,"records":len(unique),"refreshed":True}
+
+
+def fetch_quality(root,cfg,old=None):
+    url=cfg["sbom_quality_url"]
+    req=urllib.request.Request(url,headers={"User-Agent":"xgov-software-okf/0.1","Accept":"application/json"})
+    with urllib.request.urlopen(req,timeout=cfg["timeout_seconds"]) as response:
+        if response.geturl()!=url:raise ValueError("SBOM quality source redirect requires review")
+        raw=response.read(cfg["max_bytes"]+1)
+        if len(raw)>cfg["max_bytes"]:raise ValueError("SBOM quality report exceeds size limit")
+        report=json.loads(raw);facet_tools.quality_rows(report)
+        checksum=digest(raw)
+        if old and old["sha256"]==checksum:return old
+        path=f"source/snapshots/{checksum}.sbom-quality.json"
+        destination=root/path;destination.parent.mkdir(parents=True,exist_ok=True)
+        if destination.exists() and destination.read_bytes()!=raw:raise ValueError("SBOM quality identity collision")
+        destination.write_bytes(raw)
+        return {"path":path,"sha256":checksum,"bytes":len(raw),"url":url,"retrieved_at":now(),"generated_at":report["generatedAt"],"last_modified":response.headers.get("Last-Modified")}
 
 
 def search(records, query, taxonomy, filters=None, include_inferred=True):
@@ -410,19 +522,23 @@ def search(records, query, taxonomy, filters=None, include_inferred=True):
     expansions=[]
     if include_inferred:
         q=" "+normalise(query)+" "
-        for scheme in ("domains","capabilities"):
-            for c in taxonomy[scheme]:
+        for scheme in SCHEMES:
+            for c in taxonomy.get(scheme,[]):
                 hits=[t for t in c["terms"] if " "+normalise(t)+" " in q]
                 if hits:
                     synonyms[c["id"]]=c["label"]
                     expansions.append((c["id"],set(normalise(" ".join(hits)).split())))
     results=[]
     for r in records:
-        if any((value.casefold() not in [str(v).casefold() for v in r.get(key,[])] if isinstance(r.get(key),list) else ("unknown" if r.get(key) is None else str(r.get(key))).casefold()!=value.casefold()) for key,value in (filters or {}).items()):continue
+        def allowed(key,requested):
+            wanted=requested if isinstance(requested,list) else [requested]
+            actual=r.get(key);actual=actual if isinstance(actual,list) else ["unknown" if actual is None else actual]
+            return bool({str(v).casefold() for v in wanted}&{str(v).casefold() for v in actual})
+        if any(not allowed(key,value) for key,value in (filters or {}).items()):continue
         text=normalise(r["title"]+" "+r["description"])
         words=set(text.split())
         direct=all(t in words for t in terms)
-        matched=sorted(set(synonyms)&set(r["domains"]+r["capabilities"])) if terms else []
+        matched=sorted(set(synonyms)&set(r["domains"]+r["capabilities"]+r.get("content_types",[]))) if terms else []
         explained=set().union(*(tokens for concept,tokens in expansions if concept in matched)) if matched else set()
         if terms and not direct and (not matched or any(t not in words and t not in explained for t in terms)):continue
         score=sum(4 for t in terms if t in normalise(r["title"]).split())+sum(t in words for t in terms)+(1 if matched else 0)
@@ -438,9 +554,11 @@ def main():
     sub.add_parser("build",help="Rebuild from frozen inputs, without network access")
     sub.add_parser("check",help="Verify every output and deterministic documentation lockstep")
     sub.add_parser("status",help="Report source observation and retrieval freshness")
+    f=sub.add_parser("facets",help="Facet counts within the current search and filter selection")
+    f.add_argument("--query",default="");f.add_argument("--facet");f.add_argument("--limit",type=int,default=20);f.add_argument("--offset",type=int,default=0);f.add_argument("--value-query",default="");f.add_argument("--json",action="store_true");f.add_argument("--source-only",action="store_true")
     q=sub.add_parser("search");q.add_argument("query",nargs="?",default="");q.add_argument("--limit",type=int,default=10)
-    for name in ("organisation","language","licence","domain","capability","archived","is-fork","sbom"):
-        q.add_argument("--"+name)
+    for name in ("organisation","language","licence","domain","capability","archived","is-fork","sbom","content-type","language-family","licence-status","push-age","push-year","description-status","sbom-resolution","dependency-context","package-volume","quality-report-age","history-coverage","recent-commit-band","churn-availability","recent-contributor","historical-contributor","metadata-change","metadata-change-degree"):
+        q.add_argument("--"+name,action="append");f.add_argument("--"+name,action="append")
     q.add_argument("--source-only",action="store_true",help="Do not expand queries through inferred concepts")
     q.add_argument("--json",action="store_true")
     args=parser.parse_args();root=args.root.resolve()
@@ -465,8 +583,20 @@ def main():
             last=read(root/"source/last-check.json") if (root/"source/last-check.json").exists() else {}
             result={"source":receipt,"last_check":last,"retrieval_stale":stale({"retrieved_at":last.get("checked_at",receipt["retrieved_at"])},cfg["stale_after_hours"]),"upstream_record_freshness":"not-independently-verified","publication":"configured-github-releases-remote-state-not-checked","scheduler":"configured-daily-1643-UTC-remote-state-not-checked"}
         else:
-            filters={k:v for k,v in {"publisher":args.organisation.casefold() if args.organisation else None,"language":args.language,"license_id":args.licence,"domains":args.domain,"capabilities":args.capability,"archived":args.archived,"is_fork":args.is_fork,"sbom":args.sbom}.items() if v is not None}
-            rows=search(records_from(root/"generated"),args.query,read(root/"config/taxonomy.json"),filters,not args.source_only)
+            filters={k:v for k,v in {"publisher":args.organisation,"language":args.language,"license_id":args.licence,"domains":args.domain,"capabilities":args.capability,"archived":args.archived,"is_fork":args.is_fork,"sbom":args.sbom}.items() if v is not None}
+            filters.pop("is_fork",None)
+            if args.is_fork:filters["fork_status"]=args.is_fork
+            for flag,field in (("content_type","content_types"),("language_family","language_family"),("licence_status","licence_status"),("push_age","push_age"),("push_year","push_year"),("description_status","description_status"),("sbom_resolution","sbom_resolution"),("dependency_context","dependency_context"),("package_volume","package_volume"),("quality_report_age","quality_report_age"),("history_coverage","history_coverage"),("recent_commit_band","recent_commit_band"),("churn_availability","churn_availability"),("recent_contributor","recent_contributors"),("historical_contributor","historical_contributors"),("metadata_change","metadata_change"),("metadata_change_degree","metadata_change_degree")):
+                if getattr(args,flag):filters[field]=getattr(args,flag)
+            population=records_from(root/"generated")
+            rows=search(population,args.query,read(root/"config/taxonomy.json"),filters,not args.source_only)
+            if args.command=="facets":
+                selected={r["url"] for r in rows};counts=facet_tools.counts([r for r in population if r["url"] in selected],read(root/"generated/data/facet-definitions.json")["facets"])
+                if args.facet:
+                    if args.facet not in counts:raise ValueError("Unknown facet key")
+                    counts={args.facet:counts[args.facet]}
+                if args.value_query:counts={k:[r for r in v if normalise(args.value_query) in normalise(r["label"]+" "+r["value"])] for k,v in counts.items()}
+                print(json.dumps({"selected_records":len(selected),"facet_value_totals":{k:len(v) for k,v in counts.items()},"facets":{k:v[max(0,args.offset):max(0,args.offset)+max(0,args.limit)] for k,v in counts.items()},"overlap_policy":"OR within a facet; AND across facets. Counts are distinct repositories per value; multi-value counts are not additive."},indent=2));return
             result={"total_matches":len(rows),"results":rows[:max(0,min(args.limit,200))],"status": "experimental-unreviewed-classification"}
             if not args.json:
                 print(f"{len(rows):,} matches; showing {len(result['results'])}.")

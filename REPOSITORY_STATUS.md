@@ -3,8 +3,12 @@
 Experimental producer, version 0.1.0, prepared on 28 October 2026.
 
 Implemented: standard OKF scaffold, frozen public source, deterministic build,
-search/facets, proposed domains/tasks, RDF JSON-LD, evidence assertions,
-quality/change reports and a daily release workflow.
+25 authored facets, proposed domains/tasks/content types, RDF JSON-LD, evidence assertions,
+quality/change reports, a daily release workflow, an hourly full-catalogue
+history collector, private permission drafts, a private-system beginner starter
+and attributed community credits. Full history collection is progressive;
+inspect the history-data index for actual coverage, rather than assuming all
+24,068 repositories already have available statistics.
 
 The initial snapshot has 24,137 rows, 24,068 distinct repositories, 212 hosting
 accounts and 14,326 distinct repositories with SBOM paths. A path does not

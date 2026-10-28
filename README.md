@@ -14,6 +14,7 @@ The first frozen snapshot, retrieved on 28 October 2026, has 24,137 rows,
 retain their original row numbers. Unknown values and inferred labels remain
 explicit; stars and recent activity do not establish quality or support.
 
+[Rich discovery facets](docs/rich-facets.md) · [Change and contributor history](docs/history-and-change.md) ·
 [Discovery design](docs/discovery.md) · [Semantic model](docs/semantic-model.md) ·
 [SBOMs, security helpers and issues](docs/security-and-sbom-review.md) ·
 [Operations](docs/operations.md) · [Scope](REPOSITORY_STATUS.md) ·
@@ -32,6 +33,8 @@ uv run --locked python scripts/catalogue.py search --domain health --language Py
 uv run --locked python scripts/catalogue.py search --organisation alphagov --licence MIT
 uv run --locked python scripts/catalogue.py search --sbom present --is-fork unknown
 uv run --locked python scripts/catalogue.py search "notification" --source-only --json
+uv run --locked python scripts/catalogue.py facets --facet content_type
+uv run --locked python scripts/catalogue.py search --history-coverage available
 uv run --locked python scripts/catalogue.py status
 uv run --locked python scripts/catalogue.py check
 uv run --locked python -m unittest discover -s tests -v
@@ -65,7 +68,13 @@ The upstream project already collects SBOMs on a scheduled Action. This pack
 consumes public metadata; it does not clone or execute catalogued code or
 perform estate-wide vulnerability matching.
 
-The proposed taxonomy has 20 subject domains and 15 engineering tasks, with
+A separate hourly Action progressively enriches every catalogued repository
+with all available GitHub contributor statistics. Collection is bounded and
+coverage remains explicit while the full backfill runs. It retains recent and
+historical activity, without emails or claims of ownership or quality.
+
+The proposed taxonomy has 20 subject domains, 15 engineering tasks and 12
+content types, with
 matched-term evidence and explicit unclassified buckets. It is a starting
 vocabulary, not exhaustive domain knowledge. The [resources page](https://www.uk-x-gov-software-community.org.uk/resources/)
 also links guidance absent from the repository feed; admitting that guidance,

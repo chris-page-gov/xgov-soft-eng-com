@@ -8,6 +8,12 @@ daily dataset snapshots have separate identifiers.
 
 ### Added
 
+- Twenty-five authored discovery facets, including content types, dependency
+  context, metadata change, contributor accounts and explicit history coverage.
+- A bounded hourly history collector targeting every catalogued repository,
+  with minimal public account data, provider-pending states, selectable checkpoint
+  sizes and a separate data branch.
+
 - Linked contributor credits across the nine community repositories, with
   automated accounts and inherited fork history distinguished.
 - An offline metadata-only starter and beginner guide for private systems,
@@ -21,6 +27,12 @@ daily dataset snapshots have separate identifiers.
 
 - Adopt Keep a Changelog, Semantic Versioning and Conventional Commits for
   future releases and commits, while preserving already published history.
+
+### Fixed
+
+- Retry cleanup when Finder recreates only its metadata in a retired build.
+- Include every declared build input in release archives, including hidden
+  inputs, and reject undeclared or private archive members.
 
 ## [0.1.0] - 2026-10-28
 

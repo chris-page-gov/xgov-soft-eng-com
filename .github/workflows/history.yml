@@ -1,0 +1,62 @@
+name: Enrich full-catalogue history
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Maximum repositories in this checkpoint (1 to 500)
+        required: true
+        default: 500
+        type: number
+permissions:
+  contents: read
+concurrency:
+  group: full-catalogue-history
+  cancel-in-progress: false
+jobs:
+  collect:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HISTORY_LIMIT: ${{ github.event.inputs.limit || '500' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12.11'
+      - run: python scripts/check_release_hygiene.py
+      - run: python -m unittest discover -s tests -v
+      - name: Restore the prior validated data branch
+        run: |
+          if git ls-remote --exit-code --heads origin history-data >/dev/null; then
+            git fetch origin history-data
+            git restore --source FETCH_HEAD --worktree -- source/history
+          fi
+      - name: Collect a bounded part of the complete catalogue
+        run: python scripts/history.py collect --limit "$HISTORY_LIMIT" --request-budget 1800 --max-seconds 1500
+      - name: Validate the checkpoint
+        run: python scripts/history.py pack
+      - name: Checkpoint public statistics on the data branch
+        run: |
+          history_tree="$RUNNER_TEMP/xgov-history-data"
+          if git ls-remote --exit-code --heads origin history-data >/dev/null; then
+            git fetch origin history-data
+            git worktree add --detach "$history_tree" FETCH_HEAD
+          else
+            git worktree add --detach "$history_tree" "$GITHUB_SHA"
+            git -C "$history_tree" checkout --orphan history-data
+            git -C "$history_tree" rm -r --ignore-unmatch -- .
+          fi
+          mkdir -p "$history_tree/source/history"
+          cp -R source/history/. "$history_tree/source/history/"
+          git -C "$history_tree" add source/history
+          if git -C "$history_tree" diff --cached --quiet; then exit 0; fi
+          git -C "$history_tree" -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'chore(history): checkpoint public repository statistics'
+          git -C "$history_tree" push origin HEAD:history-data

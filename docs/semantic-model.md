@@ -16,6 +16,7 @@ There is no OWL reasoning or claim to understand all domains in repository code.
 | Domains and tasks | [SKOS](https://www.w3.org/TR/skos-reference/) concepts, schemes, labels, alternatives and scope notes |
 | Provenance | [PROV-O](https://www.w3.org/TR/prov-o/) entities, activities and source derivation |
 | Directed relationships | RDF statements and direct triples generated from one assertion source |
+| Contributor account | Custom ContributorAccount with reported historical/recent contribution relationships; no ownership or maintainership claim |
 | Hosting account and reported licence | Custom predicates; no verified legal ownership or permission claim |
 
 Absolute URNs derive from case-insensitive GitHub owner/name. The feed has no
@@ -44,3 +45,10 @@ checksums and deterministic rebuilds. These do not establish semantic truth.
 SBOM paths are metadata. A future security graph should distinguish repository,
 commit, SBOM, package/version, advisory, candidate match and reviewed
 applicability, with separate evidence and dates for each.
+
+Content-type suggestions use the same unreviewed name/description rules as
+domains and tasks. Contributor relationships instead cite the exact filtered
+GitHub observation, account row, date and checksum. Their RDF provenance points
+to that observation rather than to the repository feed. The source entities
+record both origins. See [history limits](history-and-change.md) and
+[facet definitions](rich-facets.md).

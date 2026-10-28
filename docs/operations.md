@@ -14,6 +14,8 @@ Ordinary errors restore the previous generated directory. If killed between
 moves, recover .build/previous-generated to generated/ before continuing.
 Keep source/current.json, its referenced snapshot and baseline together.
 Concurrent local writers are unsupported; Actions uses a concurrency group.
+Retired-build cleanup retries when Finder recreates only .DS_Store metadata;
+other cleanup failures remain visible and the checked candidate is retained.
 
 A byte-identical successful download retains the original receipt and graph
 timestamp. source/last-check.json records retrieval. The 48-hour warning
@@ -41,6 +43,21 @@ delay schedules; Action failures remain visible and no model heartbeat is used.
 The archive contains a frozen source/receipt, comparison baseline, generated
 pack and build code/config/docs. Generated data is not committed daily.
 The checked-in initial snapshot remains an independent reproducible baseline.
+
+Before upload, the packager reopens the archive as a stream and verifies every
+declared controlled input, raw source and generated output against the build
+manifest. Missing files, duplicate declared members and checksum mismatches
+block publication. Hidden build inputs such as .gitignore are included.
+Only manifest-declared members are admitted; private consent files and undeclared
+source files are rejected. The first snapshot release omitted .gitignore despite
+listing its hash: retain it as historical evidence, and use the corrected release
+for a complete standalone reproduction.
+
+The separate hourly history workflow checkpoints public contributor statistics
+on history-data. The daily pack restores that branch before building. It also
+restores the preceding record summary to distinguish actual source-field changes
+from changes to derived classification or observation metadata. See
+[collection and recovery limits](history-and-change.md).
 
 ## Consumer limits
 

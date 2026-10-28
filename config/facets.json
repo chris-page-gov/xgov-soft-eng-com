@@ -1,0 +1,239 @@
+{
+  "schema": "xgov-facet-contract.v1",
+  "consumer": "catalogue.py search and facets; Explorer browser acceptance pending",
+  "count_policy": "Distinct repositories per value; overlapping values are not additive; counts reflect the selected search and filters.",
+  "facets": [
+    {
+      "key": "domain",
+      "field": "domains",
+      "label": "Subject domain",
+      "question": "Which public-service subject might this address?",
+      "description": "Unreviewed name/description classification; unclassified is retained.",
+      "basis": "inferred",
+      "missing_value": "unclassified",
+      "required_task_dimension": true
+    },
+    {
+      "key": "capability",
+      "field": "capabilities",
+      "label": "Engineering task",
+      "question": "What might I use this for?",
+      "description": "Unreviewed task suggestions with matched-term evidence.",
+      "basis": "inferred",
+      "missing_value": "unclassified",
+      "required_task_dimension": true
+    },
+    {
+      "key": "content_type",
+      "field": "content_types",
+      "label": "Type of content",
+      "question": "Is this likely code, documentation, data or infrastructure?",
+      "description": "Multiple suggested types from names/descriptions; code has not been inspected.",
+      "basis": "inferred",
+      "missing_value": "unclassified",
+      "required_task_dimension": true
+    },
+    {
+      "key": "publisher",
+      "field": "publisher",
+      "label": "Hosting account",
+      "question": "Which GitHub account hosts it?",
+      "description": "Source account, not verified legal owner or service operator.",
+      "basis": "source-reported",
+      "missing_value": "unknown"
+    },
+    {
+      "key": "language",
+      "field": "language",
+      "label": "Primary language",
+      "question": "Which primary language does GitHub report?",
+      "description": "One primary language; not all languages or dependency ecosystems.",
+      "basis": "source-reported",
+      "missing_value": "unknown"
+    },
+    {
+      "key": "language_family",
+      "field": "language_family",
+      "label": "Language family",
+      "question": "Which language family could guide analysis tooling?",
+      "description": "Editorial grouping of the reported language; no build-system claim.",
+      "basis": "derived",
+      "missing_value": "unknown"
+    },
+    {
+      "key": "license",
+      "field": "license_id",
+      "label": "Reported licence",
+      "question": "What licence identifier is reported?",
+      "description": "Not legal clearance. Unknown and NOASSERTION remain unresolved.",
+      "basis": "source-reported",
+      "missing_value": "unknown",
+      "value_labels": {
+        "unknown": "Unknown",
+        "NOASSERTION": "No licence conclusion reported"
+      }
+    },
+    {
+      "key": "licence_status",
+      "field": "licence_status",
+      "label": "Licence evidence",
+      "question": "Is there a usable reported identifier to inspect?",
+      "description": "Identifier presence is metadata, not permission.",
+      "basis": "derived",
+      "missing_value": "unresolved"
+    },
+    {
+      "key": "archived",
+      "field": "archived",
+      "label": "Archive status",
+      "question": "Is the repository marked archived?",
+      "description": "Archive flag does not establish current operational use.",
+      "basis": "source-reported",
+      "missing_value": "unknown"
+    },
+    {
+      "key": "is_fork",
+      "field": "fork_status",
+      "label": "Fork status",
+      "question": "Is it a fork, a source repository or unknown?",
+      "description": "Missing fork metadata remains unknown.",
+      "basis": "source-reported",
+      "missing_value": "unknown"
+    },
+    {
+      "key": "push_age",
+      "field": "push_age",
+      "label": "Time since code push",
+      "question": "When was code last pushed relative to this snapshot?",
+      "description": "Date bands are not a maintenance, support or security rating.",
+      "basis": "derived",
+      "missing_value": "unknown"
+    },
+    {
+      "key": "push_year",
+      "field": "push_year",
+      "label": "Code push year",
+      "question": "Which year was the last recorded code push?",
+      "description": "Code activity date, distinct from metadata updates and observation time.",
+      "basis": "source-reported",
+      "missing_value": "unknown"
+    },
+    {
+      "key": "description_status",
+      "field": "description_status",
+      "label": "Description available",
+      "question": "Is there a description to support discovery?",
+      "description": "The build does not fetch README content.",
+      "basis": "derived",
+      "missing_value": "not-supplied"
+    },
+    {
+      "key": "sbom",
+      "field": "sbom",
+      "label": "SBOM link reported",
+      "question": "Does the feed provide an SBOM reference?",
+      "description": "A path is not a successful fetch, a current SBOM or security evidence.",
+      "basis": "source-reported",
+      "missing_value": "not-reported"
+    },
+    {
+      "key": "sbom_resolution",
+      "field": "sbom_resolution",
+      "label": "Reported package version resolution",
+      "question": "Are unresolved versions likely to limit advisory matching?",
+      "description": "Upstream quality-report classifications; not independently resolved versions or vulnerability results.",
+      "basis": "upstream-derived",
+      "missing_value": "not-reported"
+    },
+    {
+      "key": "dependency_context",
+      "field": "dependency_context",
+      "label": "Reported dependency context",
+      "question": "Which runtime, build, CI or unresolved groups need investigation?",
+      "description": "Package-name heuristics from upstream; build and CI dependencies remain relevant to supply-chain risk.",
+      "basis": "upstream-inferred",
+      "missing_value": "not-reported"
+    },
+    {
+      "key": "package_volume",
+      "field": "package_volume",
+      "label": "Reported package count band",
+      "question": "How large is the reported inventory to investigate?",
+      "description": "Package observations per SBOM report, not distinct packages across government.",
+      "basis": "upstream-derived",
+      "missing_value": "not-reported"
+    },
+    {
+      "key": "quality_report_age",
+      "field": "quality_report_age",
+      "label": "Quality report age at snapshot",
+      "question": "How old was the aggregate quality report when captured?",
+      "description": "The report generation date does not establish individual SBOM creation dates.",
+      "basis": "derived",
+      "missing_value": "not-reported"
+    },
+    {
+      "key": "history_coverage",
+      "field": "history_coverage",
+      "label": "History collection coverage",
+      "question": "Has GitHub history been collected, is it pending or unavailable?",
+      "description": "Collection coverage is separate from code activity.",
+      "basis": "source-reported",
+      "missing_value": "not-collected"
+    },
+    {
+      "key": "recent_commit_band",
+      "field": "recent_commit_band",
+      "label": "Recent reported commit count",
+      "question": "How many commits are reported in 13 complete weeks?",
+      "description": "Default-branch statistics exclude merge and empty commits; not a quality measure.",
+      "basis": "upstream-derived",
+      "missing_value": "not-collected"
+    },
+    {
+      "key": "churn_availability",
+      "field": "churn_availability",
+      "label": "Line-change data availability",
+      "question": "Does the provider supply usable line-change observations?",
+      "description": "Large repositories can return zero line counts; those are retained as unknown or omitted.",
+      "basis": "upstream-derived",
+      "missing_value": "not-collected"
+    },
+    {
+      "key": "recent_contributor",
+      "field": "recent_contributors",
+      "label": "Recent contributor account",
+      "question": "Which accounts contributed in the complete recent window?",
+      "description": "Public GitHub accounts; not verified people, maintainers or approvers.",
+      "basis": "source-reported",
+      "missing_value": "not-collected"
+    },
+    {
+      "key": "historical_contributor",
+      "field": "historical_contributors",
+      "label": "Historical contributor account",
+      "question": "Which accounts appear in the available default-branch history?",
+      "description": "Historical contribution is not present ownership or scan authority.",
+      "basis": "source-reported",
+      "missing_value": "not-collected"
+    },
+    {
+      "key": "metadata_change",
+      "field": "metadata_change",
+      "label": "Catalogue change status",
+      "question": "Did the source metadata change since the prior admitted snapshot?",
+      "description": "Metadata changes are separate from code changes; first observations have no baseline.",
+      "basis": "derived",
+      "missing_value": "baseline-unavailable"
+    },
+    {
+      "key": "metadata_change_degree",
+      "field": "metadata_change_degree",
+      "label": "Number of source fields changed",
+      "question": "How many metadata fields changed?",
+      "description": "A count of changed catalogue fields, not code churn or impact.",
+      "basis": "derived",
+      "missing_value": "baseline-unavailable"
+    }
+  ]
+}

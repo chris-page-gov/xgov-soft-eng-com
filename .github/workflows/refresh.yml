@@ -32,6 +32,13 @@ jobs:
           mkdir -p generated
           if gh release view --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release download --repo "$GITHUB_REPOSITORY" --pattern record-hashes.json --dir generated
+            gh release download --repo "$GITHUB_REPOSITORY" --pattern record-summary.json --dir generated || true
+          fi
+      - name: Restore available public repository history
+        run: |
+          if git ls-remote --exit-code --heads origin history-data >/dev/null; then
+            git fetch origin history-data
+            git restore --source FETCH_HEAD --worktree -- source/history
           fi
       - run: python scripts/catalogue.py refresh
       - run: python scripts/catalogue.py check
@@ -40,5 +47,5 @@ jobs:
       - name: Publish the assured candidate
         run: |
           tag="snapshot-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          gh release create "$tag" dist/xgov-okf.tar.gz dist/SHA256SUMS dist/record-hashes.json dist/build-manifest.json dist/quality.json --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --draft --title "Daily experimental OKF pack" --notes-file dist/release-notes.md
+          gh release create "$tag" dist/xgov-okf.tar.gz dist/SHA256SUMS dist/record-hashes.json dist/record-summary.json dist/build-manifest.json dist/quality.json --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --draft --title "Daily experimental OKF pack" --notes-file dist/release-notes.md
           gh release edit "$tag" --repo "$GITHUB_REPOSITORY" --draft=false --latest

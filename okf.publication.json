@@ -82,7 +82,9 @@
       "paths": [
         "source/security-helper-inventory.json",
         "source/upstream/**",
-        "source/sbom-review/**"
+        "source/contributors-inventory.json",
+        "source/sbom-review/receipt.json",
+        "source/sbom-review/sample*"
       ],
       "formats": [
         "application/json",
@@ -97,7 +99,7 @@
         "command_ids": []
       },
       "limitations": [
-        "Not automatically refreshed; not a vulnerability audit."
+        "Dated contributor, security helper and issue review; not a vulnerability audit."
       ],
       "inventory": {
         "method": "pinned-source-register",
@@ -128,6 +130,125 @@
         "semantic",
         "runtime",
         "documentation"
+      ]
+    },
+    {
+      "id": "public-sbom-quality",
+      "label": "Public SBOM quality counters",
+      "description": "Frozen, checksummed upstream version-resolution and dependency-context counters, not an advisory scan.",
+      "kind": "json",
+      "paths": [
+        "source/snapshots/*.sbom-quality.json",
+        "source/sbom-review/sbom-quality.json"
+      ],
+      "formats": [
+        "application/json"
+      ],
+      "origin": "acquired",
+      "authority": "external-reference",
+      "snapshot_policy": "immutable-checksummed",
+      "inventory": {
+        "method": "content-addressed-manifest",
+        "manifest_path": "source/current.json",
+        "identity": [
+          "relative-path",
+          "sha256",
+          "source-identifier",
+          "observed-at"
+        ]
+      },
+      "rights": {
+        "status": "mixed",
+        "evidence": [
+          "https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/blob/master/LICENSE",
+          "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/LICENSE_DECISIONS.md"
+        ]
+      },
+      "sensitivity": {
+        "status": "potentially-sensitive",
+        "assessment": "Public GitHub identifiers and descriptions may refer to individuals. Only the requested public sources and minimal review metadata are admitted.",
+        "evidence": [
+          "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/source/README.md"
+        ]
+      },
+      "extraction": {
+        "mode": "versioned-adapter",
+        "network_access": "separate-authorised-step",
+        "command_ids": [
+          "refresh"
+        ],
+        "limitations": [
+          "Heuristic runtime exclusions do not establish deployment or vulnerability applicability."
+        ]
+      },
+      "invalidates": [
+        "source",
+        "semantic",
+        "runtime",
+        "documentation"
+      ],
+      "limitations": [
+        "Package counters are observations, not deduplicated deployed dependencies."
+      ]
+    },
+    {
+      "id": "public-contributor-history",
+      "label": "Public repository contributor statistics",
+      "description": "Bounded full-catalogue collection of all available default-branch weekly contributor statistics.",
+      "kind": "api",
+      "paths": [
+        "source/history/index.json",
+        "source/history/observations/*.json"
+      ],
+      "formats": [
+        "application/json"
+      ],
+      "origin": "acquired",
+      "authority": "external-reference",
+      "snapshot_policy": "content-addressed",
+      "inventory": {
+        "method": "content-addressed-manifest",
+        "manifest_path": "source/history/index.json",
+        "identity": [
+          "relative-path",
+          "sha256",
+          "source-identifier",
+          "observed-at"
+        ]
+      },
+      "rights": {
+        "status": "mixed",
+        "evidence": [
+          "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service"
+        ]
+      },
+      "sensitivity": {
+        "status": "potentially-sensitive",
+        "assessment": "Public account handles and contribution counts may identify individuals. Emails and unrelated profile data are excluded.",
+        "evidence": [
+          "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/source/README.md"
+        ]
+      },
+      "extraction": {
+        "mode": "versioned-adapter",
+        "network_access": "separate-authorised-step",
+        "command_ids": [
+          "history"
+        ],
+        "limitations": [
+          "No source-code execution; minimal public account identifiers and counts only."
+        ]
+      },
+      "invalidates": [
+        "source",
+        "semantic",
+        "runtime",
+        "documentation"
+      ],
+      "limitations": [
+        "Collection coverage is explicit; provider-pending data are not zero activity.",
+        "Default-branch statistics exclude some commit kinds and can omit line counts.",
+        "Accounts and counts do not establish ownership, maintainership or quality."
       ]
     }
   ],
@@ -211,7 +332,8 @@
         "source/**"
       ],
       "command_ids": [
-        "refresh"
+        "refresh",
+        "history"
       ]
     },
     {
@@ -340,6 +462,19 @@
         "network": "none",
         "mutates": "generated-only",
         "timeout_minutes": 10
+      },
+      {
+        "id": "history",
+        "kind": "build",
+        "planes": [
+          "source"
+        ],
+        "command": "uv run --locked python scripts/history.py collect --limit 500 --request-budget 1800 --max-seconds 1500",
+        "source": "AGENTS.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "acquisition",
+        "mutates": "source-and-generated",
+        "timeout_minutes": 30
       }
     ]
   },
@@ -369,7 +504,8 @@
     "provider": "github-actions",
     "workflow_paths": [
       ".github/workflows/validate.yml",
-      ".github/workflows/refresh.yml"
+      ".github/workflows/refresh.yml",
+      ".github/workflows/history.yml"
     ],
     "impact_routing": "full-suite",
     "parallelism": "serial",

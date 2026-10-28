@@ -17,7 +17,9 @@
       "source/current.json",
       "source/snapshots/*.json",
       "config/*.json",
-      "schemas/*.json"
+      "schemas/*.json",
+      "source/history/index.json",
+      "source/history/observations/*.json"
     ],
     "outputs": [
       {
@@ -46,7 +48,8 @@
     "limitations": [
       "Custom experimental profile; no canonical Bundle Wiki v1 conformance claim.",
       "Rules describe names and descriptions, not repository code; labels are unreviewed.",
-      "Reader acceptance remains pending."
+      "Reader acceptance remains pending.",
+      "Historical and recent contributor relationships describe available GitHub default-branch statistics, not ownership or maintainership."
     ]
   },
   "relationship_contract": {
