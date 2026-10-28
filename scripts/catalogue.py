@@ -267,7 +267,7 @@ def build(root, output, receipt, previous=None):
         rec['recent_contributors']=[a['login'] for a in activity['contributors'] if a.get('login') and a['recent_reported_commits']] if activity else ['not-collected']
         if activity:
             count=activity['recent_reported_commits'];rec['recent_commit_band']='0' if count==0 else '1-10' if count<=10 else '11-50' if count<=50 else '51-200' if count<=200 else 'over-200'
-            rec['recent_contributors']=rec['recent_contributors'] or ['none-reported-in-window'];rec['historical_contributors']=rec['historical_contributors'] or ['no-mapped-account']
+            rec['recent_contributors']=rec['recent_contributors'] or ['no-mapped-account' if count else 'none-reported-in-window'];rec['historical_contributors']=rec['historical_contributors'] or ['no-mapped-account']
             rec['churn_availability']=activity['line_count_status'];rec['activity']={k:v for k,v in activity.items() if k not in ('contributors','weekly_totals')}|{'source':history_item,'contributors':[ {k:v for k,v in a.items() if k!='weeks'} for a in activity['contributors']]}
             n[PROV+'wasDerivedFrom']=[ref(snapshot),ref(NS+'snapshot:'+history_item['sha256'])]
             for key,value in {'reportedRecentCommitCount':activity['recent_reported_commits'],'reportedHistoricalCommitCount':activity['historical_reported_commits'],'activityWindowStart':activity['window']['start'],'activityWindowEndExclusive':activity['window']['end_exclusive'],'activityObservedAt':history_observation['observed_at'],'lineCountStatus':activity['line_count_status']}.items():n[NS+key]=value

@@ -34,6 +34,8 @@ daily dataset snapshots have separate identifiers.
 
 ### Fixed
 
+- Keep unmapped contributor accounts distinct from no reported recent activity.
+- Declare the exact retained SBOM sample and receipt source boundaries.
 - Initialise the history data branch with an empty index and working tree.
 - Retry cleanup when Finder recreates only its metadata in a retired build.
 - Include every declared build input in release archives, including hidden

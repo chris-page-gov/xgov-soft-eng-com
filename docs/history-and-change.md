@@ -57,6 +57,8 @@ Every catalogue record exposes collection coverage: not collected, provider
 pending, available, unavailable, size-limited or provider-limited. Missing and
 pending data are never converted into zero activity. The dated credits page
 remains separate from the continuously collected activity data.
+Reported commits without a mapped GitHub account retain their counts and an
+explicit no-mapped-account value; no person is invented to fill the gap.
 
 ```sh
 uv run --locked python scripts/history.py status

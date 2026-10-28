@@ -81,10 +81,10 @@
       "kind": "mixed",
       "paths": [
         "source/security-helper-inventory.json",
-        "source/upstream/**",
         "source/contributors-inventory.json",
-        "source/sbom-review/receipt.json",
-        "source/sbom-review/sample*"
+        "source/upstream/**",
+        "source/sbom-review/*.receipt.json",
+        "source/sbom-review/sds-addresses.json.gz"
       ],
       "formats": [
         "application/json",

@@ -74,7 +74,13 @@ class HistoryTests(unittest.TestCase):
             observation={'profile':profile,'source_url':'https://api.github.com/repos/examplegov/accessible-forms/stats/contributors','observed_at':receipt['retrieved_at']}
             checksum=h.c.digest(observation);path='source/history/observations/'+checksum+'.json';h.c.write(root/path,observation)
             h.c.write(root/'source/history/index.json',{'repositories':{'examplegov/accessible-forms':{'path':path,'sha256':checksum,'state':'available'}}})
+            anonymous=h.weekly_profile([{'total':2,'author':None,'weeks':[{'w':week,'a':1,'d':0,'c':2}]}],receipt['retrieved_at'])
+            anonymous_observation={**observation,'profile':anonymous};anonymous_hash=h.c.digest(anonymous_observation);anonymous_path='source/history/observations/'+anonymous_hash+'.json';h.c.write(root/anonymous_path,anonymous_observation)
+            index=h.load_index(root);index['repositories']['examplegov/geospatial-library']={'path':anonymous_path,'sha256':anonymous_hash,'state':'available'};h.c.write(root/'source/history/index.json',index)
             h.c.build(root,root/'generated',receipt)
+            anonymous_record=next(row for row in h.c.records_from(root/'generated') if row['title'].endswith('geospatial-library'))
+            self.assertEqual(anonymous_record['recent_contributors'],['no-mapped-account'])
+            self.assertEqual(anonymous_record['activity']['recent_reported_commits'],2)
             manifest=h.c.read(root/'generated/data/manifest.json')
             assertions=[row for path in manifest['chunks']['relationships'] for row in h.c.read(root/'generated'/path)]
             recent=next(row for row in assertions if row['kind']=='recent_contributor')
