@@ -17,7 +17,8 @@ explicit; stars and recent activity do not establish quality or support.
 [Discovery design](docs/discovery.md) · [Semantic model](docs/semantic-model.md) ·
 [SBOMs, security helpers and issues](docs/security-and-sbom-review.md) ·
 [Operations](docs/operations.md) · [Scope](REPOSITORY_STATUS.md) ·
-[Permission and disclosure](docs/permission-and-disclosure.md)
+[Permission and disclosure](docs/permission-and-disclosure.md) ·
+[Private-system beginner guide](docs/private-system-starter.md)
 
 ## Try it
 

@@ -8,6 +8,8 @@ daily dataset snapshots have separate identifiers.
 
 ### Added
 
+- An offline metadata-only starter and beginner guide for private systems,
+  with publication, source-code ingestion, models and scanning disabled.
 - Private, unsent scan-permission requests with exact-input approval, expiry,
   revocation and agreed private reporting terms.
 - Offline checks for Conventional Commit subjects and release-note structure.
