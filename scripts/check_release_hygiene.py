@@ -2,6 +2,7 @@
 """Check the changelog and prospective Conventional Commit subjects offline."""
 import argparse
 import datetime as dt
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -37,14 +38,23 @@ def check_changelog(text):
     return True
 
 
+def check_history(root,baseline,allow_synthetic_head=False):
+    head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
+    rows=subprocess.check_output(['git','log','--format=%H%x09%P%x09%s',baseline+'..HEAD'],cwd=root,text=True).splitlines()
+    for row in rows:
+        commit,parents,subject=row.split('\t',2)
+        if allow_synthetic_head and commit==head and len(parents.split())>1:continue
+        check_subject(subject)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--message-file',type=Path);args=parser.parse_args()
     try:
         if args.message_file:check_subject(args.message_file.read_text().splitlines()[0])
         else:
             check_changelog((ROOT/'CHANGELOG.md').read_text())
-            subjects=subprocess.check_output(['git','log','--format=%s',LEGACY_BASELINE+'..HEAD'],cwd=ROOT,text=True).splitlines()
-            for subject in subjects:check_subject(subject)
+            synthetic=os.environ.get('GITHUB_EVENT_NAME')=='pull_request' and bool(re.fullmatch(r'refs/pull/[1-9][0-9]*/merge',os.environ.get('GITHUB_REF','')))
+            check_history(ROOT,LEGACY_BASELINE,synthetic)
         print('Release hygiene checks passed.')
     except (ValueError,IndexError,subprocess.CalledProcessError) as exc:parser.exit(1,'Release hygiene check failed: '+str(exc)+'\n')
 

@@ -1,6 +1,6 @@
 [project]
 name = "xgov-software-okf"
-version = "0.2.0"
+version = "0.2.1"
 description = "Experimental, evidence-linked discovery of UK public-sector software repositories"
 requires-python = ">=3.12"
 dependencies = []

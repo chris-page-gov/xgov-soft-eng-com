@@ -6,6 +6,13 @@ daily dataset snapshots have separate identifiers.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-28
+
+### Fixed
+
+- Check actual pull-request commits without rejecting GitHub's temporary test
+  merge. Actual commits and published merges still require conventional subjects.
+
 ## [0.2.0] - 2026-10-28
 
 ### Added
@@ -58,6 +65,7 @@ daily dataset snapshots have separate identifiers.
 - Pin a runner that supports the governed Python version.
 - Exclude Finder metadata from reproducibility checks.
 
-[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/f7eaed15feaa11941b8fa95e1c66aa400f421483...v0.2.0
 [0.1.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40749128667-1

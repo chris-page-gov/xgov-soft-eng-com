@@ -25,6 +25,8 @@ a BREAKING CHANGE footer, and document its migration.
 
 Enable the optional local hook with git config core.hooksPath .githooks.
 CI checks every new commit after the documented initial-history baseline.
+It excludes only GitHub's temporary pull-request merge at the checked-out head;
+the actual commits underneath it and published merge commits remain checked.
 Already published commits are preserved. Squash-merge titles must follow the
 same convention; review the final title before merging.
 
