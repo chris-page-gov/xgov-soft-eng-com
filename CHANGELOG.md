@@ -6,6 +6,11 @@ daily dataset snapshots have separate identifiers.
 
 ## [Unreleased]
 
+### Added
+
+- Public editions of the Claude and Gemini evaluations with private paths
+  removed, frozen evidence references and verified editorial corrections.
+
 ## [0.4.0] - 2026-10-29
 
 ### Added

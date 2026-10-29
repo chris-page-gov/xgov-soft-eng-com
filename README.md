@@ -20,6 +20,7 @@ explicit; stars and recent activity do not establish quality or support.
 [Operations](docs/operations.md) · [Scope](REPOSITORY_STATUS.md) ·
 [Permission and disclosure](docs/permission-and-disclosure.md) ·
 [Repeatable Claude and Gemini test pack](docs/ai-evaluation.md) ·
+[Public Claude and Gemini reports](docs/ai-evaluations/2026-10-29/README.md) ·
 [Private-system beginner guide](docs/private-system-starter.md) · [Credits](CREDITS.md)
 
 ## Open the published pack

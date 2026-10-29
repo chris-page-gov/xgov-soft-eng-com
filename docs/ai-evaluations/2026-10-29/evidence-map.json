@@ -1,0 +1,410 @@
+{
+  "schema": "xgov-public-report-evidence-map.v1",
+  "entries": [
+    {
+      "report": "gemini",
+      "path": "xgov-okf/okf.publication.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/okf.publication.json",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/README.md",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/README.md",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf.tar.gz",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": null
+    },
+    {
+      "report": "gemini",
+      "path": "SHA256SUMS",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": null
+    },
+    {
+      "report": "gemini",
+      "path": "build-manifest.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": null
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/record-hashes.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/record-summary.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/build-manifest.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/quality.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/scripts/catalogue.py",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/scripts/catalogue.py",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/okf.manifest.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/okf-explorer.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/semantic/manifest.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/source/current.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/source/current.json",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/source/snapshots/64e70d84e1d4c7a064695c65583000f9bb8a57916ec2b7f636a84b4be98eda9b.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/source/snapshots/64e70d84e1d4c7a064695c65583000f9bb8a57916ec2b7f636a84b4be98eda9b.json",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/source/sbom-review/sbom-quality.json.receipt.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/source/sbom-review/sbom-quality.json.receipt.json",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/facets.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/AGENTS.md",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/AGENTS.md",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/config/taxonomy.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/config/taxonomy.json",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/config/history-collection.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/source/sbom-review/sbom-quality.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/source/sbom-review/sbom-quality.json",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/source/sbom-review/sds-addresses.json.gz",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/source/sbom-review/sds-addresses.json.gz",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/source/sbom-review/sds-addresses.json.gz.receipt.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/6f059605922043a28984ba8b443820588a2665e7/source/sbom-review/sds-addresses.json.gz.receipt.json",
+      "kind": "pinned-source-file",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations."
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/source/history/current.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/source/history/observations/2e9c32ed9b98ed517af9f54c84cdbaa2fdb8124ef78d3b3ed337ca998543bdef.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/overview.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/search/manifest.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/search/doc-map.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/search/postings/11.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/search/postings/nh.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/search/postings/re.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/semantic/context.jsonld",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/semantic/vocabulary.jsonld",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/semantic/organizations.jsonld",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/semantic/concepts.jsonld",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/semantic/contributors.jsonld",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/semantic/repositories-000.jsonld",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/semantic/assertions-000.jsonld",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/organisations/111online.md",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/concepts/domains/health.md",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/concepts/content_types/application-service.md",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/contributors/andriaturner.md",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/reports/sbom-review.md",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/reports/history-coverage.md",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/records-000.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/records-007.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/records-009.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/records-014.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/index.html",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/assertions-000.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/history-000.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "unresolved-original-reference",
+      "note": "This path is absent from the frozen archive. The model reference is preserved for transparency, not validated as evidence.",
+      "archive_member_present": false
+    },
+    {
+      "report": "gemini",
+      "path": "xgov-okf/generated/data/records-042.json",
+      "url": "https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/snapshot-40758707312-1",
+      "kind": "frozen-release-member",
+      "note": "Archive members are identified by path; the release page supplies the frozen archive and checksums. Original line fragments are not retained as verified citations.",
+      "archive_member_present": true
+    }
+  ]
+}
