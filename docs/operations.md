@@ -80,8 +80,13 @@ different snapshots. Private grants and private starter outputs are excluded.
 
 Run python scripts/pages.py for a local copy, or pass --release with a directory
 containing all six assets from one snapshot. An existing destination is never
-overwritten. Browser acceptance must verify the deployed Pages descriptor in
-the actual public Explorer before its opening link is advertised as working.
+overwritten. The separate, contents-read verification job checks all 38 declared browser
+checks against that release after deployment, then retains a JSON receipt.
+It has no Pages-write or OIDC permission. It pins Node 26.7.0 and Playwright CLI
+0.1.17 and uses runner-installed Chrome. A failed verification requires
+investigation of the existing deployed candidate; it does not trigger a
+rebuild or automatic rollback. Keep the preceding immutable release for
+recovery. Verify the exact public URL before advertising it as working.
 
 ## Consumer limits
 

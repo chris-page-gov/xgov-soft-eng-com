@@ -405,7 +405,8 @@
         "validation/browser/**"
       ],
       "command_ids": [
-        "browser"
+        "browser",
+        "browser-receipts"
       ]
     },
     {
@@ -539,6 +540,18 @@
         "review_status": "reviewed-local-guidance",
         "network": "bounded-read",
         "mutates": "generated-only"
+      },
+      {
+        "id": "browser-receipts",
+        "kind": "verify",
+        "planes": [
+          "browser"
+        ],
+        "command": "python scripts/collect_browser_receipts.py --manifest release/build-manifest.json --logs output/playwright/ci --output output/playwright/ci/browser-verification.json",
+        "source": "scripts/collect_browser_receipts.py",
+        "review_status": "reviewed-local-guidance",
+        "network": "none",
+        "mutates": "generated-only"
       }
     ]
   },
@@ -582,7 +595,8 @@
           "chrome"
         ],
         "command_ids": [
-          "browser"
+          "browser",
+          "browser-receipts"
         ]
       },
       "cross_engine": {
@@ -655,13 +669,14 @@
       "tests",
       "check",
       "assure",
-      "browser"
+      "browser",
+      "browser-receipts"
     ]
   },
   "limitations": [
     "No vulnerability scan or private report access.",
     "Scheduled executions may be delayed by GitHub.",
     "Publication-method v1 has no scheduled-release mode: manual denotes invocation of reviewed release commands; the separate CI workflow declares the automatic schedule. No repository branch protection is claimed.",
-    "Browser verification is a separately recorded acceptance step; the Python CI jobs do not execute Chrome. Cross-engine testing is not claimed."
+    "Pages runs the three ordinary-Chrome suites after deployment. This producer workflow does not claim cross-engine or human usability acceptance. A post-deployment failure requires investigation; no automatic rebuild or rollback is performed."
   ]
 }

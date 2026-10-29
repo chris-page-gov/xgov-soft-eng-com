@@ -68,9 +68,16 @@ record count, consumer commit, application tree, Chrome version and errors.
 A returned status of failed is a failure, even if the CLI exits successfully.
 Inspect the receipt; do not treat a zero process exit code as acceptance.
 
-The matrix is a separate browser acceptance step. Python CI checks cover
+The Pages workflow runs all three suites after deployment in a separate
+contents-read job, with Ubuntu 24.04, Node 26.7.0, Playwright CLI 0.1.17 and
+runner-installed Chrome. It compares all 38 checks with the exact released
+build manifest, quality-file checksum, descriptor hash, snapshot and consumer
+identity. CLI exit codes alone never establish success. Validated JSON results
+are retained as an Action artefact; failed verification marks the workflow
+failed without rebuilding or silently changing the deployed candidate.
+Python producer CI checks cover
 producer determinism, contracts, complete record lookup and assertion
-adjacency, schema validity and RDF equivalence. They do not run Chrome.
+adjacency, schema validity and RDF equivalence. The separate Pages verification job runs Chrome.
 Run scripts/browser_combinations.js in the same way for OR within a facet,
 AND across facets, unknown fork values, hosting-account value search and
 paging, and available-history selection. Use the further semantic and history

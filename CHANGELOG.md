@@ -11,6 +11,8 @@ daily dataset snapshots have separate identifiers.
 ### Added
 
 - Verified public Pages, Explorer and AI entry points in the README.
+- A read-only Pages verification job that checks all 38 browser journeys
+  against the released snapshot and retains machine-readable results.
 - A separate generated boundary for reviewed browser acceptance receipts.
 - Repeatable Chrome acceptance for all 25 facet dimensions, combined filtering,
   value search and paging, and exact-name search.
@@ -30,6 +32,8 @@ daily dataset snapshots have separate identifiers.
 
 ### Fixed
 
+- Reject false CLI success, missing browser checks and changed producer or
+  consumer identities in automated verification receipts.
 - Retry a Finder metadata race in the failed cleanup directory even when
   other retired shards remain elsewhere; retain unrelated cleanup errors.
 - Supply the complete experimental-publication notice expected by Explorer.
