@@ -1,0 +1,17 @@
+{
+  "browser": "156.0.8078.48",
+  "checks": [],
+  "console_errors": [],
+  "consumer_app_tree_sha256": "3a8ccd958e125d79f07e8755878e21ddf10eb60f9bef28364890ef3ad51b2660",
+  "consumer_commit": "6fc781ce2b350285705d670c51ca400983d8fad1",
+  "descriptor_sha256": "2f2731d8e98c2706ae35855c1a29419390633def1f574daec379210e24775992",
+  "descriptor_url": "https://chris-page-gov.github.io/xgov-soft-eng-com/okf-explorer.json",
+  "failed_requests": [],
+  "failure": "domain: displayed distribution differs from the checked catalogue",
+  "observed_at": "2026-10-29T00:46:15.567Z",
+  "page_errors": [],
+  "records": 24068,
+  "schema": "xgov-browser-acceptance.v1",
+  "snapshot_id": "704adf7a800d45fa4ab38e8559d8f24d79fc5a14b98cfbce5bc8d33fa9cee0d1",
+  "status": "failed"
+}

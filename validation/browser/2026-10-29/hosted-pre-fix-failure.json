@@ -1,0 +1,5 @@
+{
+  "error": "Browser verification failed: facets: browser acceptance failed",
+  "schema": "xgov-browser-verification.v1",
+  "status": "failed"
+}

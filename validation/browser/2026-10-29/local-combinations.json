@@ -1,0 +1,44 @@
+{
+  "browser": "156.0.8078.48",
+  "checks": [
+    {
+      "expected": 5850,
+      "id": "or-within-facet",
+      "passed": true
+    },
+    {
+      "expected": 3532,
+      "id": "and-across-facets",
+      "passed": true
+    },
+    {
+      "expected": 275,
+      "id": "unknown-fork-is-separate",
+      "passed": true
+    },
+    {
+      "after": 120,
+      "before": 40,
+      "id": "high-cardinality-search-and-paging",
+      "passed": true,
+      "values": 212
+    },
+    {
+      "expected": 25,
+      "id": "available-history-filter",
+      "passed": true
+    }
+  ],
+  "console_errors": [],
+  "consumer_app_tree_sha256": "3a8ccd958e125d79f07e8755878e21ddf10eb60f9bef28364890ef3ad51b2660",
+  "consumer_commit": "1fd1b70663665f8f78f8ab444ec8c2cab3b942b1",
+  "descriptor_sha256": "08ddbe95585fbd1019a857f65b596376602bbdb98b2bc928b0b6c32ba8fa200e",
+  "descriptor_url": "http://127.0.0.1:4180/bundle-03/okf-explorer.json",
+  "failed_requests": [],
+  "observed_at": "2026-10-29T00:01:33.443Z",
+  "page_errors": [],
+  "records": 24068,
+  "schema": "xgov-browser-acceptance.v1",
+  "snapshot_id": "7776b3fadc9339b9f32df41523c79bde56d9d33372d42e85098d0b52441d774c",
+  "status": "passed"
+}

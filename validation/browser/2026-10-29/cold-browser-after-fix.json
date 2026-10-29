@@ -1,0 +1,202 @@
+{
+  "browser": "156.0.8078.48",
+  "checks": [
+    {
+      "expected": 18782,
+      "id": "facet-domain",
+      "observed": 18782,
+      "passed": true,
+      "value": "unclassified"
+    },
+    {
+      "expected": 12451,
+      "id": "facet-capability",
+      "observed": 12451,
+      "passed": true,
+      "value": "unclassified"
+    },
+    {
+      "expected": 10811,
+      "id": "facet-content_type",
+      "observed": 10811,
+      "passed": true,
+      "value": "unclassified"
+    },
+    {
+      "expected": 2247,
+      "id": "facet-publisher",
+      "observed": 2247,
+      "passed": true,
+      "value": "ministryofjustice"
+    },
+    {
+      "expected": 3206,
+      "id": "facet-language",
+      "observed": 3206,
+      "passed": true,
+      "value": "JavaScript"
+    },
+    {
+      "expected": 4226,
+      "id": "facet-language_family",
+      "observed": 4226,
+      "passed": true,
+      "value": "javascript-typescript"
+    },
+    {
+      "expected": 10645,
+      "id": "facet-license",
+      "observed": 10645,
+      "passed": true,
+      "value": "MIT"
+    },
+    {
+      "expected": 15647,
+      "id": "facet-licence_status",
+      "observed": 15647,
+      "passed": true,
+      "value": "identifier-reported-unverified"
+    },
+    {
+      "expected": 15081,
+      "id": "facet-archived",
+      "observed": 15081,
+      "passed": true,
+      "value": "false"
+    },
+    {
+      "expected": 21867,
+      "id": "facet-is_fork",
+      "observed": 21867,
+      "passed": true,
+      "value": "false"
+    },
+    {
+      "expected": 10644,
+      "id": "facet-push_age",
+      "observed": 10644,
+      "passed": true,
+      "value": "over-3-years"
+    },
+    {
+      "expected": 8998,
+      "id": "facet-push_year",
+      "observed": 8998,
+      "passed": true,
+      "value": "2026"
+    },
+    {
+      "expected": 15563,
+      "id": "facet-description_status",
+      "observed": 15563,
+      "passed": true,
+      "value": "supplied"
+    },
+    {
+      "expected": 14399,
+      "id": "facet-sbom",
+      "observed": 14399,
+      "passed": true,
+      "value": "present"
+    },
+    {
+      "expected": 9669,
+      "id": "facet-sbom_resolution",
+      "observed": 9669,
+      "passed": true,
+      "value": "not-reported"
+    },
+    {
+      "expected": 14374,
+      "id": "facet-dependency_context",
+      "observed": 14374,
+      "passed": true,
+      "value": "unresolved-versions-reported"
+    },
+    {
+      "expected": 9669,
+      "id": "facet-package_volume",
+      "observed": 9669,
+      "passed": true,
+      "value": "not-reported"
+    },
+    {
+      "expected": 14399,
+      "id": "facet-quality_report_age",
+      "observed": 14399,
+      "passed": true,
+      "value": "within-48-hours-of-snapshot"
+    },
+    {
+      "expected": 23043,
+      "id": "facet-history_coverage",
+      "observed": 23043,
+      "passed": true,
+      "value": "not-collected"
+    },
+    {
+      "expected": 24022,
+      "id": "facet-recent_commit_band",
+      "observed": 24022,
+      "passed": true,
+      "value": "not-collected"
+    },
+    {
+      "expected": 24022,
+      "id": "facet-churn_availability",
+      "observed": 24022,
+      "passed": true,
+      "value": "not-collected"
+    },
+    {
+      "expected": 24022,
+      "id": "facet-recent_contributor",
+      "observed": 24022,
+      "passed": true,
+      "value": "not-collected"
+    },
+    {
+      "expected": 24022,
+      "id": "facet-historical_contributor",
+      "observed": 24022,
+      "passed": true,
+      "value": "not-collected"
+    },
+    {
+      "expected": 24068,
+      "id": "facet-metadata_change",
+      "observed": 24068,
+      "passed": true,
+      "value": "unchanged"
+    },
+    {
+      "expected": 24068,
+      "id": "facet-metadata_change_degree",
+      "observed": 24068,
+      "passed": true,
+      "value": "0-fields"
+    },
+    {
+      "expected": 1,
+      "id": "hyphenated-repository-search",
+      "passed": true
+    },
+    {
+      "expected": 0,
+      "id": "zero-result-search",
+      "passed": true
+    }
+  ],
+  "console_errors": [],
+  "consumer_app_tree_sha256": "3a8ccd958e125d79f07e8755878e21ddf10eb60f9bef28364890ef3ad51b2660",
+  "consumer_commit": "6fc781ce2b350285705d670c51ca400983d8fad1",
+  "descriptor_sha256": "2f2731d8e98c2706ae35855c1a29419390633def1f574daec379210e24775992",
+  "descriptor_url": "https://chris-page-gov.github.io/xgov-soft-eng-com/okf-explorer.json",
+  "failed_requests": [],
+  "observed_at": "2026-10-29T00:47:20.247Z",
+  "page_errors": [],
+  "records": 24068,
+  "schema": "xgov-browser-acceptance.v1",
+  "snapshot_id": "704adf7a800d45fa4ab38e8559d8f24d79fc5a14b98cfbce5bc8d33fa9cee0d1",
+  "status": "passed"
+}

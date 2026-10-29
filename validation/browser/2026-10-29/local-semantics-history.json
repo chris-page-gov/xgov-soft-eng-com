@@ -1,0 +1,49 @@
+{
+  "browser": "156.0.8078.48",
+  "checks": [
+    {
+      "contributor": "AndriaTurner",
+      "historical": 299,
+      "id": "history-counts-period-tables-and-provenance",
+      "observation_sha256": "2e9c32ed9b98ed517af9f54c84cdbaa2fdb8124ef78d3b3ed337ca998543bdef",
+      "passed": true,
+      "recent": 8
+    },
+    {
+      "assertion_id": "urn:okf:xgov:assertion:0d7028a9d7391ab2f719986d03ff22f9d315ef423421569cc662ba80986c463a",
+      "id": "semantic-assertion-inverse-measurement-and-source",
+      "passed": true
+    },
+    {
+      "id": "contributor-target-and-inverse-source-navigation",
+      "passed": true
+    },
+    {
+      "id": "missing-history-is-not-zero",
+      "passed": true,
+      "repository": "alan-turing-institute/ai-rss-feeds"
+    },
+    {
+      "id": "narrow-viewport-navigation-and-reading",
+      "passed": true,
+      "width": 390
+    },
+    {
+      "id": "repository-deep-link-reload",
+      "passed": true,
+      "url": "http://127.0.0.1:4180/explore/?bundle=http%3A%2F%2F127.0.0.1%3A4180%2Fbundle-03%2Fokf-explorer.json&view=narrative&q=111Online%2Fnhs111-resources#record:cmVwb3NpdG9yaWVzLzExMW9ubGluZSUyRm5oczExMS1yZXNvdXJjZXMubWQ"
+    }
+  ],
+  "console_errors": [],
+  "consumer_app_tree_sha256": "3a8ccd958e125d79f07e8755878e21ddf10eb60f9bef28364890ef3ad51b2660",
+  "consumer_commit": "1fd1b70663665f8f78f8ab444ec8c2cab3b942b1",
+  "descriptor_sha256": "08ddbe95585fbd1019a857f65b596376602bbdb98b2bc928b0b6c32ba8fa200e",
+  "descriptor_url": "http://127.0.0.1:4180/bundle-03/okf-explorer.json",
+  "failed_requests": [],
+  "observed_at": "2026-10-29T00:01:35.884Z",
+  "page_errors": [],
+  "records": 24068,
+  "schema": "xgov-browser-acceptance.v1",
+  "snapshot_id": "7776b3fadc9339b9f32df41523c79bde56d9d33372d42e85098d0b52441d774c",
+  "status": "passed"
+}
