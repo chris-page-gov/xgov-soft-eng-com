@@ -6,10 +6,24 @@ daily dataset snapshots have separate identifiers.
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-29
+
 ### Added
 
 - Public editions of the Claude and Gemini evaluations with private paths
   removed, frozen evidence references and verified editorial corrections.
+
+- Static GitHub Pages editions of both reports, with catalogue and Explorer
+  navigation, accessible tables, mobile text wrapping and manifest-bound sources.
+- Eight repeatable live browser checks for report navigation, identities,
+  provenance, hashes, mobile layout and private-path exclusions, required by CI.
+- A curated review of the later Claude UI capture, recording displayed
+  requests, outcomes, truncation and explicit execution limits.
+
+### Fixed
+
+- Explain Claude’s 1,028 checksum count as source bindings, rather than all
+  controlled inputs and generated outputs, using the supplied command history.
 
 ## [0.4.0] - 2026-10-29
 
@@ -133,7 +147,8 @@ daily dataset snapshots have separate identifiers.
 - Pin a runner that supports the governed Python version.
 - Exclude Finder metadata from reproducibility checks.
 
-[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.0...v0.2.1

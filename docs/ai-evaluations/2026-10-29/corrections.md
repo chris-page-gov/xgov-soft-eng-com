@@ -12,11 +12,14 @@ reproduced. Corrections below are bounded to the cited source or retained data.
 | C1 | No published archive checksum was found | The release publishes SHA256SUMS, including archive digest d739a2a0…b14d1ae. This matches the hash reported by Claude. |
 | C2 | Search silently loses 200 of 400 security matches | The result bound is real. The consumer reports total matches, truncation and display-limit messages. Claude did not exercise the UI, so silence was not established. |
 | C3 | Browser acceptance is pending | Browser UNTESTED correctly describes Claude's own run. Separate public acceptance receipts record 38 passing Chrome checks for this v0.3.0 snapshot. Pending wording in the archived documentation lagged those receipts. |
-| C4 | The build manifest verification row contains 1,028 controlled inputs and outputs | The exact frozen manifest lists 75 controlled inputs, 3,321 outputs and 1,025 history observations. The report's count needs reconciliation with its original verification code before its aggregate checksum claim can be accepted. |
+| C4 | The build manifest verification row contains 1,028 controlled inputs and outputs | The exact frozen manifest lists 75 controlled inputs, 3,321 outputs and 1,025 history observations. The supplied UI capture now explains the count: request 9 selects 1,025 history observations and three other source bindings. It does not enumerate the path-to-digest maps for controlled inputs or outputs. The displayed result is a bounded source-binding check, not verification of all build files. See the capture review. |
 | C5 | Recent changes are roughly weekly | The retained observation reports 8 commits across 7 active weeks in a 13-week window. This is an observed distribution, not a weekly maintenance commitment. |
 | C6 | A push timestamp proves code activity in the history window | It records a reported push. It does not establish a non-zero default-branch contributor count, the content of a change or its applicability to the statistics window. |
 | C7 | The 14,326 SBOM-path figure is stale | It describes the explicitly labelled initial source snapshot. The evaluated later snapshot contains 14,399 distinct repositories with paths. Historical figures need clear dates/source hashes rather than replacement by a moving latest count. |
 | C8 | Abbreviated evidence paths identify exact archived files | Abbreviations are descriptive references, not literal paths. Some observation suffixes are inconsistent. Resolve the full digest through the frozen history index; do not invent a file from an abbreviated name. |
+
+The later [UI capture review](claude-capture-review.md) supersedes the earlier
+missing-command-history status. It preserves truncation and execution limits.
 
 Verified examples and source:
 

@@ -105,3 +105,29 @@ the data archive. Pages verifies every listed release asset before copying the
 already-assured generated files. No model API is called. A failed verifier
 blocks publication. The Python 3.12 standard-library helper can be copied out
 of the reviewed ZIP; do not execute code from arbitrary data archives.
+
+## Publishing evaluation reports
+
+The reviewed Markdown editions in `docs/ai-evaluations/2026-10-29/` are the
+source of truth. `scripts/report_pages.py` renders their bounded Markdown
+subset as escaped static HTML in `generated/reports/`, with readable tables,
+report navigation, source Markdown and provenance files. It admits only the
+named public files, checks their complete SHA256SUMS inventory and rejects
+tampering before rendering. Raw HTML is escaped; links permit credential-free
+HTTP(S), local report pages and repository documentation. Private captures
+and model-supplied commands are neither copied nor executed.
+
+The ordinary catalogue build includes these report bytes in its build manifest.
+Pages promotes the same assured archive outputs. The catalogue landing page
+links to the collection only when its index is declared in that manifest.
+The descriptor's optional `related_links` publishes the canonical HTTPS report
+URL for Explorer. Each entry has `label`, `url` and `kind`; Explorer bounds and
+validates this navigation metadata before displaying it. These are publication
+links, not repository records or semantic assertions. Existing descriptors
+without the optional field remain supported.
+
+After editing a public edition or supplement, update its publication manifest
+report/supporting-file hashes and SHA256SUMS before building. Check source
+links, privacy, deterministic rendering and the real deployed journeys from
+both the catalogue and Explorer. Keep historical model claims, displayed UI
+outcomes, independent validation and new model runs explicitly separate.

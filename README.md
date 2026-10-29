@@ -3,6 +3,9 @@ okf_version: "0.2"
 ---
 # Cross-government software discovery OKF+
 
+[Claude and Gemini evaluation reports](https://chris-page-gov.github.io/xgov-soft-eng-com/reports/) ·
+[Claude UI capture review](docs/ai-evaluations/2026-10-29/claude-capture-review.md)
+
 An independent experimental Open Knowledge Format pack for discovering UK
 public-sector software repositories. It adds task and domain suggestions,
 transparent filters and an evidence-linked Semantic Web to the community's

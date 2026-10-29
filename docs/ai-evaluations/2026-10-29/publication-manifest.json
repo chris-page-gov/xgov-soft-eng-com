@@ -13,14 +13,21 @@
       "archive_sha256": "d739a2a058425eb40e6515a7489bbf3f5d33b439803caa3c2387ca1b5b14d1ae",
       "original_sha256": "439d91e7889adba9eea19c34b9526f1777e785eaeafcf9a3e1706b3e36b8ba9a",
       "public_report": "claude.md",
-      "public_sha256": "ad738c74668db8dbeb270345c78ca6923c43f9fd0dc998c089372da80736225b",
+      "public_sha256": "6abdeb43d96efe05171ba68948ac5ba972e4f5684af77b9efb799cd777a6408c",
       "editorial_changes": [
         "local file URLs replaced",
         "unverified line fragments removed",
         "prominent version/scope/correction notices added",
-        "British English prose check; schema identifiers preserved"
+        "British English prose check; schema identifiers preserved",
+        "later expanded UI capture reviewed; missing-history status superseded; checksum coverage corrected"
       ],
-      "original_files_published": false
+      "original_files_published": false,
+      "supplement": {
+        "review": "claude-capture-review.md",
+        "index": "claude-capture-review.json",
+        "capture_sha256": "7111cae8207221509061ae9ad7e3a2cb370f4e3c7a97fd16181b3533a9e836d2",
+        "raw_capture_published": false
+      }
     },
     {
       "slug": "gemini",
@@ -45,10 +52,13 @@
   "authority": "Owner requested preparation of public editions; no model-provider or government endorsement asserted.",
   "privacy": "Local paths removed; original files and execution logs are not published.",
   "supporting_files": {
-    "corrections.md": "3da8fae1129b1661d94dc598225203e9c42a5e7df6df7eee3f351a2a180dca69",
+    "README.md": "673dd9cb07c26ca4cdeb6129955d06c2befbc1073d63c3b1a443ba321be9690b",
+    "claude-capture-review.json": "f0e69506b208e74b372d788af954f27b83cc4f3043ad4d61d5cc3e690d0c29c8",
+    "claude-capture-review.md": "98dc3e25cdd72369dede1a1701205291dc34c422a470536e1586bf9c2e85e83c",
+    "claude.md": "6abdeb43d96efe05171ba68948ac5ba972e4f5684af77b9efb799cd777a6408c",
+    "corrections.md": "71e2937776818965054df3f23eca8c5d3e13e410b97831e515551c9ee0d1c076",
     "evidence-map.json": "63d00054a49fdc510f43989736ee4392d8e710d8360fdaf9aef82b0fb9d536bc",
-    "README.md": "c67e1352e34128952dddaff89d475e3751912d5e19b03347a020f034bbdcb8bd",
-    "gemini.md": "4975e996835dff13946bd466564e854223abe7908e0fb79bd11e96d6fa912125",
-    "claude.md": "ad738c74668db8dbeb270345c78ca6923c43f9fd0dc998c089372da80736225b"
-  }
+    "gemini.md": "4975e996835dff13946bd466564e854223abe7908e0fb79bd11e96d6fa912125"
+  },
+  "updated_on": "2026-10-29"
 }

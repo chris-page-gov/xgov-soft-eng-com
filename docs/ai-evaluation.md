@@ -21,3 +21,18 @@ wrong-version archive fails before evaluation. verification-result.json is also
 published beside the archive, ZIP and SHA256SUMS. Compare facts and identities
 with expected-results.json; checksum/pin status reflects which companion files
 were supplied. Keep manual domain interpretation distinct from automated facts.
+
+## Reading the historical evaluations
+
+The [public report collection](ai-evaluations/2026-10-29/README.md) preserves
+the original Claude and Gemini claims with editorial corrections. The later
+[Claude UI capture review](ai-evaluations/2026-10-29/claude-capture-review.md)
+records displayed command history, explicit errors, truncation and replay
+limits. Its curated index is public; the raw capture remains private. A UI
+Response label does not prove exit code zero. Neither historical report is
+acceptance of a newer bundle or a controlled comparison of model capability.
+
+The catalogue and Explorer link to the HTML report collection on Pages. The
+HTML, reviewed Markdown, provenance and checksums are built and released
+together. The archive-pinned pack above remains the repeatable test route
+for Claude and Gemini; a reviewed historical capture is not its replacement.

@@ -20,3 +20,9 @@ is attributed to its upstream project, not a blanket grant over all software.
 Issue titles and repository names identify linked public material. Reports
 paraphrase findings. Private reports, credentials, personal contact details
 and access-bearing meeting links are outside publication scope.
+
+The owner authorised public editions of the supplied Claude and Gemini reports
+and their publication on GitHub Pages. Only the reviewed editions in
+`docs/ai-evaluations/` and the curated Claude capture review are admitted.
+Original reports and raw UI captures remain private. Model/provider names
+identify the owner's attribution and make no endorsement claim.

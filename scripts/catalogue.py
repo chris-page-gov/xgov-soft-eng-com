@@ -20,6 +20,7 @@ import urllib.parse
 import urllib.request
 import facets as facet_tools
 import explorer_projection
+import report_pages
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = "urn:okf:xgov:"
@@ -390,6 +391,9 @@ def build(root, output, receipt, previous=None):
     manifest = {"title": "Experimental cross-government software catalogue", "generated_at": observed, "counts": dict(counts), "indexes": {"overview": "data/overview.json", "search": "data/search/manifest.json", "facets": "data/facets.json"}, "chunks": {"datasets": chunk_paths, "resources": [], "publishers": ["data/accounts.json"], "relationships": edge_paths}}
     write(output / "data/manifest.json", manifest)
     descriptor = {"schema": "okf-explorer-large-corpus.v1", "kind": "okf-large-corpus", "okf_version": "0.2", "title": "Experimental cross-government software OKF+", "description": "Source-reported repository metadata with explicit gaps and unreviewed domain and task suggestions.", "version": tomllib.loads((root/'pyproject.toml').read_text())['project']['version'], "publication_state": "exploratory", "status": "local-experiment", "profile": PROFILE, "snapshot_id": build_id, "generated_at": observed, "counts": dict(counts), "entrypoints": {"data_manifest": "data/manifest.json", "overview_index": "data/overview.json", "search_manifest": "data/search/manifest.json", "markdown_index": "index.md"}, "source": {"url": cfg["source_url"], "source_sha256": receipt["sha256"], "observed_at": observed}, "semantic_descriptor": "semantic/manifest.json", "vocabulary": {"record_singular": "repository", "record_plural": "repositories", "publisher_singular": "hosting account", "publisher_plural": "hosting accounts", "format_plural": "languages"}, "warnings": warnings}
+    report_links = report_pages.generate(root, output)
+    if report_links:
+        descriptor['related_links'] = report_links
     write(output / "okf-explorer.json", descriptor)
     descriptor['identities']={'build_id':build_id,'source_snapshot_iri':snapshot,'source_sha256':receipt['sha256'],'history_observation_policy':'Independent observation dates and hashes; repository-identity join recorded per profile.'}
     descriptor['history_coverage']={'counts':history_coverage,'message':coverage_text}

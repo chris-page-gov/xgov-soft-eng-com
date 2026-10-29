@@ -74,6 +74,19 @@ class PagesTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "symlink"):
                 pages.create_candidate(root, Path(tmp) / "pages", check=False)
 
+    def test_report_navigation_appears_only_for_manifest_bound_report_pages(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)/'repo';root.mkdir();generated,manifest=self.fixture(root)
+            first=Path(tmp)/'without-reports'
+            pages.create_candidate(root,first,check=False)
+            self.assertNotIn('reports/',(first/'index.html').read_text())
+            report=generated/'reports/index.html';report.parent.mkdir();report.write_bytes(b'<h1>Reviewed reports</h1>')
+            manifest['outputs']['reports/index.html']=hashlib.sha256(report.read_bytes()).hexdigest()
+            c.write(generated/'build-manifest.json',manifest)
+            second=Path(tmp)/'with-reports';pages.create_candidate(root,second,check=False)
+            self.assertIn('Claude and Gemini evaluation reports',(second/'index.html').read_text())
+            self.assertEqual((second/'reports/index.html').read_bytes(),report.read_bytes())
+
     def test_refuses_existing_destination(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "repo"

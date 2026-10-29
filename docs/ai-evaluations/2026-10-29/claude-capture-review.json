@@ -1,0 +1,420 @@
+{
+  "schema": "xgov-public-ui-capture-review.v1",
+  "reviewed_on": "2026-10-29",
+  "input_build_id": "cf3cc937490d7f3f4de51883e3f8e6d6041c5e24e777d2cecf4b10e95e42b94d",
+  "input_archive_sha256": "d739a2a058425eb40e6515a7489bbf3f5d33b439803caa3c2387ca1b5b14d1ae",
+  "capture_sha256": "7111cae8207221509061ae9ad7e3a2cb370f4e3c7a97fd16181b3533a9e836d2",
+  "capture_bytes": 130343,
+  "counts": {
+    "complete_python_heredocs": 24,
+    "outcome_labels": {
+      "Error": 5,
+      "Response": 30
+    },
+    "requests": 35,
+    "shortened_requests": 1,
+    "shortened_response_regions": 15
+  },
+  "review_checks": [
+    "Capture digest checked against admission record",
+    "All 35 request and 35 response regions match retained source byte ranges",
+    "All 24 complete Python bodies match retained source byte ranges",
+    "Recovered code inspected as text; no recovered command or model executed"
+  ],
+  "model_identity": "Opus 5.5, Medium was visible in the inspected current selector; historical per-call identity is not established.",
+  "limitations": [
+    "UI Response labels do not establish exit code zero or substantive test success.",
+    "Response regions can include subsequent model narrative; they are not claimed to be exact stdout/stderr.",
+    "Omitted UI rows and persisted remote outputs have not been reconstructed.",
+    "Some requests depend on a helper whose creation is shortened in the UI, plus original absolute paths and remote scratch files.",
+    "Historical per-call model identity and timestamps are not established by this capture."
+  ],
+  "raw_capture_published": false,
+  "records": [
+    {
+      "number": 1,
+      "purpose": "Live descriptor shell access",
+      "source_request_line": 49,
+      "ui_outcome_label": "Error",
+      "explicit_exit_code": 1,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "28deadaae9380423155fff6278e523c8aa2004e69c40a8d5415fd8f323022967",
+      "response_region_sha256": "edd8a2c4603792d2a67d3eaf279551b750328ad83db43946e63e4dace5494016"
+    },
+    {
+      "number": 2,
+      "purpose": "Frozen archive download",
+      "source_request_line": 66,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "825716e63f430765b3a246d03239acfa31d04aa15a06c651a890d7cf6faec6f5",
+      "response_region_sha256": "175c7954f2e076c1d3da8512d39455c1ab79135292fe270787bc2aaac2fb9a49"
+    },
+    {
+      "number": 3,
+      "purpose": "Archive inventory and digest",
+      "source_request_line": 77,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "e1b94954f26ba2912ba73d1b0e81e5e49f65c46b80b15f6deb7315495eff8b24",
+      "response_region_sha256": "59d1cd5b7b243d0da0ff784edbb875e05a918c4792ba1e6ed4f14c3b51fab29c"
+    },
+    {
+      "number": 4,
+      "purpose": "Archive directory inventory",
+      "source_request_line": 155,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "2a1e622caebf697d1c7bc6fe88954b18caf4fe59b9b78675c6287c7a962f487c",
+      "response_region_sha256": "d072a4122c34b97df64a0e06ce71003c66910c7f5875e8c973556dab1c75efc4"
+    },
+    {
+      "number": 5,
+      "purpose": "Descriptor and shard layout",
+      "source_request_line": 283,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "3e32adf6c04a58712519da845f61d96fc45605ed45d4f9ff7bdbb0ff6a231f5f",
+      "response_region_sha256": "124eeb918b547d1923d99e3ee036fe6f3ffce84c2536f4ec85b6d79a61ba680b"
+    },
+    {
+      "number": 6,
+      "purpose": "Descriptor entrypoint digests",
+      "source_request_line": 429,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "d01618d2b0c7b901182c9cb753de0697e3f893464961167b26f8f8a6ee0d68a6",
+      "response_region_sha256": "ec4bd7b6b51453a3a0f1c56ce41410e84224ed892791919fd28676dffabac993"
+    },
+    {
+      "number": 7,
+      "purpose": "Manifest traversal from generated directory",
+      "source_request_line": 447,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "40a7d6a80d7dd075adb0ce3a6d93efca463c4832c57776ed7dc8a7f366e9c301",
+      "response_region_sha256": "418657145e5507530b023c67dbea0e424d03a15b012c8f282e39ce1f7194efa5"
+    },
+    {
+      "number": 8,
+      "purpose": "Inspect persisted checksum results",
+      "source_request_line": 542,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "3ec14aadaf498d8a689778caa216dc926ad02a7c802f6f5cf30bb1bbcca38fc4",
+      "response_region_sha256": "5d25beb955c06a5219735555dc5078f8b70e737a1048ecfbbdb1543c87899f74"
+    },
+    {
+      "number": 9,
+      "purpose": "Manifest traversal from archive root",
+      "source_request_line": 584,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "f374aa0c839309c0528ebd8cc2832f02ee25460357a5727ab2596a0e81482d6c",
+      "response_region_sha256": "752d5221b4f56898e5e7d3b6d9b0386f74d958f9317d82ddaeae4dc162bf44cc"
+    },
+    {
+      "number": 10,
+      "purpose": "History and discovery documentation",
+      "source_request_line": 666,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "2141330dc99b427b84e86cef87eef582935bd7dc4d13e7a16bbed9d8994a293b",
+      "response_region_sha256": "03d7045ed80035534ea02b1b03111a33aa6591fcaa2b0157756d6e4a19c80692"
+    },
+    {
+      "number": 11,
+      "purpose": "Semantic and facet documentation",
+      "source_request_line": 746,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "e1ccb0797fab4fbd2889d9d4c0d253817c87f88af24ec0c3bcab83795f5ef1d4",
+      "response_region_sha256": "21ea7fefd8a18d7dbd2bb37a4657cba8a5f582d1ac15eedad659c332f37825c3"
+    },
+    {
+      "number": 12,
+      "purpose": "Load record shards and NHS profile",
+      "source_request_line": 818,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "1db7168a974a6eb1f258006acaf204e8f916979bafb2f31fd9de4ad0a56fee33",
+      "response_region_sha256": "43c842c7dcc5d30a92e3768d65c47ed6b0f27541ee2a970da12b67e81e09eeff"
+    },
+    {
+      "number": 13,
+      "purpose": "Inspect NHS narrative",
+      "source_request_line": 1076,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "a51e7745a4a1497c2ea6163b3d0e96b79b660d90e6bb27f6f0148e4b7f6c1581",
+      "response_region_sha256": "92616be53374fe55c6c68c11af07de2350a81893be3be2f46a4c7ef3db957823"
+    },
+    {
+      "number": 14,
+      "purpose": "Read scratch records using relative path",
+      "source_request_line": 1222,
+      "ui_outcome_label": "Error",
+      "explicit_exit_code": 1,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "93310706c93cffda3405de17adde2452469bca5a75faba4173dcc5aee10f9f2b",
+      "response_region_sha256": "b43fe12a5daa155a783f5ce246520741df50cd82545ebf06d35de1a7a8631bf1"
+    },
+    {
+      "number": 15,
+      "purpose": "Correct scratch path and inspect search contract",
+      "source_request_line": 1242,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "bfb638f51bd2243a8e561a0459e0c1ce9e5015fc69c9f1200e77e468f2acebe8",
+      "response_region_sha256": "dd97eac1ad90df01828554748e91023b0c011ef2e730f77bb86b1c58ad9e2c14"
+    },
+    {
+      "number": 16,
+      "purpose": "Read facet definitions",
+      "source_request_line": 1277,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "04413cce0ee012a5cd49701d2c3b401d6d4a27d6030f196b297754e3be6e167e",
+      "response_region_sha256": "451036570884aed8ab6f81d707ab6e4121f8073b93b60e5e97cd4fb61f983fba"
+    },
+    {
+      "number": 17,
+      "purpose": "Create discovery helper (shortened request)",
+      "source_request_line": 1316,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": true,
+      "response_shortened": false,
+      "request_sha256": "ed506f6cb6d7f81961c47ee81920470c02128c2817135a5ca8dd7d889d7c6109",
+      "response_region_sha256": "721ff869e6040495156a54dffd34d6bc8373cb5abb4229f7f48c67bf145f1282"
+    },
+    {
+      "number": 18,
+      "purpose": "Exact search and targeted record lookup",
+      "source_request_line": 1361,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "2ea573577c5114cbf29ff4bdb8ae98159fd9f160c7feeff8747c2d9a6f70a919",
+      "response_region_sha256": "4c5f5283f4b29bc0d71b2ce0ede1f2387dbde22e0143449e2ea1e1ae7e4e004f"
+    },
+    {
+      "number": 19,
+      "purpose": "Validate record-locator buckets",
+      "source_request_line": 1389,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "e98d2d7a4329821d85ff6f3384e4ec1a78d24e77ee398d932587bc6c9220d4fa",
+      "response_region_sha256": "adbb0146e88dfb0c7487d51f528980843abe17e8a8e341ac8e774740c0800f39"
+    },
+    {
+      "number": 20,
+      "purpose": "Python/SBOM intersection and history states",
+      "source_request_line": 1399,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "eb185aacdfb3faefda504152dd0cb8c30660afa81c50f414706cd6d97df1323a",
+      "response_region_sha256": "51c2abaa9c7d7fc7ec6e75907a6ccdcfaedc375864e48b0e8872537e322d4fb5"
+    },
+    {
+      "number": 21,
+      "purpose": "Security queries and classification examples",
+      "source_request_line": 1442,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "b09c416e374a593f13bba3267f68f749fe7dd45822f79a134e9a1f6b08af5e27",
+      "response_region_sha256": "27e3a1de6885705b3dfc84d8ddfe0407d0dcee82544326e8f2678af2e62228d5"
+    },
+    {
+      "number": 22,
+      "purpose": "Inspect prefix index and selected examples",
+      "source_request_line": 1488,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "1fd0cc1e430690933939865756580daf051af6fb6de356f85998f859f67f0141",
+      "response_region_sha256": "d239d98fd0410ae6c676833d7a8258c5990db8df577f12221d9fbe6a9b7cf964"
+    },
+    {
+      "number": 23,
+      "purpose": "Read compressed adjacency as plain JSON",
+      "source_request_line": 1512,
+      "ui_outcome_label": "Error",
+      "explicit_exit_code": 1,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "3856c55d87262f170dfab5877663df6ce71c646619dff24a555087f59cc5e0fc",
+      "response_region_sha256": "062ec23dff7c6c7eb51b2a94a0a9bec401504b07ff35d773cc86e480678d8c7f"
+    },
+    {
+      "number": 24,
+      "purpose": "Validate adjacency digests and inspect rows",
+      "source_request_line": 1540,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "54cd8712833e4be77a7bd4fb353d95c8429da50724e52ebed2a7bae395f5c815",
+      "response_region_sha256": "6819369387f5248aa7445557cab7900185209f2328234675c6ab29a8c7fc25cf"
+    },
+    {
+      "number": 25,
+      "purpose": "Inspect NHS incident assertions",
+      "source_request_line": 1654,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": true,
+      "request_sha256": "71984595d913a3984ced3d2a84a741c91390ba4bce9c29b4b12a2c20f4017082",
+      "response_region_sha256": "e35227fe5f3fc0dcc73347819671d6e080750dc6016b8cf4af11dbee0c4232f3"
+    },
+    {
+      "number": 26,
+      "purpose": "Contributor and concept inverse lookup",
+      "source_request_line": 1709,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "54dbcf75245d3a94b48876845cc999ea13ca6935dac3cc0024610985c25e1478",
+      "response_region_sha256": "fa5abb03353bde7745a56495ee873dba3db1d16dc479f6d4c125f5355b8f3a0b"
+    },
+    {
+      "number": 27,
+      "purpose": "RDF inspection with undefined helper alias",
+      "source_request_line": 1753,
+      "ui_outcome_label": "Error",
+      "explicit_exit_code": 1,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "4302247e6d0facc61a809040949ff85b38a2e3fa3dda928a840e8d1d07cf17ff",
+      "response_region_sha256": "8fbd8a0540db84b97c767700e2e35a21de68d1aee3eb08a0ac8c455fd95aee10"
+    },
+    {
+      "number": 28,
+      "purpose": "RDF assertion inspection and gzip format error",
+      "source_request_line": 1782,
+      "ui_outcome_label": "Error",
+      "explicit_exit_code": 1,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "1ace52890f4b69e7d2aa0e13548609014a82634ddc88223627ebac1df4f99fb0",
+      "response_region_sha256": "af40f7b6f50050ed31dc4f12eb1ec0fdab23d452b5ef29ecbf3a72967dfa291b"
+    },
+    {
+      "number": 29,
+      "purpose": "Correct mixed-compression RDF inspection",
+      "source_request_line": 1881,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "8639084a7ce09fb2cabd7ea53f9466bcb5b7ffcfd6d07b4890c5159053908f87",
+      "response_region_sha256": "c6b8ecf73c1a59f887efc0fb19eef5dc5fdb2a48249af8ba9a113aad24f29ef8"
+    },
+    {
+      "number": 30,
+      "purpose": "Source-feed digest and assertion evidence",
+      "source_request_line": 1912,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "bd0c93f7090989e04d97fc9492bdce80d5949605f700ca8897cb1375799fa9d3",
+      "response_region_sha256": "11271d85312190cd787810485ddf35fbf3a1745added4e8e9c990cf3a1da7ce1"
+    },
+    {
+      "number": 31,
+      "purpose": "Contributor totals, weekly totals and coverage",
+      "source_request_line": 2004,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "676459b76524217b7dfa13c34b0bef67fbfcf93313f02f04cbdfbfa7550e5fea",
+      "response_region_sha256": "787847463c60c988fcc39b4b1fb3483ef125d6314ecf2dde66eb10c095fa5083"
+    },
+    {
+      "number": 32,
+      "purpose": "History index and pending-state examples",
+      "source_request_line": 2042,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "e47c5897483c92007de63f80affca3b46406c348813edf5204457607c2b17ae2",
+      "response_region_sha256": "136fde18d0933cee0d8006310459838aa330926f98f58d7778ef84394d71db1b"
+    },
+    {
+      "number": 33,
+      "purpose": "Inspect one pending provider observation",
+      "source_request_line": 2092,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "2cb6c67581386c56021e304a51e0dffe12d5f6552ead3035c19e003a92bec0b8",
+      "response_region_sha256": "dd8e7982f1e9c89812ed60491f35615009734a14cc5844a83c815f9989552737"
+    },
+    {
+      "number": 34,
+      "purpose": "Facet counts and SBOM-quality cross-checks",
+      "source_request_line": 2132,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "cde8793f7dac59f247470be5d55daa9edb6d8622306b0d0fb7d3fdfa4cdb8f80",
+      "response_region_sha256": "f9acc8161e088a33fc44fc2290f2922648efb11f926625b0f324a144f6c5af17"
+    },
+    {
+      "number": 35,
+      "purpose": "Inspect report output directory",
+      "source_request_line": 2171,
+      "ui_outcome_label": "Response",
+      "explicit_exit_code": null,
+      "request_shortened": false,
+      "response_shortened": false,
+      "request_sha256": "e80373367fc2106089ef167d41d5f0cc45e5af9cdcca46b2401a80c0c48a73e6",
+      "response_region_sha256": "d17b550a413e8d5300bba8b02847463ad6c8937c476b0583ff6bc10b165a4cc9"
+    }
+  ]
+}

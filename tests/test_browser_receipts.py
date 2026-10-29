@@ -23,7 +23,7 @@ class BrowserReceiptTests(unittest.TestCase):
     def test_accepts_complete_consistent_results(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);r=self.fixture(root);self.write(root,r)
-            self.assertEqual(b.collect(root/'build-manifest.json',root)['checks'],40)
+            self.assertEqual(b.collect(root/'build-manifest.json',root)['checks'],48)
 
     def test_rejects_false_success_missing_checks_and_mixed_snapshots(self):
         for mutation in ('status','check','snapshot','consumer','consumer-format','request'):
@@ -37,6 +37,13 @@ class BrowserReceiptTests(unittest.TestCase):
                 else:r['failed_requests']=[{'error':'failed'}]
                 self.write(root,receipts)
                 with self.assertRaises(ValueError):b.collect(root/'build-manifest.json',root)
+
+    def test_report_navigation_checks_are_required(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);receipts=self.fixture(root)
+            receipts['reports']['checks'].pop();self.write(root,receipts)
+            with self.assertRaisesRegex(ValueError,'reports: required browser checks'):
+                b.collect(root/'build-manifest.json',root)
 
     def test_cli_errors_and_quality_tampering_fail_even_with_zero_cli_exit(self):
         with tempfile.TemporaryDirectory() as directory:

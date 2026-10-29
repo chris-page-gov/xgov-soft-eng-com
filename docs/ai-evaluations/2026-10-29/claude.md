@@ -21,8 +21,11 @@ frozen-release references. Original line fragments are not endorsed as exact
 citations. Archive paths remain visible because generated files are not all
 published as individual web pages. Prose uses British English; exact schema
 identifiers and quoted source material retain their original spelling.
-The original run's tool logs and verifier scripts were not supplied with the
-report; this edition does not independently certify all its claimed executions.
+The expanded UI capture was supplied after the first public edition. Its
+[editorial review](claude-capture-review.md) now records the displayed command
+history, responses and limits. The capture supports several reported results
+and explains the checksum-count discrepancy; it is not a complete portable
+replay or independent certification of all claimed executions.
 
 ## Original report with annotations
 
@@ -30,7 +33,7 @@ report; this edition does not independently certify all its claimed executions.
 
 Test date: 29 October 2026 · Read-only metadata test · No repository code was executed or scanned, and no maintainers were contacted.
 
-> **Editorial note C1/C4:** The archive checksum is published separately. The report's aggregate checksum count is not a reproduced audit; see [the correction ledger](corrections.md#claude-report).
+> **Editorial note C1/C4:** The archive checksum is published separately. The supplied UI capture explains the 1,028 count as source bindings rather than all controlled inputs and outputs; see [the correction ledger](corrections.md#claude-report).
 
 ### 0. Access and snapshot
 
