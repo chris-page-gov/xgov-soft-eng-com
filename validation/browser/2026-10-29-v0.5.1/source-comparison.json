@@ -1,0 +1,49 @@
+{
+  "counts_before": {
+    "archived": 8944,
+    "datasets": 24019,
+    "duplicate_rows": 69,
+    "missing_description": 8485,
+    "missing_isFork": 275,
+    "missing_language": 2485,
+    "missing_license": 7666,
+    "organisations": 212,
+    "publishers": 212,
+    "raw_rows": 24088,
+    "records": 24019,
+    "relationships": 116619,
+    "resources": 0,
+    "sbom_paths": 14309,
+    "unclassified_capabilities": 12393,
+    "unclassified_domains": 18737,
+    "unresolved_licences": 8400
+  },
+  "counts_after": {
+    "archived": 8944,
+    "datasets": 24019,
+    "duplicate_rows": 69,
+    "missing_description": 8485,
+    "missing_isFork": 275,
+    "missing_language": 2485,
+    "missing_license": 7666,
+    "organisations": 212,
+    "publishers": 212,
+    "raw_rows": 24088,
+    "records": 24019,
+    "relationships": 117606,
+    "resources": 0,
+    "sbom_paths": 14393,
+    "unclassified_capabilities": 12393,
+    "unclassified_domains": 18737,
+    "unresolved_licences": 8400
+  },
+  "delta": {
+    "relationships": 987,
+    "sbom_paths": 84
+  },
+  "previous_source_sha256": "10c76a0c8be90f216457be6f0d6bfa6aeaf5ed918c72eb41351b6674d08b9a02",
+  "source_sha256": "f7e776c0245d698c62ce7211beaa0d8e90c13f2f431ca82e8a6eb26705bc5bac",
+  "previous_supplement_sha256": "85971382bfed9d7af8d080b3ccc36fa18eee8d0c59958c801c8ea32d813fe0b1",
+  "supplement_sha256": "2071a0a83d1bf2d9788c371d4042efaf0cc58ac9c4ac555dbc1fd87b934cff98",
+  "observed_last_modified": "Thu, 29 Oct 2026 17:27:56 GMT"
+}

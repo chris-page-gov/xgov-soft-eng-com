@@ -1,0 +1,28 @@
+{
+  "build_id": "d8f9ebeb1ee2a2c79fcbc414d164d6613ea6f34bb2c29ec73fb90ec66167ee6e",
+  "ci_conclusion": "success",
+  "ci_run": 40939531219,
+  "daily_variable": {
+    "name": "OKF_DAILY_REFRESH_ENABLED",
+    "value": "false"
+  },
+  "history_data_commit": "697810aaae0deb7251752bbb68fbaf84f9a75c6f",
+  "limitations": [
+    "No new scheduled daily tick has been observed since setting the pause flag.",
+    "GitHub can delay or drop schedule events; the exact cause of the absent 16:43 run is not established.",
+    "Hourly history collection does not publish Pages until a catalogue refresh."
+  ],
+  "observed_at": "2026-10-29T19:47:36.570505+00:00",
+  "pages_conclusion": "success",
+  "pages_run": 40942633997,
+  "producer_commit": "58eb97ad52c50f9e3c869a57797a1d53e96636b4",
+  "refresh_conclusion": "success",
+  "refresh_event": "workflow_dispatch",
+  "refresh_run": 40941783959,
+  "scheduled_skip_observed": false,
+  "schema": "xgov-on-demand-operations-verification.v1",
+  "workflow_states": {
+    "history": "active",
+    "refresh": "active"
+  }
+}

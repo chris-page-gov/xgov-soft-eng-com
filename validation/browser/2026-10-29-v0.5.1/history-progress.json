@@ -1,0 +1,62 @@
+{
+  "history_commit": "697810aaae0deb7251752bbb68fbaf84f9a75c6f",
+  "runs": [
+    40937773375,
+    40939632259
+  ],
+  "snapshots": {
+    "before": {
+      "entries": 2450,
+      "catalogue_records": 24019,
+      "updated_at": "2026-10-29T19:08:01Z",
+      "states": {
+        "available": 88,
+        "pending-provider-statistics": 2343,
+        "unavailable-response": 8,
+        "empty-or-unavailable": 10,
+        "response-size-limit": 1
+      }
+    },
+    "first": {
+      "entries": 2950,
+      "catalogue_records": 24019,
+      "updated_at": "2026-10-29T19:21:56Z",
+      "states": {
+        "available": 90,
+        "pending-provider-statistics": 2831,
+        "unavailable-response": 8,
+        "empty-or-unavailable": 20,
+        "response-size-limit": 1
+      }
+    },
+    "second": {
+      "entries": 3350,
+      "catalogue_records": 24019,
+      "updated_at": "2026-10-29T19:35:20Z",
+      "states": {
+        "available": 189,
+        "pending-provider-statistics": 3127,
+        "empty-or-unavailable": 25,
+        "unavailable-response": 8,
+        "response-size-limit": 1
+      }
+    }
+  },
+  "second_run": {
+    "new": 400,
+    "retried": 100,
+    "retry_transitions": {
+      "pending-provider-statistics -> available": 93,
+      "pending-provider-statistics -> pending-provider-statistics": 4,
+      "pending-provider-statistics -> empty-or-unavailable": 3
+    },
+    "new_states": {
+      "pending-provider-statistics": 392,
+      "available": 6,
+      "empty-or-unavailable": 2
+    },
+    "processed": 500,
+    "api_requests": 1099,
+    "budget_checkpoint": false
+  }
+}

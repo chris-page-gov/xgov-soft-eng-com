@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-10-29T17:27:19.772Z",
+  "limitations": [
+    "Upstream package observations, not distinct packages or affected repositories.",
+    "Resolution and runtime categories are upstream classifications, not independent vulnerability or deployment evidence.",
+    "No SBOM scanner or model was invoked."
+  ],
+  "source_sha256": "2071a0a83d1bf2d9788c371d4042efaf0cc58ac9c4ac555dbc1fd87b934cff98",
+  "source_url": "https://www.uk-x-gov-software-community.org.uk/xgov-opensource-repo-scraper/sbom-quality.json",
+  "totals": {
+    "excludedCi": 27501,
+    "excludedDev": 270170,
+    "excludedUnresolved": 40565,
+    "packages": 2652433,
+    "resolved": 2589149,
+    "runtime": 2314197,
+    "unresolved": 63284
+  },
+  "upstream_resolved_percent": 97.6,
+  "upstream_runtime_percent": 87.2
+}
