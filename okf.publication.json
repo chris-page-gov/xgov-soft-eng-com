@@ -762,7 +762,8 @@
   "limitations": [
     "No vulnerability scan or private report access.",
     "Scheduled executions may be delayed by GitHub.",
-    "Publication-method v1 has no scheduled-release mode: manual denotes invocation of reviewed release commands; the separate CI workflow declares the automatic schedule. No repository branch protection is claimed.",
-    "Pages runs the three ordinary-Chrome suites after deployment. This producer workflow does not claim cross-engine or human usability acceptance. A post-deployment failure requires investigation; no automatic rebuild or rollback is performed."
+    "Publication-method v1 has no scheduled-release mode: manual denotes invocation of reviewed release commands; the separate CI workflow retains the daily cron behind OKF_DAILY_REFRESH_ENABLED=true, with manual dispatch always available. No repository branch protection is claimed.",
+    "Pages runs the three ordinary-Chrome suites after deployment. This producer workflow does not claim cross-engine or human usability acceptance. A post-deployment failure requires investigation; no automatic rebuild or rollback is performed.",
+    "Daily refresh is operationally paused by the owner using the repository Actions variable; hourly history collection is separate and remains enabled. Scheduled triggers are not a punctuality guarantee."
   ]
 }

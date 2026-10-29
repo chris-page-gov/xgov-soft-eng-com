@@ -37,13 +37,20 @@ an atomic observation; that limitation is recorded.
 
 ## Full-catalogue collection and refresh
 
-The hourly history Action targets the complete current feed. Each run handles
+The hourly history Action remains enabled and targets the complete current feed.
+It is independent of the paused daily catalogue publication schedule. Use the
+[on-demand controls](operations.md#pause-and-run-on-demand) for an extra bounded
+checkpoint. GitHub can delay or drop scheduled events; inspect actual runs and
+checkpoint coverage rather than assuming every hourly tick executed. Each run handles
 up to 500 repositories, 1,800 API requests and 25 minutes of collection, with
 one serial worker and a 10% API-rate reserve. These are request/time limits,
 not model-credit limits. No language model or scanner is invoked.
 
-New targets are prioritised. Pending provider results are deferred for at least
-six hours; unavailable results are retried later. Available results are normally
+New targets keep most batch capacity. When both new targets and due provider
+retries exist, one fifth of the batch (at least one slot) is reserved for retries;
+unused slots return to the other work. This prevents pending observations from
+waiting for the entire first pass. Available-profile refreshes use remaining
+capacity. Pending provider results are deferred for at least six hours; unavailable results are retried later. Available results are normally
 rechecked after seven days, or earlier when the source push date changes.
 There is no claim that the initial backfill is instant or complete: it requires
 multiple runs and its exact completion time depends on GitHub’s responses.

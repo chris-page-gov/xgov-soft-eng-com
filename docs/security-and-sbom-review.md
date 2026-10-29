@@ -119,3 +119,9 @@ The 14,326 SBOM-path figure above belongs to the initial source snapshot
 64e70d84e1d4c7a064695c65583000f9bb8a57916ec2b7f636a84b4be98eda9b
 reviewed on 28 October 2026. It is a historical observation. Read the frozen
 release quality.json for that release's current distinct-record count.
+
+## Recommended next step
+
+The [SBOM and Daybreak Blue pilot](sbom-daybreak-pilot.md) sets out a small,
+reproducible matching and owner-reviewed triage approach, with explicit scope,
+privacy and evidence boundaries. It is a proposal, not a scan result.

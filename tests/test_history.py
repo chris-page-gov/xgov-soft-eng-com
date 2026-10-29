@@ -12,6 +12,24 @@ import history as h
 
 
 class HistoryTests(unittest.TestCase):
+    def test_due_pending_retries_get_a_bounded_share_during_backfill(self):
+        due=[(0,'new/'+str(i),{}) for i in range(10)]+[(1,'pending/'+str(i),{}) for i in range(10)]
+        selected=h.select_due(due,5)
+        self.assertEqual([priority for priority,_,_ in selected].count(1),1)
+        self.assertEqual([priority for priority,_,_ in selected].count(0),4)
+        self.assertEqual(len({identity for _,identity,_ in selected}),5)
+        self.assertEqual(h.select_due(list(reversed(due)),5),selected)
+
+    def test_unused_retry_capacity_returns_to_new_or_refresh_work(self):
+        self.assertEqual(len(h.select_due([(0,str(i),{}) for i in range(8)],5)),5)
+        due=[(0,'new',{}),(1,'pending',{})]+[(2,str(i),{}) for i in range(8)]
+        self.assertEqual([p for p,_,_ in h.select_due(due,5)],[1,0,2,2,2])
+        self.assertEqual(len(h.select_due([(1,str(i),{}) for i in range(8)],5)),5)
+
+    def test_a_single_slot_can_retry_pending_and_empty_work_is_safe(self):
+        self.assertEqual(h.select_due([(0,'new',{}),(1,'pending',{})],1)[0][0],1)
+        self.assertEqual(h.select_due([],500),[])
+
     def test_recent_window_excludes_partial_week_and_preserves_past(self):
         observed=dt.datetime(2026,10,28,tzinfo=dt.timezone.utc);sunday=observed-dt.timedelta(days=3)
         recent=int((sunday-dt.timedelta(days=7)).timestamp());current=int(sunday.timestamp())

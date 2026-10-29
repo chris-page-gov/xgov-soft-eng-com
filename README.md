@@ -71,7 +71,7 @@ use the frozen test release above. Browser journeys and their limits are
 recorded in [the acceptance report](docs/browser-acceptance.md).
 
 [Rich facets](docs/rich-facets.md) · [Contributor history](docs/history-and-change.md) ·
-[Semantic model](docs/semantic-model.md) · [SBOMs and security](docs/security-and-sbom-review.md) ·
+[Semantic model](docs/semantic-model.md) · [SBOMs and security](docs/security-and-sbom-review.md) · [Daybreak Blue pilot](docs/sbom-daybreak-pilot.md) ·
 [Private-system beginner guide](docs/private-system-starter.md) · [Credits](CREDITS.md)
 
 ## Build or search locally (optional)
@@ -106,9 +106,17 @@ for the tested consumer version, journeys and limitations.
 
 ## Daily updates
 
-The refresh Action is scheduled at **16:43 UTC daily**, with manual dispatch.
-GitHub may delay scheduled runs. It validates and assures a candidate before
-publishing a timestamped release. Full generated data lives in releases rather
+The daily refresh schedule is **paused**. Run it when needed from
+[Refresh daily OKF pack → Run workflow](https://github.com/chris-page-gov/xgov-soft-eng-com/actions/workflows/refresh.yml),
+selecting `main`. The workflow builds, checks and freezes the pack, then
+publishes the same assured files to Pages and runs the browser checks.
+
+The retained cron is **16:43 UTC daily**. Automatic runs require the repository
+variable `OKF_DAILY_REFRESH_ENABLED=true`; `false` or an unset variable pauses
+them. Manual runs remain available. The hourly contributor-history worker is
+separate and stays enabled. GitHub schedules can be delayed or dropped, so a
+configured time is not evidence that a run occurred. See
+[the operational controls](docs/operations.md#pause-and-run-on-demand). Full generated data lives in releases rather
 than daily Git commits. The checked-in frozen source remains reproducible.
 
 [Latest complete pack](https://github.com/chris-page-gov/xgov-soft-eng-com/releases/latest)

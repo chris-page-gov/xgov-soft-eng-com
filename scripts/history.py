@@ -82,6 +82,17 @@ def load_index(root):
     return c.read(path) if path.exists() else {'schema':'xgov-history-index.v1','repositories':{}}
 
 
+def select_due(due,limit):
+    """Keep new coverage moving without starving due provider retries."""
+    groups={priority:[] for priority in (0,1,2)}
+    for item in sorted(due):groups[item[0]].append(item)
+    retry_quota=min(len(groups[1]),max(1,limit//5)) if groups[0] else min(len(groups[1]),limit)
+    selected=groups[1][:retry_quota]+groups[0][:limit-retry_quota]
+    selected+=groups[1][retry_quota:retry_quota+max(0,limit-len(selected))]
+    selected+=groups[2][:max(0,limit-len(selected))]
+    return selected
+
+
 def collect(root,limit=500,budget=1800,max_seconds=1500,repositories=None):
     if not 1<=limit<=500 or budget<1 or max_seconds<1:raise ValueError('Use 1 to 500 repositories and positive request/time budgets')
     root=Path(root);cfg=c.read(root/'config/catalogue.json');req=urllib.request.Request(cfg['source_url'],headers={'User-Agent':'xgov-okf-history/1'})
@@ -108,7 +119,7 @@ def collect(root,limit=500,budget=1800,max_seconds=1500,repositories=None):
     index.update(catalogue_source_sha256=c.digest(raw),catalogue_records=len(rows),updated_at=c.now())
     c.write(root/'source/history/index.json',index)
     completed=0;stopped=False;stop_reason=None
-    for _,identity,row in sorted(due)[:limit]:
+    for _,identity,row in select_due(due,limit):
         try:
             status,metadata,metadata_hash=client.get('/repos/'+identity)
             observation={'repository':identity,'observed_at':c.now(),'source_url':'https://api.github.com/repos/'+identity,'state':'unavailable-or-not-public','metadata_http_status':status,'metadata_response_sha256':metadata_hash,'catalogue_source_sha256':c.digest(raw)}

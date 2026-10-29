@@ -131,3 +131,55 @@ report/supporting-file hashes and SHA256SUMS before building. Check source
 links, privacy, deterministic rendering and the real deployed journeys from
 both the catalogue and Explorer. Keep historical model claims, displayed UI
 outcomes, independent validation and new model runs explicitly separate.
+
+## Pause and run on demand
+
+The owner paused the daily catalogue schedule on 29 October 2026 while leaving
+hourly contributor-history collection enabled. The refresh workflow stays
+active so its Run workflow button and workflow_dispatch API remain usable.
+
+`OKF_DAILY_REFRESH_ENABLED` is a repository Actions variable. Only `true` admits
+scheduled refresh work; `false` or an unset value pauses it. The scheduled run
+may appear as skipped. The downstream Pages workflow applies the same guard
+so a skipped scheduled refresh does not try to publish a missing snapshot.
+Manual refreshes still publish and verify their exact assured snapshot.
+
+```sh
+# Refresh and publish on demand; select main in the GitHub Actions UI too.
+gh workflow run refresh.yml --repo chris-page-gov/xgov-soft-eng-com --ref main
+
+# Pause or resume only automatic daily refreshes.
+gh variable set OKF_DAILY_REFRESH_ENABLED --repo chris-page-gov/xgov-soft-eng-com --body false
+gh variable set OKF_DAILY_REFRESH_ENABLED --repo chris-page-gov/xgov-soft-eng-com --body true
+
+# Collect another bounded history checkpoint without publishing a new catalogue.
+gh workflow run history.yml --repo chris-page-gov/xgov-soft-eng-com --ref main -f limit=500
+```
+
+Do not disable the whole refresh workflow to pause its cron: that also removes
+the usable manual route until it is re-enabled. History collection has its own
+serial concurrency group, API/time budgets and data branch; it does not update
+Pages until the next explicit catalogue refresh. Keep owner approval evidence,
+raw security reports and credentials outside public builds.
+
+## Missing scheduled run on 29 October 2026
+
+The daily workflow declared 16:43 UTC, but no schedule-event refresh run was
+present when checked after 19:00 UTC. The workflow was active, Actions were
+enabled, the default branch was main and the repository was not a fork or
+archived. The successful 16:13 UTC refresh was manually dispatched; it was
+not the scheduled 16:43 run. No failed scheduled refresh was found.
+
+GitHub documents that scheduled events can be delayed or dropped. The available
+API evidence does not establish the exact reason for this missing event. The
+history workflow also showed only three scheduled starts on 29 October when
+checked: 05:47, 12:59 and 18:57 UTC, despite its hourly cron. They completed
+successfully. A run timestamp is observed execution, not a guaranteed mapping
+to a particular intended cron tick.
+
+For stronger punctuality, use an independently monitored external scheduler
+to dispatch this same manual workflow, with a freshness alert and idempotency
+controls. No external scheduler or paid service has been configured here.
+
+References: [GitHub schedule behaviour](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
+and [repository variables](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#vars-context).

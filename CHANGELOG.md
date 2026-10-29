@@ -6,6 +6,22 @@ daily dataset snapshots have separate identifiers.
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-10-29
+
+### Added
+
+- A repository-variable pause control for daily refreshes, preserving manual
+  publication and the separate hourly contributor-history worker.
+- Operational instructions and an evidence-grounded SBOM/Daybreak Blue pilot roadmap.
+
+### Fixed
+
+- Reserve batch capacity for due provider retries so initial backfill does not
+  starve already-requested contributor statistics.
+- Keep a skipped paused schedule from triggering an attempt to publish a
+  missing snapshot to Pages.
+- Distinguish the configured daily cron from evidence of actual execution.
+
 ## [0.5.0] - 2026-10-29
 
 ### Added
@@ -152,7 +168,8 @@ daily dataset snapshots have separate identifiers.
 - Pin a runner that supports the governed Python version.
 - Exclude Finder metadata from reproducibility checks.
 
-[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.1...v0.3.0
