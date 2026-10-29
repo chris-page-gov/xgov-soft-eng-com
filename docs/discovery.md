@@ -33,8 +33,24 @@ Next priorities:
    maintained components and package-to-repository impact discovery.
 4. Add reviewed hierarchies, aliases and cross-domain relationships. Similarity
    must not become identity, dependency or substitutability.
-5. Complete Explorer browser, graph and performance acceptance before
-   advertising a verified browser discovery URL.
+5. Expand the recorded browser acceptance with classification, coverage and
+   semantic parity regressions. See [the dated acceptance evidence](browser-acceptance.md).
 
 The upstream uk-x-gov-repo-query already implements lightweight metadata
 filters. Reuse its learning and keep interoperability explicit.
+
+## Report-driven regressions
+
+Security terms use governed singular/plural aliases and explicit cyber context.
+The exact repository name `vulnerabilities` can suggest a security task, while
+unsupported social or community vulnerability descriptions do not. These remain
+unreviewed inferences. No general stemming or silent OR broadening is applied.
+Search-index aliases are recorded in `search_aliases` and indexed as inferred
+tags, rather than misreported as literal title matches. `--source-only` keeps
+local CLI search limited to source terms.
+
+Repeated named CLI filters already support OR within a field and AND across
+fields. Search JSON reports `total_matches`, `offset`, `limit`, `has_more` and
+the selected page. Use `--offset` with a maximum page size of 200 to retrieve
+other matches. Explorer retains its bounded result window and total/limit
+messages. Complete facet postings and the offline evaluator support full counts.

@@ -26,3 +26,8 @@ is experimental, not canonical Bundle Wiki v1 conformance or production assuranc
 Browser acceptance and deployed URLs are recorded in
 [the acceptance report](docs/browser-acceptance.md). This status file does not
 claim that full-history statistics are already available for the entire catalogue.
+
+The 14,326 SBOM-path figure above belongs to the initial source snapshot
+64e70d84e1d4c7a064695c65583000f9bb8a57916ec2b7f636a84b4be98eda9b
+reviewed on 28 October 2026. It is a historical observation. Read the frozen
+release quality.json for that release's current distinct-record count.

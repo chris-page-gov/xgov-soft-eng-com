@@ -23,7 +23,7 @@ class BrowserReceiptTests(unittest.TestCase):
     def test_accepts_complete_consistent_results(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);r=self.fixture(root);self.write(root,r)
-            self.assertEqual(b.collect(root/'build-manifest.json',root)['checks'],38)
+            self.assertEqual(b.collect(root/'build-manifest.json',root)['checks'],40)
 
     def test_rejects_false_success_missing_checks_and_mixed_snapshots(self):
         for mutation in ('status','check','snapshot','consumer','consumer-format','request'):

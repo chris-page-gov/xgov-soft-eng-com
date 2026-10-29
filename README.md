@@ -19,6 +19,7 @@ explicit; stars and recent activity do not establish quality or support.
 [SBOMs, security helpers and issues](docs/security-and-sbom-review.md) ·
 [Operations](docs/operations.md) · [Scope](REPOSITORY_STATUS.md) ·
 [Permission and disclosure](docs/permission-and-disclosure.md) ·
+[Repeatable Claude and Gemini test pack](docs/ai-evaluation.md) ·
 [Private-system beginner guide](docs/private-system-starter.md) · [Credits](CREDITS.md)
 
 ## Open the published pack
@@ -37,6 +38,11 @@ The hosted URL moves with daily updates; cite an immutable release and its
 checksums when reproducing an answer. Browser checks and their limits are
 recorded in [the acceptance report](docs/browser-acceptance.md).
 
+For a controlled AI comparison, download `xgov-ai-test-pack.zip`,
+`xgov-okf.tar.gz` and `SHA256SUMS` from the same immutable release. The test
+pack pins the archive hash and contains one prompt, a standalone offline
+verifier and computed expected facts. See [the evaluation guide](docs/ai-evaluation.md).
+
 ## Try it
 
 Python 3.12 or later is required. Build and search have no third-party runtime
@@ -51,6 +57,7 @@ uv run --locked python scripts/catalogue.py search --sbom present --is-fork unkn
 uv run --locked python scripts/catalogue.py search "notification" --source-only --json
 uv run --locked python scripts/catalogue.py facets --facet content_type
 uv run --locked python scripts/catalogue.py search --history-coverage available
+uv run --locked python scripts/catalogue.py search --language Python --sbom present --offset 200 --limit 200 --json
 uv run --locked python scripts/catalogue.py status
 uv run --locked python scripts/catalogue.py check
 uv run --locked python -m unittest discover -s tests -v

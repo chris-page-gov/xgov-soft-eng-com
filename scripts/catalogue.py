@@ -134,10 +134,30 @@ def classify(row, taxonomy):
     for scheme in SCHEMES:
         matches[scheme] = []
         for concept in taxonomy.get(scheme,[]):
-            hits = [term for term in concept["terms"] if " " + normalise(term) + " " in text]
+            hits = matching_terms(row, concept, taxonomy)
             if hits:
                 matches[scheme].append({"id": concept["id"], "label": concept["label"], "matched_terms": hits})
     return matches
+
+
+def matching_terms(row, concept, taxonomy):
+    """Whole terms and governed aliases, with explicit ambiguous-term context."""
+    text = " " + normalise(row["name"] + " " + (row.get("description") or "")) + " "
+    hits = []
+    for term in concept["terms"]:
+        forms = [term, *taxonomy.get("term_aliases", {}).get(term, [])]
+        for form in forms:
+            if " " + normalise(form) + " " not in text:
+                continue
+            rule = concept.get("context_rules", {}).get(term)
+            if rule:
+                positive = any(" " + normalise(value) + " " in text for value in rule["requires_any"])
+                exact = normalise(row["name"]) in {normalise(value) for value in forms}
+                negative = any(" " + normalise(value) + " " in text for value in rule.get("exclude_phrases", []))
+                if not positive and (negative or not (rule.get("allow_exact_name") and exact)):
+                    continue
+            hits.append(form)
+    return sorted(set(hits))
 
 
 def controlled_inputs(root):
@@ -246,7 +266,7 @@ def build(root, output, receipt, previous=None):
             assertion_id = NS + "assertion:" + digest([ri, pred, target])
             evidence_value = {k: row.get(k) for k in ("name", "description")} if inferred else row.get(field)
             evidence = {"url": cfg["source_url"], "source_artifact": receipt["path"], "source_sha256": receipt["sha256"], "rows": positions, "source_field": field, "source_value_sha256": digest(evidence_value), "matched_terms": terms}
-            edge = {"id": assertion_id, "source": rr, "target": tr, "source_iri": ri, "target_iri": target, "predicate": pred, "kind": kind, "label": preferred, "inverse_label": inverse, "assertion_status": status, "assertion_scope": "real-world", "authority": {"class": "derived", "label": "Experimental catalogue projection", "source": cfg["source_url"]}, "derivation": iri("rule", "term-match-v1" if inferred else "source-field-v1"), "observed_at": observed, "evidence": [evidence], "rights": rights, "review_status": "unreviewed" if inferred else "source-reported-not-independently-verified"}
+            edge = {"id": assertion_id, "source": rr, "target": tr, "source_iri": ri, "target_iri": target, "predicate": pred, "kind": kind, "label": preferred, "inverse_label": inverse, "assertion_status": status, "assertion_scope": "real-world", "authority": {"class": "derived", "label": "Experimental catalogue projection", "source": cfg["source_url"]}, "derivation": iri("rule", "term-match-v2" if inferred else "source-field-v1"), "observed_at": observed, "evidence": [evidence], "rights": rights, "review_status": "unreviewed" if inferred else "source-reported-not-independently-verified"}
             if (kind,value) in actor_evidence:
                 position,actor=actor_evidence[(kind,value)]
                 edge['authority']['source']=history_observation['source_url'];edge['observed_at']=history_observation['observed_at']
@@ -267,16 +287,20 @@ def build(root, output, receipt, previous=None):
         rec.update(facet_tools.analysis_values(rec,quality_row,facet_observed,quality_report["generatedAt"] if quality_report else None))
         rec["sbom_quality"]={"counts":quality_row,"generated_at":quality_report["generatedAt"],"source":quality_receipt} if quality_row else None
         rec['history_coverage']=history_item['state'] if history_item else 'not-collected'
-        rec['historical_contributors']=[a['login'] for a in activity['contributors'] if a.get('login') and a['historical_reported_commits']] if activity else ['not-collected']
-        rec['recent_contributors']=[a['login'] for a in activity['contributors'] if a.get('login') and a['recent_reported_commits']] if activity else ['not-collected']
+        rec['historical_contributors']=[a['login'] for a in activity['contributors'] if a.get('login') and a['historical_reported_commits']] if activity else []
+        rec['recent_contributors']=[a['login'] for a in activity['contributors'] if a.get('login') and a['recent_reported_commits']] if activity else []
+        rec['source_metrics']={key:row[key] for key in ('stargazersCount','forksCount','openIssuesCount')}
+        rec['search_aliases']=sorted({alias for scheme in ('capabilities','content_types') for hit in matches[scheme] for term,aliases in tax.get('term_aliases',{}).items() if any(value in hit['matched_terms'] for value in [term,*aliases]) for alias in [term,*aliases]})
+        rec['history_observation']={**history_item, 'reason_code':history_observation.get('reason_code', 'legacy-empty-successful-response' if history_observation.get('http_status')==200 and not activity else 'source-reported-state'), 'catalogue_source_sha256_at_observation':history_observation.get('catalogue_source_sha256'), 'current_catalogue_source_sha256':receipt['sha256'], 'catalogue_binding':'same-catalogue-source' if history_observation.get('catalogue_source_sha256')==receipt['sha256'] else 'different-or-unrecorded-catalogue-source', 'join_basis':'case-insensitive GitHub owner/repository identity'} if history_item else None
         if activity:
             count=activity['recent_reported_commits'];rec['recent_commit_band']='0' if count==0 else '1-10' if count<=10 else '11-50' if count<=50 else '51-200' if count<=200 else 'over-200'
-            rec['recent_contributors']=rec['recent_contributors'] or ['no-mapped-account' if count else 'none-reported-in-window'];rec['historical_contributors']=rec['historical_contributors'] or ['no-mapped-account']
-            rec['churn_availability']=activity['line_count_status'];rec['activity']=explorer_projection.reader_activity(activity)|{'source':history_item|{'observed_at':history_observation['observed_at']}}
+            rec['churn_availability']=activity['line_count_status'];rec['activity']=explorer_projection.reader_activity(activity)|{'source':rec['history_observation']|{'observed_at':history_observation['observed_at']}}
             n[PROV+'wasDerivedFrom']=[ref(snapshot),ref(NS+'snapshot:'+history_item['sha256'])]
             for key,value in {'reportedRecentCommitCount':activity['recent_reported_commits'],'reportedHistoricalCommitCount':activity['historical_reported_commits'],'activityWindowStart':activity['window']['start'],'activityWindowEndExclusive':activity['window']['end_exclusive'],'activityObservedAt':history_observation['observed_at'],'lineCountStatus':activity['line_count_status']}.items():n[NS+key]=value
             if activity['recent_reported_line_changes'] is not None:n[NS+'reportedRecentLineChanges']=activity['recent_reported_line_changes']
-        else:rec.update(recent_commit_band='not-collected',churn_availability='not-collected',activity=None)
+        else:rec.update(recent_commit_band=rec['history_coverage'],churn_availability=rec['history_coverage'],activity=None)
+        rec['historical_contributor_facet_values']=rec['historical_contributors'] or ['no-mapped-account' if activity else rec['history_coverage']]
+        rec['recent_contributor_facet_values']=rec['recent_contributors'] or [('no-mapped-account' if activity['recent_reported_commits'] else 'none-reported-in-window') if activity else rec['history_coverage']]
         record_summary[ri]=row
         older=prior_summary.get(ri);changed=[k for k in sorted(set(row)|set(older or {})) if older is not None and row.get(k)!=older.get(k)]
         rec['metadata_changed_fields']=changed
@@ -306,6 +330,15 @@ def build(root, output, receipt, previous=None):
         graph = []
         for e in batch:
             graph.append({"@id": e["id"], "@type": [RDF + "Statement", PROV + "Entity", NS + "RelationshipAssertion"], RDF + "subject": ref(e["source_iri"]), RDF + "predicate": ref(e["predicate"]), RDF + "object": ref(e["target_iri"]), PROV + "wasDerivedFrom": ref(NS+'snapshot:'+e['evidence'][0]['source_sha256']), PROV + "wasGeneratedBy": ref(NS + "build:" + build_id), NS + "assertionStatus": e["assertion_status"], NS + "assertionScope": e["assertion_scope"], NS + "evidence": {"@value": e["evidence"], "@type": RDF + "JSON"}, NS + "rights": e['rights']["assertion"]})
+            graph[-1].update({
+                'http://www.w3.org/2000/01/rdf-schema#label':e['label'],
+                NS+'inverseLabel':e['inverse_label'], NS+'relationshipKind':e['kind'],
+                NS+'sourceRoute':e['source'], NS+'targetRoute':e['target'],
+                NS+'authority':{'@value':e['authority'],'@type':RDF+'JSON'},
+                NS+'authoritySource':ref(e['authority']['source']),
+                NS+'derivation':ref(e['derivation']), NS+'observedAt':e['observed_at'],
+                NS+'reviewStatus':e['review_status'],
+                NS+'rightsRecord':{'@value':e['rights'],'@type':RDF+'JSON'}})
             if e.get('measurement'):
                 graph[-1][NS+'reportedCommitCount']=e['measurement']['reported_commits']
                 graph[-1][NS+'measurement']={'@value':e['measurement'],'@type':RDF+'JSON'}
@@ -314,25 +347,34 @@ def build(root, output, receipt, previous=None):
     rdfs="http://www.w3.org/2000/01/rdf-schema#"
     definitions=[{"@id":NS+name,"@type":rdfs+"Class",rdfs+"label":label} for name,label in (("Repository","Source-reported GitHub repository"),("HostingAccount","Source-reported hosting account"),("ContributorAccount","Public contributor account reported by GitHub"),("SbomReference","Source-reported SBOM reference"),("RelationshipAssertion","Evidence-bearing relationship assertion"))]
     definitions += [{"@id":p,"@type":RDF+"Property",rdfs+"label":label} for p,label,_,_ in predicates.values() if p.startswith(NS)]
+    # Usage descriptors scope local labels without redefining external vocabularies.
+    definitions += [{'@id':iri('predicate-usage',kind),'@type':NS+'PredicateUsage',NS+'predicate':ref(p),NS+'preferredLabel':label,NS+'inverseLabel':inverse,NS+'relationshipKind':kind} for kind,(p,label,inverse,_) in predicates.items()]
     write(output / "semantic/vocabulary.jsonld.gz", {"@graph": list(concepts.values())+definitions})
     write(output / "semantic/catalogue.jsonld", {"@graph": [{"@id": NS + "catalogue", "@type": DCAT + "Catalog", DCT + "title": "Experimental cross-government software catalogue", PROV + "wasDerivedFrom": ref(snapshot)}, {"@id": snapshot, "@type": [DCAT + "Dataset", PROV + "Entity"], DCT + "source": ref(cfg["source_url"]), PROV + "generatedAtTime": observed, NS + "sha256": receipt["sha256"], NS + "httpLastModified": receipt.get("last_modified")}, {"@id": NS + "build:" + build_id, "@type": PROV + "Activity", PROV + "used": ref(snapshot), NS + "inputHashes": {"@value": inputs, "@type": RDF + "JSON"}}]})
     source_graph=read(output/'semantic/catalogue.jsonld')['@graph']
     for extra in ([quality_receipt] if quality_receipt else [])+history_sources:
-        source_graph.append({'@id':NS+'snapshot:'+extra['sha256'],'@type':PROV+'Entity',NS+'sha256':extra['sha256'],NS+'sourceArtifact':extra['path']})
+        source_graph.append({'@id':NS+'snapshot:'+extra['sha256'],'@type':PROV+'Entity',NS+'sha256':extra['sha256'],NS+'sourceArtifact':extra['path'],NS+'sourceKind':'history-observation' if '/history/' in extra['path'] else 'sbom-quality-observation'})
     write(output/'semantic/catalogue.jsonld',{'@graph':source_graph})
     semantic_paths += ["semantic/vocabulary.jsonld.gz", "semantic/catalogue.jsonld"]
-    write(output / "semantic/manifest.json", {"profile": PROFILE, "snapshot": snapshot, "context_policy": "fully-expanded-IRIs-no-remote-contexts", "shards": [{"path": p, "sha256": digest((output / p).read_bytes()), "bytes": (output/p).stat().st_size, "media_type": "application/ld+json", **({"compression":"gzip"} if p.endswith(".gz") else {})} for p in semantic_paths]})
+    write(output / "semantic/manifest.json", {"profile": PROFILE, "snapshot": snapshot, "source_snapshot_iri":snapshot, "build_id":build_id, "identity_policy":"snapshot is the legacy source-feed IRI; build_id identifies the complete bundle; history observations are separate content-addressed entities", "context_policy": "fully-expanded-IRIs-no-remote-contexts", "shards": [{"path": p, "sha256": digest((output / p).read_bytes()), "bytes": (output/p).stat().st_size, "media_type": "application/ld+json", **({"compression":"gzip"} if p.endswith(".gz") else {})} for p in semantic_paths]})
     counts.update({"raw_rows": len(rows), "records": len(records), "datasets": len(records), "duplicate_rows": len(rows)-len(records), "organisations": len(facets["publisher"]), "relationships": len(edges), "resources": 0, "publishers": len(facets["publisher"]), "unclassified_domains": facets["domain"]["unclassified"], "unclassified_capabilities": facets["capability"]["unclassified"]})
     warnings = ["Experimental metadata discovery; classifications are unreviewed term matches.", "Hosting accounts are not verified legal organisations or service owners.", "Missing licences and NOASSERTION do not establish reuse permission.", "Pushed dates, stars, SBOM paths and archive flags do not establish quality, security or support.", "The repository feed does not contain all guidance linked from the community resources page.", "The source fetch time and HTTP Last-Modified do not verify every upstream record was refreshed."]
     for spec in facet_specs:
         scheme={"domain":"domains","capability":"capabilities","content_type":"content_types"}.get(spec["key"])
         if scheme:spec["value_labels"]={c["id"]:c["label"] for c in tax.get(scheme,[])}|{"unclassified":"Unclassified"}
     facet_payload=facet_tools.counts(records,facet_specs)
+    history_coverage=dict(collections.Counter(record['history_coverage'] for record in records))
+    coverage_text=f"History profiles are available for {history_coverage.get('available',0):,} of {len(records):,} repositories. Other states: "+', '.join(f'{key}: {value:,}' for key,value in sorted(history_coverage.items()) if key!='available')+'. Missing history is not zero activity.'
+    for spec in facet_specs:
+        if spec['key'] in ('history_coverage','recent_commit_band','churn_availability','recent_contributor','historical_contributor'):
+            spec['description']+=' '+coverage_text
+        if spec['key']=='history_coverage':
+            spec['label']+=f" ({history_coverage.get('available',0):,}/{len(records):,} available)"
     facet_tools.validate(records,facet_specs,facet_payload)
     write(output/"data/facet-definitions.json",{"schema":"xgov-facet-contract.v1","facets":facet_specs,"consumer":"catalogue.py search/facets; OKF Explorer with recorded Chrome acceptance"})
     write(output/"data/presentation.json",{"schema":"okf-explorer-presentation.v1","status":"experimental","facets":[{"key":s["key"],"label":s["label"],"description":s["description"],"value_type":"nominal","order":i*10,"default_state":"pinned" if s.get("required_task_dimension") else "shown","open_control":"search" if s["key"] in ("publisher","language","license") else "distribution","value_order":"count-desc","examples":[r["label"] for r in facet_payload[s["key"]][:3]]} for i,s in enumerate(facet_specs)]})
     write(output / "data/facets.json", facet_payload)
-    overview = {"schema": "okf-large-overview.v1", "title": "Cross-government software discovery", "generated_at": observed, "counts": dict(counts), "warnings": warnings, "facet_previews": {k: v[:15] for k,v in facet_payload.items()}, "recent_datasets": sorted(records, key=lambda r: r["timestamp"] or "", reverse=True)[:10]}
+    overview = {"schema": "okf-large-overview.v1", "title": "Cross-government software discovery", "generated_at": observed, "counts": dict(counts), "history_coverage":history_coverage, "history_coverage_notice":coverage_text, "warnings": warnings, "facet_previews": {k: v[:15] for k,v in facet_payload.items()}, "recent_datasets": sorted(records, key=lambda r: r["timestamp"] or "", reverse=True)[:10]}
     write(output / "data/overview.json", overview)
     write(output / "quality.json", {"grain": "unique case-insensitive GitHub repository URL", "counts": dict(counts), "duplicates": duplicates, "source_fields": dict(collections.Counter(k for row in rows for k in row)), "warnings": warnings})
     previous_map = previous or {}
@@ -349,6 +391,10 @@ def build(root, output, receipt, previous=None):
     write(output / "data/manifest.json", manifest)
     descriptor = {"schema": "okf-explorer-large-corpus.v1", "kind": "okf-large-corpus", "okf_version": "0.2", "title": "Experimental cross-government software OKF+", "description": "Source-reported repository metadata with explicit gaps and unreviewed domain and task suggestions.", "version": tomllib.loads((root/'pyproject.toml').read_text())['project']['version'], "publication_state": "exploratory", "status": "local-experiment", "profile": PROFILE, "snapshot_id": build_id, "generated_at": observed, "counts": dict(counts), "entrypoints": {"data_manifest": "data/manifest.json", "overview_index": "data/overview.json", "search_manifest": "data/search/manifest.json", "markdown_index": "index.md"}, "source": {"url": cfg["source_url"], "source_sha256": receipt["sha256"], "observed_at": observed}, "semantic_descriptor": "semantic/manifest.json", "vocabulary": {"record_singular": "repository", "record_plural": "repositories", "publisher_singular": "hosting account", "publisher_plural": "hosting accounts", "format_plural": "languages"}, "warnings": warnings}
     write(output / "okf-explorer.json", descriptor)
+    descriptor['identities']={'build_id':build_id,'source_snapshot_iri':snapshot,'source_sha256':receipt['sha256'],'history_observation_policy':'Independent observation dates and hashes; repository-identity join recorded per profile.'}
+    descriptor['history_coverage']={'counts':history_coverage,'message':coverage_text}
+    descriptor['entrypoints']['ai_evaluation']='evaluation.json'
+    write(output/'evaluation.json',{'schema':'xgov-ai-evaluation-discovery.v1','build_id':build_id,'source_snapshot_iri':snapshot,'instructions':'https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/docs/ai-evaluation.md','release_assets':['xgov-okf.tar.gz','xgov-ai-test-pack.zip','SHA256SUMS'],'release_index':'https://github.com/chris-page-gov/xgov-soft-eng-com/releases','pairing_policy':'Use the archive SHA-256 in the test-pack manifest. Never substitute a different or live snapshot.','browser_evidence':'https://github.com/chris-page-gov/xgov-soft-eng-com/tree/main/validation/browser'})
     descriptor["entrypoints"].update(presentation="data/presentation.json",facet_definitions="data/facet-definitions.json")
     descriptor["extensions"]={"okf-explorer-presentation.v1":{"mode":"external","entrypoint":"presentation"}}
     write(output/"okf-explorer.json",descriptor)
@@ -376,7 +422,7 @@ def build_search(output, records, facets, size):
     for ordinal, record in enumerate(records):
         doc = {**{key:value for key,value in record.items() if key not in ('body','narrative','activity','sbom_quality','classification_evidence')}, "ordinal": ordinal, "quality_score": None}
         docs.append(doc)
-        for field, text, weight, mask in (("title", record["title"], 16, 1), ("publisher", record["publisher_title"], 8, 2), ("description", record["notes"], 5, 8), ("topics", " ".join(record["domains"]), 3, 16), ("tags", " ".join(record["capabilities"]), 3, 32)):
+        for field, text, weight, mask in (("title", record["title"], 16, 1), ("publisher", record["publisher_title"], 8, 2), ("description", record["notes"], 5, 8), ("topics", " ".join(record["domains"]), 3, 16), ("tags", " ".join(record["capabilities"]+record.get('search_aliases',[])), 3, 32)):
             for token in explorer_projection.search_tokens(text):
                 if len(token) >= 2:
                     old = postings[token].get(ordinal, [0, 0])
@@ -544,7 +590,7 @@ def search(records, query, taxonomy, filters=None, include_inferred=True):
         q=" "+normalise(query)+" "
         for scheme in SCHEMES:
             for c in taxonomy.get(scheme,[]):
-                hits=[t for t in c["terms"] if " "+normalise(t)+" " in q]
+                hits=[form for t in c['terms'] for form in [t,*taxonomy.get('term_aliases',{}).get(t,[])] if ' '+normalise(form)+' ' in q]
                 if hits:
                     synonyms[c["id"]]=c["label"]
                     expansions.append((c["id"],set(normalise(" ".join(hits)).split())))
@@ -576,7 +622,7 @@ def main():
     sub.add_parser("status",help="Report source observation and retrieval freshness")
     f=sub.add_parser("facets",help="Facet counts within the current search and filter selection")
     f.add_argument("--query",default="");f.add_argument("--facet");f.add_argument("--limit",type=int,default=20);f.add_argument("--offset",type=int,default=0);f.add_argument("--value-query",default="");f.add_argument("--json",action="store_true");f.add_argument("--source-only",action="store_true")
-    q=sub.add_parser("search");q.add_argument("query",nargs="?",default="");q.add_argument("--limit",type=int,default=10)
+    q=sub.add_parser("search");q.add_argument("query",nargs="?",default="");q.add_argument("--limit",type=int,default=10);q.add_argument('--offset',type=int,default=0)
     for name in ("organisation","language","licence","domain","capability","archived","is-fork","sbom","content-type","language-family","licence-status","push-age","push-year","description-status","sbom-resolution","dependency-context","package-volume","quality-report-age","history-coverage","recent-commit-band","churn-availability","recent-contributor","historical-contributor","metadata-change","metadata-change-degree"):
         q.add_argument("--"+name,action="append");f.add_argument("--"+name,action="append")
     q.add_argument("--source-only",action="store_true",help="Do not expand queries through inferred concepts")
@@ -606,7 +652,7 @@ def main():
             filters={k:v for k,v in {"publisher":args.organisation,"language":args.language,"license_id":args.licence,"domains":args.domain,"capabilities":args.capability,"archived":args.archived,"is_fork":args.is_fork,"sbom":args.sbom}.items() if v is not None}
             filters.pop("is_fork",None)
             if args.is_fork:filters["fork_status"]=args.is_fork
-            for flag,field in (("content_type","content_types"),("language_family","language_family"),("licence_status","licence_status"),("push_age","push_age"),("push_year","push_year"),("description_status","description_status"),("sbom_resolution","sbom_resolution"),("dependency_context","dependency_context"),("package_volume","package_volume"),("quality_report_age","quality_report_age"),("history_coverage","history_coverage"),("recent_commit_band","recent_commit_band"),("churn_availability","churn_availability"),("recent_contributor","recent_contributors"),("historical_contributor","historical_contributors"),("metadata_change","metadata_change"),("metadata_change_degree","metadata_change_degree")):
+            for flag,field in (("content_type","content_types"),("language_family","language_family"),("licence_status","licence_status"),("push_age","push_age"),("push_year","push_year"),("description_status","description_status"),("sbom_resolution","sbom_resolution"),("dependency_context","dependency_context"),("package_volume","package_volume"),("quality_report_age","quality_report_age"),("history_coverage","history_coverage"),("recent_commit_band","recent_commit_band"),("churn_availability","churn_availability"),("recent_contributor","recent_contributor_facet_values"),("historical_contributor","historical_contributor_facet_values"),("metadata_change","metadata_change"),("metadata_change_degree","metadata_change_degree")):
                 if getattr(args,flag):filters[field]=getattr(args,flag)
             population=records_from(root/"generated")
             rows=search(population,args.query,read(root/"config/taxonomy.json"),filters,not args.source_only)
@@ -617,7 +663,8 @@ def main():
                     counts={args.facet:counts[args.facet]}
                 if args.value_query:counts={k:[r for r in v if normalise(args.value_query) in normalise(r["label"]+" "+r["value"])] for k,v in counts.items()}
                 print(json.dumps({"selected_records":len(selected),"facet_value_totals":{k:len(v) for k,v in counts.items()},"facets":{k:v[max(0,args.offset):max(0,args.offset)+max(0,args.limit)] for k,v in counts.items()},"overlap_policy":"OR within a facet; AND across facets. Counts are distinct repositories per value; multi-value counts are not additive."},indent=2));return
-            result={"total_matches":len(rows),"results":rows[:max(0,min(args.limit,200))],"status": "experimental-unreviewed-classification"}
+            offset=max(0,args.offset);limit=max(0,min(args.limit,200))
+            result={"total_matches":len(rows),"offset":offset,"limit":limit,"has_more":offset+limit<len(rows),"results":rows[offset:offset+limit],"status": "experimental-unreviewed-classification"}
             if not args.json:
                 print(f"{len(rows):,} matches; showing {len(result['results'])}.")
                 for r in result["results"]:print(f"{r['title']} | {r['language']} | {r['licence']} | archived={r['archived']}\n  {r['url']}\n  {r['reason']}")

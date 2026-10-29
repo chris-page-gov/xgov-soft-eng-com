@@ -119,7 +119,9 @@ def collect(root,limit=500,budget=1800,max_seconds=1500,repositories=None):
                 observation.update(source_url='https://api.github.com/repos/'+identity+'/stats/contributors',default_branch=metadata['default_branch'],is_fork=metadata.get('fork'),parent_repository=metadata.get('parent',{}).get('full_name'),head_sha_observed=head.get('commit',{}).get('sha') if head_status==200 else None,head_binding='Observed near the statistics request; the API is not an atomic snapshot.',response_sha256=response_hash,http_status=status,source_pushed_at=row.get('pushedAt'))
                 if status==200 and statistics:
                     observation.update(state='available',profile=weekly_profile(statistics,observation['observed_at']))
-                else:observation['state']={202:'pending-provider-statistics',204:'empty-or-unavailable',413:'response-size-limit',422:'provider-limit'}.get(status,'unavailable-response')
+                else:
+                    observation['state']={200:'empty-or-unavailable',202:'pending-provider-statistics',204:'empty-or-unavailable',413:'response-size-limit',422:'provider-limit'}.get(status,'unavailable-response')
+                    observation['reason_code']='empty-successful-response' if status==200 else 'provider-statistics-computing' if status==202 else 'no-content-response' if status==204 else 'provider-http-status-'+str(status)
             folder=root/'source/history/observations';folder.mkdir(parents=True,exist_ok=True)
             checksum=c.digest(observation);path='source/history/observations/'+checksum+'.json';c.write(root/path,observation)
             retry_hours=168 if observation['state']=='available' else 6 if observation['state']=='pending-provider-statistics' else 24

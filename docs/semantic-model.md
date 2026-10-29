@@ -68,3 +68,26 @@ acceptance and the Pages delivery boundary are described in
 RDF shard paths in the semantic manifest end in .jsonld.gz. Their SHA-256
 digests cover the exact compressed bytes; decompress before JSON-LD parsing.
 The manifest declares compression, media type and byte length for each shard.
+
+## Lossless assertions and explicit identities
+
+Runtime and RDF assertions retain the same preferred/inverse labels, kind,
+source/target routes and IRIs, predicate, status/scope, authority, derivation,
+observation, review status, evidence, rights and optional measurement.
+Structured authority, evidence, rights and measurement are RDF JSON literals;
+derivation and authority-source links remain traversable IRIs. Both independent
+assurance and the standalone evaluation verifier compare every assertion.
+
+Vocabulary PredicateUsage nodes carry profile-scoped labels for every predicate,
+including external Schema.org predicates. They describe local presentation
+without redefining the external predicate's official label or asserting an
+`owl:inverseOf` relationship. Inverse adjacency preserves the forward assertion
+identity; it does not invent a reverse triple. Logical routes remain stable
+and are distinct from physical Markdown storage paths.
+
+The descriptor snapshot_id and semantic manifest build_id identify the complete
+bundle. The semantic manifest source_snapshot_iri identifies only the frozen
+repository feed; its legacy snapshot field keeps that same source IRI for
+compatibility. History and SBOM-quality entities retain content hashes and an
+explicit sourceKind. Repository source_metrics expose the exact reported
+stargazersCount, forksCount and openIssuesCount, without assigning quality.

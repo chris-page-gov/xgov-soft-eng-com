@@ -8,6 +8,8 @@ import shutil
 import tarfile
 
 import catalogue as c
+import evaluation_pack
+import verify_bundle
 
 
 def archive_members(manifest):
@@ -61,9 +63,13 @@ def main():
             info=tarfile.TarInfo(name);info.size=len(data);info.mtime=0;info.mode=0o644
             tar.addfile(info,io.BytesIO(data))
     verify_archive(archive,manifest)
+    evaluation_pack.create_test_pack(root,archive,dist/'xgov-ai-test-pack.zip')
     for name in ("record-hashes.json","record-summary.json","build-manifest.json","quality.json"):
         shutil.copyfile(root/"generated"/name,dist/name)
-    names=["xgov-okf.tar.gz","record-hashes.json","record-summary.json","build-manifest.json","quality.json"]
+    names=["xgov-okf.tar.gz","xgov-ai-test-pack.zip","record-hashes.json","record-summary.json","build-manifest.json","quality.json"]
+    (dist/"SHA256SUMS").write_text("".join(hashlib.sha256((dist/name).read_bytes()).hexdigest()+"  "+name+"\n" for name in names))
+    c.write(dist/'verification-result.json',verify_bundle.run(archive,dist/'SHA256SUMS'))
+    names.append('verification-result.json')
     (dist/"SHA256SUMS").write_text("".join(hashlib.sha256((dist/name).read_bytes()).hexdigest()+"  "+name+"\n" for name in names))
     (dist/"release-notes.md").write_text("Experimental cross-government software discovery pack.\n\nSource SHA-256: "+manifest["source"]["sha256"]+"\n\nBuild identity: "+manifest["build_id"]+"\n\nUnreviewed classification rules; no vulnerability scan. Browser acceptance is bounded to the recorded consumer version, snapshot and journeys. See the included evidence and documentation.\n")
     print(archive)

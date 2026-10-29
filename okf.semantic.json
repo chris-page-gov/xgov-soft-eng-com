@@ -48,7 +48,8 @@
     "limitations": [
       "Custom experimental profile; no canonical Bundle Wiki v1 conformance claim.",
       "Rules describe names and descriptions, not repository code; labels are unreviewed.",
-      "Historical and recent contributor relationships describe available GitHub default-branch statistics, not ownership or maintainership."
+      "Historical and recent contributor relationships describe available GitHub default-branch statistics, not ownership or maintainership.",
+      "Semantic manifest snapshot retains its source-feed IRI for compatibility; build_id identifies the complete bundle. Predicate usage labels are local presentation metadata."
     ]
   },
   "relationship_contract": {

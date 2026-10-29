@@ -83,6 +83,8 @@ def narrative(record):
     activity = record.get("activity")
     if not activity:
         lines += ["", "Statistics are not available in this snapshot. This does not mean no activity or no contributors."]
+        if record.get('history_observation'):
+            lines += ['', 'Provider state: '+record['history_coverage']+'. Reason: '+record['history_observation']['reason_code']+'.']
     else:
         window = activity["window"]
         lines += ["", f"GitHub reports **{activity['historical_reported_commits']:,} historical commits** and **{activity['recent_reported_commits']:,} recent commits**.", "", f"Recent means {window['label']}: {window['start']} to {window['end_exclusive']} (end excluded).", "", "| Contributor account | Historical reported commits | Recent reported commits |", "| --- | ---: | ---: |"]
@@ -98,6 +100,8 @@ def narrative(record):
             day = dt.datetime.fromtimestamp(timestamp, dt.timezone.utc).date().isoformat()
             lines.append(f"| {day} | {commits:,} | {format(additions, ',') if has_lines else 'Unknown'} | {format(deletions, ',') if has_lines else 'Unknown'} |")
         lines += ["", "Line-count availability: " + activity["line_count_status"] + ".", "", "Observation: " + activity["source"]["observed_at"] + ".", "", "Captured observation SHA-256: `" + activity["source"]["sha256"] + "`. The frozen observation is included in the downloadable archive.", "", "GitHub statistics exclude merge and empty commits. Counts do not establish quality, ownership, maintainership, security or scan permission."]
+        if activity['source'].get('catalogue_binding'):
+            lines += ['', 'Catalogue join: '+activity['source']['catalogue_binding']+'. '+activity['source']['join_basis']+'. The history observation and catalogue can have different collection dates and source hashes.']
     lines += ["", "## Catalogue metadata change", "", "Status: " + record["metadata_change"] + ".", "", "Changed source fields: " + (", ".join(record["metadata_changed_fields"]) or "none reported, or no comparable baseline") + ".", "", "Metadata changes are separate from code changes. See the collection coverage before interpreting a missing value as zero."]
     return {"title": "Repository activity, contributors and evidence", "body": "\n".join(lines)}
 
@@ -173,6 +177,8 @@ def project(output, records, concepts, edges, snapshot, observed, profile):
     roots = {name: digest({path: digest((output / path).read_bytes()) for path in manifest["chunks"][name]}) for name in ("datasets", "relationships")}
     descriptor["plane_roots"] = roots
     descriptor["exploratory_publication"] = {"schema": "okf-exploratory-publication.v1", "publication_state": "exploratory", "snapshot_id": snapshot, "generated_at": observed, "applicable_plane_roots": roots, "publisher": {"name": "Independent cross-government software discovery experiment", "url": "https://github.com/chris-page-gov/xgov-soft-eng-com", "authority_status": "independent-research"}, "banner": {"label": "Exploratory", "message": "This is an incomplete research view, not an authoritative service or released data product. Content and links may change. Check the cited official source before making a decision.", "feedback_url": "https://github.com/chris-page-gov/xgov-soft-eng-com/issues/new", "preserve_route": True}, "indexing_policy": "noindex", "limitations": ["Classifications are unreviewed name and description matches.", "GitHub history coverage is partial and does not establish maintainership.", "No estate-wide vulnerability assessment is provided."], "permitted_claims": ["Public metadata can be explored with source provenance."], "prohibited_claims": ["Do not claim official endorsement, exhaustive coverage or security assurance."], "promotion_rule": "Any stronger publication claim requires a separate owner decision and supporting evidence."}
+    if descriptor.get('history_coverage'):
+        descriptor['exploratory_publication']['limitations'].append(descriptor['history_coverage']['message'])
     write(output / "data/manifest.json", manifest)
     write(output / "okf-explorer.json", descriptor)
 

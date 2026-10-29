@@ -62,6 +62,21 @@ async (page) => {
     require(actor, 'History example must retain a recent contributor account');
     const clean = await page.evaluate(bundle => { const url = new URL(location.href); url.search = new URLSearchParams({bundle, view:'reader'}).toString(); url.hash='overview'; return url.href; }, descriptorUrl);
     await page.goto(clean);
+    await page.getByRole('textbox',{name:'Search static index'}).waitFor();
+    await page.locator('[aria-label="Facet visibility"]').getByRole('button',{name:'All',exact:true}).click();
+    const coverageSection = page.locator('[data-facet-key="history_coverage"]');
+    const coverageToggle = coverageSection.locator('.facet-toggle');
+    if (await coverageToggle.getAttribute('aria-expanded') !== 'true') await coverageToggle.click();
+    await page.waitForFunction(message => document.body.innerText.includes(message),descriptor.history_coverage.message,{timeout:20000});
+    receipt.checks.push({id:'history-coverage-notice', counts:descriptor.history_coverage.counts, passed:true});
+    const state = Object.keys(descriptor.history_coverage.counts).find(value => value==='pending-provider-statistics') || 'not-collected';
+    const section = page.locator('[data-facet-key="recent_commit_band"]');
+    const toggle = section.locator('.facet-toggle');
+    if (await toggle.getAttribute('aria-expanded') !== 'true') await toggle.click();
+    await section.locator(`button.facet-value[data-facet-value=${JSON.stringify(state)}]`).press('Alt+Enter');
+    await matchCount(descriptor.history_coverage.counts[state]);
+    receipt.checks.push({id:'history-state-facet-labels', state, expected:descriptor.history_coverage.counts[state], passed:true});
+    await reset();
     const openRepository = async record => {
       await page.getByRole('navigation',{name:'Views'}).getByRole('button',{name:'Reader',exact:true}).click();
       await page.getByRole('textbox',{name:'Search static index'}).fill(record.title);

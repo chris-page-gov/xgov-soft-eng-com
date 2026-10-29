@@ -48,7 +48,8 @@ outputs, credentials and account-usage checkpoints are outside this boundary.
 The Pages candidate is copied from already-checked generated outputs; it does
 not rebuild those files. The public descriptor and Explorer journeys must be
 checked at their exact deployed URLs before a working public link is advertised.
-The final dated evidence and outcome will be recorded here after those checks.
+Dated public evidence is recorded under validation/browser, with each receipt
+bound to its own producer snapshot and consumer tree.
 
 ## Repeat the browser matrix
 
@@ -74,7 +75,7 @@ Failed receipts retain the journey's bounded error message for diagnosis.
 
 The Pages workflow runs all three suites after deployment in a separate
 contents-read job, with Ubuntu 24.04, Node 26.7.0, Playwright CLI 0.1.17 and
-runner-installed Chrome. It compares all 38 checks with the exact released
+runner-installed Chrome. It compares all 40 checks with the exact released
 build manifest, quality-file checksum, descriptor hash, snapshot and consumer
 identity. CLI exit codes alone never establish success. Validated JSON results
 are retained as an Action artefact; failed verification marks the workflow
@@ -116,3 +117,12 @@ complete available assertion dataset remains in the semantic shards; a route
 index provides incident assertions without loading that whole graph. The
 producer fails closed if endpoint labels exceed 100,000 entries or the Pages
 candidate exceeds 1 GiB. A failed publication retains the previous snapshot.
+
+## Report-driven extension in v0.4.0
+
+The current matrix adds two checks to the previous 38: the snapshot-wide history
+coverage notice in the history facet must render, and a pending or missing history band must filter
+to its exact source-bound count. The 40-check receipt retains all prior facet,
+semantic, mobile and deep-link journeys. The separate offline AI test pack
+checks complete facet postings, every RDF assertion and all available profile
+measures; its results do not imply browser or model interpretation acceptance.

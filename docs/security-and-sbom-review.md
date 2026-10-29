@@ -114,3 +114,8 @@ and cookie handling. Lean Coffee #2 specifies secret handling and avoidance
 of sensitive URL logging in proposed email automation; it is a request, not
 evidence that the feature is implemented. No issues or comments were created,
 edited or sent as part of this review.
+
+The 14,326 SBOM-path figure above belongs to the initial source snapshot
+64e70d84e1d4c7a064695c65583000f9bb8a57916ec2b7f636a84b4be98eda9b
+reviewed on 28 October 2026. It is a historical observation. Read the frozen
+release quality.json for that release's current distinct-record count.

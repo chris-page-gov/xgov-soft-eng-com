@@ -201,19 +201,19 @@
     },
     {
       "key": "recent_contributor",
-      "field": "recent_contributors",
+      "field": "recent_contributor_facet_values",
       "label": "Recent contributor account",
       "question": "Which accounts contributed in the complete recent window?",
-      "description": "Public GitHub accounts; not verified people, maintainers or approvers.",
+      "description": "Public GitHub accounts; not verified people, maintainers or approvers. Account lists contain logins only; facet values also distinguish collection states and unmapped accounts.",
       "basis": "source-reported",
       "missing_value": "not-collected"
     },
     {
       "key": "historical_contributor",
-      "field": "historical_contributors",
+      "field": "historical_contributor_facet_values",
       "label": "Historical contributor account",
       "question": "Which accounts appear in the available default-branch history?",
-      "description": "Historical contribution is not present ownership or scan authority.",
+      "description": "Historical contribution is not present ownership or scan authority. Account lists contain logins only; facet values also distinguish collection states and unmapped accounts.",
       "basis": "source-reported",
       "missing_value": "not-collected"
     },

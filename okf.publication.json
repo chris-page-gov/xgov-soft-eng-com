@@ -391,7 +391,8 @@
         ".github/workflows/**"
       ],
       "command_ids": [
-        "archive"
+        "archive",
+        "ai-evaluation"
       ]
     },
     {
@@ -549,6 +550,18 @@
         ],
         "command": "python scripts/collect_browser_receipts.py --manifest release/build-manifest.json --logs output/playwright/ci --output output/playwright/ci/browser-verification.json",
         "source": "scripts/collect_browser_receipts.py",
+        "review_status": "reviewed-local-guidance",
+        "network": "none",
+        "mutates": "generated-only"
+      },
+      {
+        "id": "ai-evaluation",
+        "kind": "check",
+        "planes": [
+          "release"
+        ],
+        "command": "uv run --locked python scripts/verify_bundle.py --archive dist/xgov-okf.tar.gz --checksums dist/SHA256SUMS --output dist/verification-result.json",
+        "source": "docs/ai-evaluation.md",
         "review_status": "reviewed-local-guidance",
         "network": "none",
         "mutates": "generated-only"

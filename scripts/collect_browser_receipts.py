@@ -15,7 +15,7 @@ def expected_checks():
     return {
         'facets':{'facet-'+row['key'] for row in facets}|{'hyphenated-repository-search','zero-result-search'},
         'combinations':{'or-within-facet','and-across-facets','unknown-fork-is-separate','high-cardinality-search-and-paging','available-history-filter'},
-        'semantics-history':{'history-counts-period-tables-and-provenance','semantic-assertion-inverse-measurement-and-source','contributor-target-and-inverse-source-navigation','missing-history-is-not-zero','narrow-viewport-navigation-and-reading','repository-deep-link-reload'},
+        'semantics-history':{'history-coverage-notice','history-state-facet-labels','history-counts-period-tables-and-provenance','semantic-assertion-inverse-measurement-and-source','contributor-target-and-inverse-source-navigation','missing-history-is-not-zero','narrow-viewport-navigation-and-reading','repository-deep-link-reload'},
     }
 
 

@@ -60,7 +60,12 @@ pending, available, unavailable, size-limited or provider-limited. Missing and
 pending data are never converted into zero activity. The dated credits page
 remains separate from the continuously collected activity data.
 Reported commits without a mapped GitHub account retain their counts and an
-explicit no-mapped-account value; no person is invented to fill the gap.
+explicit no-mapped-account facet value; no person is invented to fill the gap.
+Raw recent_contributors and historical_contributors arrays contain account
+logins only. Separate contributor facet fields hold the account or collection
+state. Pending, unavailable and empty states remain distinct in recent-commit
+and churn facets. Snapshot-wide coverage appears in the descriptor, overview,
+facet descriptions and Explorer history facet and publication details.
 The repository Narrative view includes contributor counts, recent weekly
 totals and historical annual totals. Annual rows use the year of each week's
 UTC start, rather than pretending to have individual commit dates. Missing
@@ -82,3 +87,19 @@ Read Actions and source/history/index.json on history-data for actual coverage.
 Full history here means all available provider statistics for every catalogued
 repository. Private repositories, inaccessible records, excluded commit kinds
 and branches outside the default-branch statistics remain explicit limitations.
+
+## Observation and catalogue identity
+
+History observations are retained on their own schedules and joined by
+case-insensitive GitHub owner/repository identity. An observation can cite an
+earlier catalogue source hash. `history_observation` records that hash, the
+current catalogue hash, `catalogue_binding` and `join_basis`; it does not claim
+an atomic join or an immutable repository-ID binding. Original observations
+remain unchanged.
+
+A successful empty statistics response is `empty-or-unavailable` with
+`reason_code: empty-successful-response`. HTTP 202 records the provider's
+computing state. Older HTTP 200 observations without a usable profile retain
+their original coverage and receive an explanatory legacy reason in the
+projection. Neither successful HTTP nor a push timestamp establishes usable
+default-branch statistics.

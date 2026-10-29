@@ -80,7 +80,7 @@ different snapshots. Private grants and private starter outputs are excluded.
 
 Run python scripts/pages.py for a local copy, or pass --release with a directory
 containing all six assets from one snapshot. An existing destination is never
-overwritten. The separate, contents-read verification job checks all 38 declared browser
+overwritten. The separate, contents-read verification job checks all 40 declared browser
 checks against that release after deployment, then retains a JSON receipt.
 It has no Pages-write or OIDC permission. It pins Node 26.7.0 and Playwright CLI
 0.1.17 and uses runner-installed Chrome. A failed verification requires
@@ -95,3 +95,13 @@ Chrome acceptance covers the declared facets, search, semantic evidence and
 contributor-history journeys; see the dated browser report for exact evidence.
 The JSON-LD manifest is for RDF tools, not a canonical YAML-LD descriptor.
 A successful Python build alone does not establish browser acceptance.
+
+## Frozen AI comparison assets
+
+The archive step first verifies the frozen data, then creates the deterministic
+xgov-ai-test-pack.zip from those exact bytes and runs its independent verifier.
+The release publishes that ZIP, verification-result.json and SHA256SUMS beside
+the data archive. Pages verifies every listed release asset before copying the
+already-assured generated files. No model API is called. A failed verifier
+blocks publication. The Python 3.12 standard-library helper can be copied out
+of the reviewed ZIP; do not execute code from arbitrary data archives.

@@ -47,5 +47,5 @@ jobs:
       - name: Publish the assured candidate
         run: |
           tag="snapshot-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          gh release create "$tag" dist/xgov-okf.tar.gz dist/SHA256SUMS dist/record-hashes.json dist/record-summary.json dist/build-manifest.json dist/quality.json --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --draft --title "Daily experimental OKF pack" --notes-file dist/release-notes.md
+          gh release create "$tag" dist/xgov-okf.tar.gz dist/xgov-ai-test-pack.zip dist/verification-result.json dist/SHA256SUMS dist/record-hashes.json dist/record-summary.json dist/build-manifest.json dist/quality.json --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --draft --title "Daily experimental OKF pack" --notes-file dist/release-notes.md
           gh release edit "$tag" --repo "$GITHUB_REPOSITORY" --draft=false --latest

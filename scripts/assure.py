@@ -34,8 +34,10 @@ def main():
         for row,node in zip(rows,semantic):
             validator.validate(row)
             expected={"@id":row["id"],c.RDF+"subject":c.ref(row["source_iri"]),c.RDF+"predicate":c.ref(row["predicate"]),c.RDF+"object":c.ref(row["target_iri"]),c.NS+"assertionStatus":row["assertion_status"],c.PROV+"wasDerivedFrom":c.ref(c.NS+'snapshot:'+row['evidence'][0]['source_sha256'])}
+            expected.update({'http://www.w3.org/2000/01/rdf-schema#label':row['label'],c.NS+'inverseLabel':row['inverse_label'],c.NS+'relationshipKind':row['kind'],c.NS+'sourceRoute':row['source'],c.NS+'targetRoute':row['target'],c.NS+'assertionScope':row['assertion_scope'],c.NS+'authority':{'@value':row['authority'],'@type':c.RDF+'JSON'},c.NS+'derivation':c.ref(row['derivation']),c.NS+'observedAt':row['observed_at'],c.NS+'reviewStatus':row['review_status'],c.NS+'evidence':{'@value':row['evidence'],'@type':c.RDF+'JSON'},c.NS+'rightsRecord':{'@value':row['rights'],'@type':c.RDF+'JSON'}})
             if row.get('measurement'):expected[c.NS+'reportedCommitCount']=row['measurement']['reported_commits']
-            if any(node[k]!=v for k,v in expected.items()):raise ValueError("RDF reification and runtime assertion disagree")
+            if row.get('measurement'):expected[c.NS+'measurement']={'@value':row['measurement'],'@type':c.RDF+'JSON'}
+            if any(node.get(k)!=v for k,v in expected.items()):raise ValueError("RDF reification and runtime assertion disagree: "+row['id'])
             total+=1
     triples=0
     for shard in c.read(out/"semantic/manifest.json")["shards"]:

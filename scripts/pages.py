@@ -115,7 +115,7 @@ def prepare_release(root, release, destination):
     """Verify an assured release; extract only generated data, never its code."""
     import archive as packager
     root,release=Path(root),Path(release)
-    expected={'xgov-okf.tar.gz','build-manifest.json','record-hashes.json','record-summary.json','quality.json'}
+    expected={'xgov-okf.tar.gz','xgov-ai-test-pack.zip','verification-result.json','build-manifest.json','record-hashes.json','record-summary.json','quality.json'}
     checked=set()
     for line in (release/'SHA256SUMS').read_text().splitlines():
         checksum,name=line.split('  ',1)

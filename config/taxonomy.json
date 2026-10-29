@@ -349,7 +349,35 @@
         "cyber",
         "vulnerability",
         "encryption"
-      ]
+      ],
+      "context_rules": {
+        "vulnerability": {
+          "requires_any": [
+            "security",
+            "cyber",
+            "cve",
+            "cves",
+            "cwe",
+            "osv",
+            "grype",
+            "trivy",
+            "dependabot",
+            "dependency",
+            "dependencies",
+            "disclosure",
+            "exploit",
+            "vulnerability scanner",
+            "vulnerability scan"
+          ],
+          "allow_exact_name": true,
+          "exclude_phrases": [
+            "community vulnerability",
+            "social vulnerability",
+            "covid vulnerability",
+            "climate vulnerability"
+          ]
+        }
+      }
     },
     {
       "id": "apis-integration",
@@ -658,7 +686,35 @@
         "scanner",
         "authentication",
         "encryption"
-      ]
+      ],
+      "context_rules": {
+        "vulnerability": {
+          "requires_any": [
+            "security",
+            "cyber",
+            "cve",
+            "cves",
+            "cwe",
+            "osv",
+            "grype",
+            "trivy",
+            "dependabot",
+            "dependency",
+            "dependencies",
+            "disclosure",
+            "exploit",
+            "vulnerability scanner",
+            "vulnerability scan"
+          ],
+          "allow_exact_name": true,
+          "exclude_phrases": [
+            "community vulnerability",
+            "social vulnerability",
+            "covid vulnerability",
+            "climate vulnerability"
+          ]
+        }
+      }
     },
     {
       "id": "learning",
@@ -684,5 +740,10 @@
         "scientific"
       ]
     }
-  ]
+  ],
+  "term_aliases": {
+    "vulnerability": [
+      "vulnerabilities"
+    ]
+  }
 }

@@ -52,3 +52,11 @@ presentation sidecar share the complete record plane. Checks recompute counts
 and reject stale or incomplete classifications. Static tests exercise OR, AND,
 empty selections and multi-value counts. Explorer browser acceptance remains
 pending; presentation metadata is not proof of working Reader controls.
+
+## Contributor and activity unknowns
+
+Account arrays contain logins only. Contributor facet values use separate
+projection fields so missing, pending, empty and unavailable collection states
+do not masquerade as accounts or collapse into not-collected. Recent commit
+bands and churn availability use the exact non-available coverage state. A
+coverage notice states the available denominator before activity is compared.

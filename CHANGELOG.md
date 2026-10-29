@@ -6,6 +6,28 @@ daily dataset snapshots have separate identifiers.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-29
+
+### Added
+
+- A deterministic, archive-pinned AI test pack with one prompt for Claude and
+  Gemini, an independent offline verifier and machine-readable expected facts.
+- Complete RDF assertion metadata under the unchanged shared contract, scoped
+  predicate-usage labels, explicit
+  source/build identities and captured history-join provenance.
+- CLI result paging and a visible snapshot-wide history coverage notice
+  through the governed facet presentation.
+
+### Fixed
+
+- Keep pending, empty and unavailable history distinct in activity facets;
+  store account logins separately from facet status values.
+- Retain a specific reason for empty successful GitHub statistics responses.
+- Match governed vulnerability aliases with cyber context while excluding
+  unsupported social-vulnerability security classifications.
+- Publish paired archive, test-pack and verification checksums together, and
+  test RDF/runtime field parity and the confirmed report regressions.
+
 ## [0.3.0] - 2026-10-29
 
 ### Added
@@ -106,7 +128,8 @@ daily dataset snapshots have separate identifiers.
 - Pin a runner that supports the governed Python version.
 - Exclude Finder metadata from reproducibility checks.
 
-[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/chris-page-gov/xgov-soft-eng-com/compare/f7eaed15feaa11941b8fa95e1c66aa400f421483...v0.2.0

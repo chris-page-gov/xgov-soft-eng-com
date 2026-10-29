@@ -61,6 +61,18 @@ class HistoryTests(unittest.TestCase):
                 result=h.collect(root)
                 self.assertTrue(result['budget_checkpoint']);self.assertEqual(h.verify(root)['repositories'],{})
 
+    def test_successful_empty_statistics_keep_a_specific_reason(self):
+        from test_catalogue import fixture
+        for statistics in (None,[]):
+            with self.subTest(statistics=statistics),tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);h.c.write(root/'config/catalogue.json',{'source_url':'https://example.invalid/repos.json','max_bytes':10000,'minimum_records':1,'maximum_removal_fraction':0.2})
+                response=MagicMock();response.__enter__.return_value=response;response.geturl.return_value='https://example.invalid/repos.json';response.read.return_value=json.dumps([fixture()]).encode()
+                client=MagicMock();client.calls=2;client.get.side_effect=[(200,{'private':False,'full_name':'ExampleGov/accessible-forms','default_branch':'main'},'a'*64),(200,statistics,'b'*64)]
+                with patch.object(h.urllib.request,'urlopen',return_value=response),patch.object(h,'Client',return_value=client):
+                    result=h.collect(root);self.assertEqual(result['coverage'],{'empty-or-unavailable':1})
+                    item=h.load_index(root)['repositories']['examplegov/accessible-forms'];observation=h.c.read(root/item['path'])
+                    self.assertEqual(observation['http_status'],200);self.assertEqual(observation['reason_code'],'empty-successful-response');self.assertNotIn('profile',observation)
+
     def test_small_or_mass_removal_feed_cannot_replace_checkpoint(self):
         from test_catalogue import fixture
         for minimum in (1,2):
@@ -93,7 +105,8 @@ class HistoryTests(unittest.TestCase):
             index=h.load_index(root);index['repositories']['examplegov/geospatial-library']={'path':anonymous_path,'sha256':anonymous_hash,'state':'available'};h.c.write(root/'source/history/index.json',index)
             h.c.build(root,root/'generated',receipt)
             anonymous_record=next(row for row in h.c.records_from(root/'generated') if row['title'].endswith('geospatial-library'))
-            self.assertEqual(anonymous_record['recent_contributors'],['no-mapped-account'])
+            self.assertEqual(anonymous_record['recent_contributors'],[])
+            self.assertEqual(anonymous_record['recent_contributor_facet_values'],['no-mapped-account'])
             self.assertEqual(anonymous_record['activity']['recent_reported_commits'],2)
             manifest=h.c.read(root/'generated/data/manifest.json')
             assertions=[row for path in manifest['chunks']['relationships'] for row in h.c.read(root/'generated'/path)]
