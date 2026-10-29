@@ -46,5 +46,13 @@ class BrowserReceiptTests(unittest.TestCase):
             self.write(root,r);(root/'quality.json').write_bytes(b'changed')
             with self.assertRaisesRegex(ValueError,'checksum'):b.collect(root/'build-manifest.json',root)
 
+    def test_failed_journey_preserves_actionable_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);r=self.fixture(root)
+            r['facets'].update(status='failed',failure='All 25 facets must be available')
+            self.write(root,r)
+            with self.assertRaisesRegex(ValueError,'facets: All 25 facets must be available'):
+                b.collect(root/'build-manifest.json',root)
+
 
 if __name__=='__main__':unittest.main()

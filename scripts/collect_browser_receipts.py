@@ -33,7 +33,8 @@ def collect(manifest_path,logs,descriptor_url=DESCRIPTOR):
             raise ValueError(suite+': CLI did not return exactly one successful result')
         receipt=json.JSONDecoder().raw_decode(text.split('### Result\n',1)[1])[0]
         if receipt.get('schema')!='xgov-browser-acceptance.v1' or receipt.get('status')!='passed':
-            raise ValueError(suite+': browser acceptance failed')
+            detail=str(receipt.get('failure','browser acceptance failed'))[:2000]
+            raise ValueError(suite+': '+detail)
         if receipt.get('descriptor_url')!=descriptor_url or receipt.get('snapshot_id')!=manifest['build_id'] or receipt.get('descriptor_sha256')!=manifest['outputs']['okf-explorer.json'] or receipt.get('records')!=records:
             raise ValueError(suite+': browser identity differs from the released candidate')
         checks=receipt.get('checks',[]);ids=[row.get('id') for row in checks]

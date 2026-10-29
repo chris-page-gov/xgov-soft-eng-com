@@ -43,6 +43,7 @@ async (page) => {
     await page.goto(clean);
     await page.getByRole('textbox', {name: 'Search static index'}).waitFor();
     await page.locator('[aria-label="Facet visibility"]').getByRole('button', {name: 'All', exact: true}).click();
+    await page.waitForFunction(() => document.querySelectorAll('[data-facet-key]').length === 25, undefined, {timeout: 20000});
     require(await page.locator('[data-facet-key]').count() === 25 && definitions.length === 25, 'All 25 facets must be available');
     for (const facet of definitions) {
       await reset();
@@ -52,6 +53,12 @@ async (page) => {
       const row = distributions[facet.key][0];
       const value = section.locator(`button.facet-value[data-facet-value=${JSON.stringify(row.value)}]`);
       await value.waitFor();
+      await page.waitForFunction(({key, value, expected}) => {
+        const section = Array.from(document.querySelectorAll('[data-facet-key]')).find(node => node.getAttribute('data-facet-key') === key);
+        const button = Array.from(section?.querySelectorAll('button.facet-value') || []).find(node => node.getAttribute('data-facet-value') === value);
+        const total = button?.querySelector('small')?.textContent?.split('/').at(-1).replaceAll(',', '').trim();
+        return total && Number(total) === expected;
+      }, {key: facet.key, value: row.value, expected: row.count}, {timeout: 20000});
       const displayed = Number((await value.locator('small').innerText()).split('/').at(-1).replaceAll(',', '').trim());
       require(displayed === row.count, `${facet.key}: displayed distribution differs from the checked catalogue`);
       await value.press('Alt+Enter'); await matchCount(row.count);

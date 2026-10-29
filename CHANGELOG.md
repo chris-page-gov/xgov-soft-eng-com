@@ -32,6 +32,8 @@ daily dataset snapshots have separate identifiers.
 
 ### Fixed
 
+- Wait for asynchronously loaded facet counts in fresh browser contexts and
+  retain actionable journey failures in automated verification receipts.
 - Reject false CLI success, missing browser checks and changed producer or
   consumer identities in automated verification receipts.
 - Retry a Finder metadata race in the failed cleanup directory even when

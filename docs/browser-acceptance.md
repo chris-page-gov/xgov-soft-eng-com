@@ -67,6 +67,10 @@ and a zero-result query. The receipt records the descriptor hash, snapshot,
 record count, consumer commit, application tree, Chrome version and errors.
 A returned status of failed is a failure, even if the CLI exits successfully.
 Inspect the receipt; do not treat a zero process exit code as acceptance.
+The facet check waits for the published distribution before sampling it. A
+fresh browser can initially display an unavailable count while its metadata
+loads; a missing or incorrect count still fails after the bounded wait.
+Failed receipts retain the journey's bounded error message for diagnosis.
 
 The Pages workflow runs all three suites after deployment in a separate
 contents-read job, with Ubuntu 24.04, Node 26.7.0, Playwright CLI 0.1.17 and
