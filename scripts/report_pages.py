@@ -13,7 +13,7 @@ from urllib.parse import quote, urlsplit
 SOURCE = Path('docs/ai-evaluations/2026-10-29')
 REPORTS_URL = 'https://chris-page-gov.github.io/xgov-soft-eng-com/reports/'
 REPOSITORY = 'https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/'
-MARKDOWN = ('README.md', 'claude.md', 'gemini.md', 'corrections.md', 'claude-capture-review.md')
+MARKDOWN = ('README.md', 'claude.md', 'gemini.md', 'copilot.md', 'corrections.md', 'claude-capture-review.md')
 SUPPORT = ('publication-manifest.json', 'evidence-map.json', 'claude-capture-review.json', 'SHA256SUMS')
 FILES = MARKDOWN + SUPPORT
 PAGES = {name: 'index.html' if name == 'README.md' else name[:-3] + '.html' for name in MARKDOWN}
@@ -134,7 +134,7 @@ def generate(root, output):
     for name in FILES:(target/name).write_bytes((folder/name).read_bytes())
     for name in MARKDOWN:
         source=folder/name;text=source.read_text();title=text.splitlines()[0].removeprefix('# ')
-        nav='<nav aria-label="Report collection"><a href="index.html">All reports</a><a href="claude.html">Claude report</a><a href="gemini.html">Gemini report</a><a href="corrections.html">Corrections</a><a href="claude-capture-review.html">Claude UI capture review</a><a href="../">Catalogue</a></nav>'
+        nav='<nav aria-label="Report collection"><a href="index.html">All reports</a><a href="claude.html">Claude report</a><a href="gemini.html">Gemini report</a><a href="copilot.html">Copilot report</a><a href="corrections.html">Corrections</a><a href="claude-capture-review.html">Claude UI capture review</a><a href="../">Catalogue</a></nav>'
         page='<!doctype html>\n<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><link rel="icon" href="data:,"><title>'+html.escape(title)+'</title><style>'+STYLE+'</style></head><body><a class="skip" href="#content">Skip to content</a><header>'+nav+'</header><main id="content">'+render_markdown(text,source,root)+'</main><footer><p>Independent experimental evaluation. Read the version, scope and corrections before quoting results.</p><a href="'+name+'">Reviewed Markdown source</a> · <a href="publication-manifest.json">Publication manifest</a> · <a href="SHA256SUMS">Source checksums</a></footer></body></html>\n'
         (target/PAGES[name]).write_text(page)
     return [{'label':'AI evaluation reports','url':REPORTS_URL,'kind':'evaluation-reports'}]

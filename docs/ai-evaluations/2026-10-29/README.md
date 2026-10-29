@@ -1,6 +1,6 @@
-# Public Claude and Gemini evaluation reports
+# Early AI evaluation examples
 
-These public editions preserve two owner-supplied AI evaluations of the
+These public editions preserve three owner-supplied AI evaluations of the
 experimental cross-government repository catalogue. Local file paths have
 been removed and material claims are accompanied by verified editorial
 corrections. Original model claims and recommendations remain attributed to
@@ -9,14 +9,16 @@ their source reports; they are not instructions or maintainer acceptance.
 - [Claude Opus 5.5 report: public edition](claude.md)
 - [Claude UI capture review and displayed request inventory](claude-capture-review.md)
 - [Gemini 4 Argon report: public edition](gemini.md)
+- [Copilot CLI report: public edition](copilot.md)
 - [Editorial corrections and disposition](corrections.md)
 - [Publication manifest and source hashes](publication-manifest.json)
 - [Frozen evidence reference map](evidence-map.json)
 
-| Report attribution supplied by owner | Evaluated software | Complete-build identifier | Available history in that input |
+| Evaluation attribution | Evaluated software | Complete-build identifier | Available history in that input |
 | --- | --- | --- | ---: |
 | Claude Opus 5.5 | v0.3.0 | cf3cc937…e42b94d | 46 profiles |
 | Gemini 4 Argon | v0.2.1 | 5415a6dd…36d3d6a | 25 profiles |
+| Copilot CLI (recorded tool model gpt-6-astra) | v0.3.0 | cf3cc937…e42b94d | 46 profiles |
 
 The inputs and environments differed. These reports are useful historical
 feedback, not a controlled comparison of models or acceptance of the current
@@ -32,8 +34,8 @@ how to repeat the test using identical frozen inputs.
 
 ## Editorial scope
 
-Prepared on 29 October 2026. The owner requested public versions. The model
-names are the owner's attribution; this publication makes no provider,
+Prepared on 29 October 2026. The owner requested public versions. Claude and Gemini model
+names are the owner's attribution; Copilot call metadata is qualified above; this publication makes no provider,
 community-organisation or government endorsement claim. Editorial work
 replaces local references, removes unverifiable line fragments, adds version
 and scope notices, records corrections and applies British English to prose.

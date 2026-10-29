@@ -25,11 +25,11 @@ were supplied. Keep manual domain interpretation distinct from automated facts.
 ## Reading the historical evaluations
 
 The [public report collection](ai-evaluations/2026-10-29/README.md) preserves
-the original Claude and Gemini claims with editorial corrections. The later
+the original Claude, Gemini and Copilot claims with editorial corrections. The later
 [Claude UI capture review](ai-evaluations/2026-10-29/claude-capture-review.md)
 records displayed command history, explicit errors, truncation and replay
 limits. Its curated index is public; the raw capture remains private. A UI
-Response label does not prove exit code zero. Neither historical report is
+Response label does not prove exit code zero. No historical report is
 acceptance of a newer bundle or a controlled comparison of model capability.
 
 The catalogue and Explorer link to the HTML report collection on Pages. The

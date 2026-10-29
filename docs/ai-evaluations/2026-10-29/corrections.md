@@ -67,6 +67,28 @@ presentation gaps. Its overall PASS summary is not accepted as current-release
 assurance. The independent editorial checks do not establish general model
 quality or compare model capability: the inputs and environments differed.
 
+## Copilot report
+
+This early example used the same v0.3.0 archive as Claude. Its retained private
+session includes recorded requests/results, unlike a prose-only evaluation.
+Transport success is not a per-test PASS, and this publication has not replayed
+all original scripts. Its overall seven-test PASS remains a historical claim;
+its browser status is explicitly UNTESTED. The checksum account distinguishes
+all generated outputs from 26 extracted controlled inputs; it does not claim
+that all 75 controlled inputs were extracted and inspected.
+
+Its 1,618 Python/SBOM intersection and NHS totals agree with the retained v0.3.0
+input and examples already discussed above. The 46 available profiles and
+0.19% coverage describe that snapshot, not today's rolling collection.
+
+The complete-count recommendation needs the same qualification as Claude C2:
+the bound is real, but total-match and truncation messages already existed in
+Explorer. CLI paging arrived in v0.4.0. Missing-history facet states and RDF
+metadata parity were confirmed issues addressed in v0.4.0. Suggested aliases
+for “Cybersecurity” and a finer distinction between research lists and tools
+remain proposals for further classification review; publishing this example
+does not claim those broader changes were implemented or validated.
+
 ## Implemented response and repeatable retest
 
 [v0.4.0](https://github.com/chris-page-gov/xgov-soft-eng-com/releases/tag/v0.4.0)

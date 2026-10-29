@@ -130,9 +130,9 @@ measures; its results do not imply browser or model interpretation acceptance.
 ## Public report journeys
 
 `scripts/browser_reports.js` adds eight snapshot-bound checks: navigation from
-the catalogue and Explorer; all five HTML report identities; the later Claude
-capture review and 35-request inventory; all 14 report output hashes against
-the released build manifest; public-edition provenance hashes; five-page mobile
+the catalogue and Explorer; all six HTML report identities; the later Claude
+capture review and 35-request inventory; all 16 report output hashes against
+the released build manifest; public-edition provenance hashes; six-page mobile
 layout; and private-path exclusions. It starts on Explorer with the catalogue
 loaded and restores that view afterwards. The Pages workflow runs it after the
 three catalogue suites, and the receipt collector requires all four suites
@@ -140,5 +140,5 @@ and 48 checks from the same producer and consumer identities.
 
 The initial local mobile check identified overflowing long evidence links in
 the Gemini report. The renderer now wraps long text; the browser check covers
-all five report pages at 390 pixels. These report checks supplement the
+all six report pages at 390 pixels. These report checks supplement the
 existing facets, semantic and contributor journeys.

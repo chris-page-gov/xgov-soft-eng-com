@@ -38,7 +38,7 @@ def _landing(count, reports=False):
             "    <p>It presents source-reported metadata. Suggested classifications are unreviewed; coverage is limited to the admitted sources and recorded collection period. Repository rights and reported licences are not independently verified. This is not a security assessment.</p>\n"
             f"    <p><a href=\"{html.escape(DESCRIPTOR_URL, quote=True)}\">View the OKF Explorer descriptor</a></p>\n"
             f"    <p><a href=\"{html.escape(explorer_url, quote=True)}\">Open in OKF Explorer</a></p>\n"
-            + ("    <p><a href=\"reports/\">Claude and Gemini evaluation reports</a> · <a href=\"reports/claude-capture-review.html\">Claude UI capture review</a></p>\n" if reports else "") +
+            + ("    <p><a href=\"reports/\">Early AI evaluation examples</a> · <a href=\"reports/claude-capture-review.html\">Claude UI capture review</a></p>\n" if reports else "") +
             "    <p><a href=\"publication-receipt.json\">Publication receipt and checksums</a> · <a href=\"semantic/manifest.json\">Semantic graph</a> · <a href=\"https://github.com/chris-page-gov/xgov-soft-eng-com\">Source code, documentation and credits</a></p>\n"
             "  </main>\n</body>\n</html>\n").encode("utf-8")
 

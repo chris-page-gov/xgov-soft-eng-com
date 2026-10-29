@@ -47,16 +47,45 @@
         "British English prose check; schema identifiers preserved"
       ],
       "original_files_published": false
+    },
+    {
+      "slug": "copilot",
+      "model": "Copilot CLI (recorded tool model gpt-6-astra)",
+      "version": "0.3.0",
+      "snapshot": "cf3cc937490d7f3f4de51883e3f8e6d6041c5e24e777d2cecf4b10e95e42b94d",
+      "tag": "snapshot-40796536582-1",
+      "commit": "f24915104e5e9b34c91babab9f00fc5c6bdff02f",
+      "archive_sha256": "d739a2a058425eb40e6515a7489bbf3f5d33b439803caa3c2387ca1b5b14d1ae",
+      "original_sha256": "79dd00b4290292f8ba73632241a40a6137ddc451a091ffcd45655e489232e749",
+      "public_report": "copilot.md",
+      "editorial_changes": [
+        "prominent historical-input, attribution and execution-limit notice",
+        "retained report prose with correction-ledger qualifications"
+      ],
+      "original_files_published": false,
+      "retained_metadata": {
+        "selection": "Fusion Max",
+        "tool_models": [
+          "gpt-6-astra"
+        ],
+        "tool_starts": 37,
+        "tool_completions": 37,
+        "commands": 15,
+        "complete_json_outputs": 3,
+        "transport_success_is_test_success": false
+      },
+      "public_sha256": "b67f7aba58e42678174a90c04c05ccb748ff163f8c9bd886cc01f7308e75d240"
     }
   ],
   "authority": "Owner requested preparation of public editions; no model-provider or government endorsement asserted.",
   "privacy": "Local paths removed; original files and execution logs are not published.",
   "supporting_files": {
-    "README.md": "673dd9cb07c26ca4cdeb6129955d06c2befbc1073d63c3b1a443ba321be9690b",
+    "README.md": "23eebf00d2f87aaa9f86680cf920f2ef6562803de49788cede422423bd9d4020",
     "claude-capture-review.json": "f0e69506b208e74b372d788af954f27b83cc4f3043ad4d61d5cc3e690d0c29c8",
     "claude-capture-review.md": "98dc3e25cdd72369dede1a1701205291dc34c422a470536e1586bf9c2e85e83c",
     "claude.md": "6abdeb43d96efe05171ba68948ac5ba972e4f5684af77b9efb799cd777a6408c",
-    "corrections.md": "71e2937776818965054df3f23eca8c5d3e13e410b97831e515551c9ee0d1c076",
+    "copilot.md": "b67f7aba58e42678174a90c04c05ccb748ff163f8c9bd886cc01f7308e75d240",
+    "corrections.md": "b2db4b71dc718851955fb7522672048bc027a48f34b10c4ed662b69fece45eef",
     "evidence-map.json": "63d00054a49fdc510f43989736ee4392d8e710d8360fdaf9aef82b0fb9d536bc",
     "gemini.md": "4975e996835dff13946bd466564e854223abe7908e0fb79bd11e96d6fa912125"
   },

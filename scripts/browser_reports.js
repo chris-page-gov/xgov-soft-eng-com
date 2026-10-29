@@ -25,28 +25,28 @@ async (page) => {
     if(await link.getAttribute('href')!==declared.url)throw Error('Explorer report URL differs');
     const popupPromise=page.waitForEvent('popup');await link.click();const popup=await popupPromise;
     await popup.waitForLoadState('domcontentloaded');
-    if(popup.url()!==declared.url||await popup.title()!=='Public Claude and Gemini evaluation reports')throw Error('Explorer report navigation failed');
+    if(popup.url()!==declared.url||await popup.title()!=='Early AI evaluation examples')throw Error('Explorer report navigation failed');
     await popup.close();check('explorer-report-link','Producer-declared report link opens the collection');
-    await page.goto(base);await page.getByRole('link',{name:'Claude and Gemini evaluation reports',exact:true}).click();
+    await page.goto(base);await page.getByRole('link',{name:'Early AI evaluation examples',exact:true}).click();
     if(page.url()!==base+'reports/')throw Error('Catalogue report navigation failed');check('catalogue-report-link','Catalogue links to reports');
-    const routes=[['','Public Claude and Gemini evaluation reports'],['claude.html','Claude Opus 5.5 evaluation: public edition'],['gemini.html','Gemini 4 Argon evaluation: public edition'],['corrections.html','Editorial corrections and disposition'],['claude-capture-review.html','Claude UI capture: editorial review']];
+    const routes=[['','Early AI evaluation examples'],['claude.html','Claude Opus 5.5 evaluation: public edition'],['gemini.html','Gemini 4 Argon evaluation: public edition'],['copilot.html','Copilot CLI evaluation: public edition'],['corrections.html','Editorial corrections and disposition'],['claude-capture-review.html','Claude UI capture: editorial review']];
     for(const [route,title]of routes){const response=await page.goto(base+'reports/'+route);if(response.status()!==200||await page.title()!==title||!await page.getByRole('heading',{name:title,exact:true}).isVisible())throw Error('Report identity failed: '+route);}
-    check('report-collection-five-pages','Five HTML report pages return 200 with matching headings');
+    check('report-collection-pages','Six HTML report pages return 200 with matching headings');
     await page.goto(base+'reports/claude.html');await page.locator('main').getByRole('link',{name:'editorial review',exact:true}).click();
     if(!page.url().endsWith('claude-capture-review.html')||await page.locator('tbody tr').count()!==35)throw Error('Claude supplement navigation or inventory failed');
     check('claude-capture-update','Claude links to the later UI capture review with 35 requests');
     const manifest=await(await page.request.get(base+'build-manifest.json')).json();
     if(manifest.build_id!==descriptor.snapshot_id)throw Error('Reports build differs');
     const reports=Object.entries(manifest.outputs).filter(([name])=>name.startsWith('reports/'));
-    if(reports.length!==14)throw Error('Report output inventory differs');
+    if(reports.length!==16)throw Error('Report output inventory differs');
     for(const [name,sha]of reports){const response=await page.request.get(base+name);if(!response.ok()||await hash(await response.body())!==sha)throw Error('Report output hash differs: '+name);}
-    check('report-source-hashes','All 14 report HTML/source/provenance outputs match the frozen build manifest');
+    check('report-source-hashes','All 16 report HTML/source/provenance outputs match the frozen build manifest');
     const publication=await(await page.request.get(base+'reports/publication-manifest.json')).json();
     for(const [name,sha]of Object.entries(publication.supporting_files)){const response=await page.request.get(base+'reports/'+name);if(!response.ok()||await hash(await response.body())!==sha)throw Error('Public source hash differs: '+name);}
     check('report-provenance-hashes','Public-edition supporting-file hashes match');
     await page.setViewportSize({width:390,height:844});
     for(const [route]of routes){await page.goto(base+'reports/'+route);if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Mobile overflow: '+route);}
-    check('report-mobile-layout','Five pages fit a 390px viewport');
+    check('report-mobile-layout','Six pages fit a 390px viewport');
     for(const name of ['claude.md','gemini.md','claude-capture-review.json']){const text=await(await page.request.get(base+'reports/'+name)).text();if(/file:\/\/|\/Users\/|\/home\/claude|\/root\/\.claude/.test(text))throw Error('Private path in public source: '+name);}
     check('report-no-private-paths','Reviewed report and capture-index sources contain no local paths');
     if(receipt.console_errors.length||receipt.page_errors.length||receipt.failed_requests.length)throw Error('Browser errors or failed requests');

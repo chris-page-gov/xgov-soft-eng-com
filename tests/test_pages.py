@@ -84,7 +84,7 @@ class PagesTests(unittest.TestCase):
             manifest['outputs']['reports/index.html']=hashlib.sha256(report.read_bytes()).hexdigest()
             c.write(generated/'build-manifest.json',manifest)
             second=Path(tmp)/'with-reports';pages.create_candidate(root,second,check=False)
-            self.assertIn('Claude and Gemini evaluation reports',(second/'index.html').read_text())
+            self.assertIn('Early AI evaluation examples',(second/'index.html').read_text())
             self.assertEqual((second/'reports/index.html').read_bytes(),report.read_bytes())
 
     def test_refuses_existing_destination(self):

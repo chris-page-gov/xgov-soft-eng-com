@@ -13,12 +13,15 @@ daily dataset snapshots have separate identifiers.
 - Public editions of the Claude and Gemini evaluations with private paths
   removed, frozen evidence references and verified editorial corrections.
 
-- Static GitHub Pages editions of both reports, with catalogue and Explorer
+- Static GitHub Pages editions of the three early evaluation reports, with catalogue and Explorer
   navigation, accessible tables, mobile text wrapping and manifest-bound sources.
 - Eight repeatable live browser checks for report navigation, identities,
   provenance, hashes, mobile layout and private-path exclusions, required by CI.
 - A curated review of the later Claude UI capture, recording displayed
   requests, outcomes, truncation and explicit execution limits.
+
+- A beginner README route for testing the bundle in an AI tool, with a short
+  starter prompt, archive-capability guidance and links to all three early examples.
 
 ### Fixed
 
