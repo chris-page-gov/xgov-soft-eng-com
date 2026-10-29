@@ -25,6 +25,8 @@ daily dataset snapshots have separate identifiers.
 
 ### Fixed
 
+- Qualify later private Gemini session retention without replacing the supplied
+  report or treating recorded tool statuses as test verdicts.
 - Explain Claude’s 1,028 checksum count as source bindings, rather than all
   controlled inputs and generated outputs, using the supplied command history.
 

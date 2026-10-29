@@ -39,12 +39,13 @@
       "archive_sha256": "6cb6981f1bbbf9b7db49df0e610309e63405fdd132a8aab455888e4857b089c1",
       "original_sha256": "31c7fb91507a4a6a390fa284f0a52335366b341eae16138fe63bc862ee5002d6",
       "public_report": "gemini.md",
-      "public_sha256": "4975e996835dff13946bd466564e854223abe7908e0fb79bd11e96d6fa912125",
+      "public_sha256": "68e22c830ee63ec6c92fd2d6402d1f9e501569e5d18bce5e0fa40036a8bba1fe",
       "editorial_changes": [
         "local file URLs replaced",
         "unverified line fragments removed",
         "prominent version/scope/correction notices added",
-        "British English prose check; schema identifiers preserved"
+        "British English prose check; schema identifiers preserved",
+        "later private session retention noted; supplied report distinguished from separate report version"
       ],
       "original_files_published": false
     },
@@ -87,7 +88,7 @@
     "copilot.md": "b67f7aba58e42678174a90c04c05ccb748ff163f8c9bd886cc01f7308e75d240",
     "corrections.md": "b2db4b71dc718851955fb7522672048bc027a48f34b10c4ed662b69fece45eef",
     "evidence-map.json": "63d00054a49fdc510f43989736ee4392d8e710d8360fdaf9aef82b0fb9d536bc",
-    "gemini.md": "4975e996835dff13946bd466564e854223abe7908e0fb79bd11e96d6fa912125"
+    "gemini.md": "68e22c830ee63ec6c92fd2d6402d1f9e501569e5d18bce5e0fa40036a8bba1fe"
   },
   "updated_on": "2026-10-29"
 }

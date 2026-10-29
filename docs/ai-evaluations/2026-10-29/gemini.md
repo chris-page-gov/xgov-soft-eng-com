@@ -21,8 +21,11 @@ frozen-release references. Original line fragments are not endorsed as exact
 citations. Archive paths remain visible because generated files are not all
 published as individual web pages. Prose uses British English; exact schema
 identifiers and quoted source material retain their original spelling.
-The original run's tool logs and verifier scripts were not supplied with the
-report; this edition does not independently certify all its claimed executions.
+The first edition was prepared without original execution logs. A later private
+collection retains Gemini session material and a separate report version; this
+public edition preserves the owner-supplied download identified in its manifest.
+Those session records have not been fully replayed or independently audited for
+this edition. Recorded tool statuses are not substituted for test verdicts.
 
 ## Original report with annotations
 
