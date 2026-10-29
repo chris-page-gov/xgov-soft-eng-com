@@ -424,8 +424,10 @@ def remove_build_tree(path):
             return
         except OSError as exc:
             if exc.errno not in (39,66) or attempt==2:raise
-            if any(p.is_file() and p.name!='.DS_Store' for p in path.rglob('*')):raise
-            for metadata in path.rglob('.DS_Store'):
+            failed=Path(exc.filename) if exc.filename else path
+            if not failed.resolve().is_relative_to(path.resolve()):raise
+            if any(p.name!='.DS_Store' for p in failed.iterdir()):raise
+            for metadata in failed.glob('.DS_Store'):
                 metadata.unlink(missing_ok=True)
 
 

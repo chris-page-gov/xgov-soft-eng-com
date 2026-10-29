@@ -1,5 +1,6 @@
 import copy
 import datetime as dt
+import errno
 import importlib.util
 from pathlib import Path
 import tempfile
@@ -61,6 +62,27 @@ class CatalogueTests(unittest.TestCase):
             before=c.controlled_inputs(root)
             (folder/".DS_Store").write_bytes(b"Finder metadata")
             self.assertEqual(c.controlled_inputs(root),before)
+
+    def test_retired_cleanup_retries_metadata_race_with_other_old_shards_remaining(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)/'retired';failed=root/'data';failed.mkdir(parents=True)
+            (failed/'.DS_Store').write_bytes(b'metadata race')
+            (root/'old-shard.json').write_text('retired output')
+            original=c.shutil.rmtree
+            attempts=[]
+            def remove(path):
+                attempts.append(path)
+                if len(attempts)==1:raise OSError(errno.ENOTEMPTY,'metadata race',str(failed))
+                original(path)
+            with patch.object(c.shutil,'rmtree',side_effect=remove):c.remove_build_tree(root)
+            self.assertFalse(root.exists());self.assertEqual(len(attempts),2)
+
+    def test_retired_cleanup_does_not_hide_non_metadata_content_in_failed_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)/'retired';root.mkdir();(root/'unexpected').write_text('retain')
+            with patch.object(c.shutil,'rmtree',side_effect=OSError(errno.ENOTEMPTY,'unexpected content',str(root))) as remove:
+                with self.assertRaises(OSError):c.remove_build_tree(root)
+            remove.assert_called_once();self.assertTrue((root/'unexpected').exists())
 
 
 if __name__=="__main__":unittest.main()

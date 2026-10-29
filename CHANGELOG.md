@@ -6,10 +6,11 @@ daily dataset snapshots have separate identifiers.
 
 ## [Unreleased]
 
-## [0.3.0] - 2026-10-28
+## [0.3.0] - 2026-10-29
 
 ### Added
 
+- Verified public Pages, Explorer and AI entry points in the README.
 - A separate generated boundary for reviewed browser acceptance receipts.
 - Repeatable Chrome acceptance for all 25 facet dimensions, combined filtering,
   value search and paging, and exact-name search.
@@ -29,6 +30,8 @@ daily dataset snapshots have separate identifiers.
 
 ### Fixed
 
+- Retry a Finder metadata race in the failed cleanup directory even when
+  other retired shards remain elsewhere; retain unrelated cleanup errors.
 - Supply the complete experimental-publication notice expected by Explorer.
 - Use canonical hyphenated content-type routes and preserve missing dates as
   empty sort values rather than invalid null values.

@@ -11,7 +11,7 @@ There is no OWL reasoning or claim to understand all domains in repository code.
 
 | Concept | Mapping |
 | --- | --- |
-| Catalogue and frozen metadata | [DCAT 3](https://www.w3.org/TR/vocab-dcat-3/) Catalog and Dataset |
+| Catalogue and frozen metadata | [DCAT 3](https://www.w3.org/TR/vocab-dcat-3/) `Catalog` and `Dataset` |
 | Repository | Custom Repository, with [Schema.org](https://schema.org/SoftwareSourceCode) name, description, codeRepository and programmingLanguage terms where supported |
 | Domains and tasks | [SKOS](https://www.w3.org/TR/skos-reference/) concepts, schemes, labels, alternatives and scope notes |
 | Provenance | [PROV-O](https://www.w3.org/TR/prov-o/) entities, activities and source derivation |
@@ -27,8 +27,8 @@ remote contexts. Shard and build manifests bind the exact source and inputs.
 
 Each relationship retains stable ID, source/target IRIs and routes, predicate,
 kind, preferred/inverse labels, status/scope, authority, derivation, observation,
-evidence and rights. Source-derived edges are normalized; domain/task edges
-are inferred and unreviewed. The schema spelling normalized is intentional.
+evidence and rights. Source-derived edges are normalised (`normalized`); domain/task edges
+are inferred and unreviewed. The schema spelling `normalized` is intentional.
 No numeric confidence is invented. Hosting account is not verified service owner.
 
 Evidence includes source URL, frozen path and SHA-256, zero-based source rows,

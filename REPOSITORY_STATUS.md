@@ -1,6 +1,6 @@
 # Repository status
 
-Experimental producer, version 0.3.0, prepared on 28 October 2026.
+Experimental producer, version 0.3.0, published on 29 October 2026.
 
 Implemented: standard OKF scaffold, frozen public source, deterministic build,
 25 authored facets, proposed domains/tasks/content types, RDF JSON-LD, evidence assertions,

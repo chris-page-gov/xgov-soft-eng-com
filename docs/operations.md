@@ -14,7 +14,8 @@ Ordinary errors restore the previous generated directory. If killed between
 moves, recover .build/previous-generated to generated/ before continuing.
 Keep source/current.json, its referenced snapshot and baseline together.
 Concurrent local writers are unsupported; Actions uses a concurrency group.
-Retired-build cleanup retries when Finder recreates only .DS_Store metadata;
+Retired-build cleanup retries when Finder recreates only .DS_Store metadata
+in the directory whose removal failed, including when old shards remain elsewhere;
 other cleanup failures remain visible and the checked candidate is retained.
 
 A byte-identical successful download retains the original receipt and graph
