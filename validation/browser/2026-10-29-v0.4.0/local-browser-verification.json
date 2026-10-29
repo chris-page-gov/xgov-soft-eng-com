@@ -1,0 +1,321 @@
+{
+  "build_id": "f3beca697efe582dd91f965dc8c3833b28b7b2c77919c127c5ebcd461ecc4a01",
+  "checks": 40,
+  "consumer_app_tree_sha256": "3a8ccd958e125d79f07e8755878e21ddf10eb60f9bef28364890ef3ad51b2660",
+  "consumer_commit": "1fd1b70663665f8f78f8ab444ec8c2cab3b942b1",
+  "descriptor_sha256": "a42feb1816557727c1a7ebdd51747fc3c70e0d759822f77daaad7aac5a4cc7f1",
+  "records": 24068,
+  "schema": "xgov-browser-verification.v1",
+  "status": "passed",
+  "suites": {
+    "combinations": {
+      "browser": "156.0.8078.48",
+      "checks": [
+        {
+          "expected": 5850,
+          "id": "or-within-facet",
+          "passed": true
+        },
+        {
+          "expected": 3532,
+          "id": "and-across-facets",
+          "passed": true
+        },
+        {
+          "expected": 275,
+          "id": "unknown-fork-is-separate",
+          "passed": true
+        },
+        {
+          "after": 120,
+          "before": 40,
+          "id": "high-cardinality-search-and-paging",
+          "passed": true,
+          "values": 212
+        },
+        {
+          "expected": 25,
+          "id": "available-history-filter",
+          "passed": true
+        }
+      ],
+      "console_errors": [],
+      "consumer_app_tree_sha256": "3a8ccd958e125d79f07e8755878e21ddf10eb60f9bef28364890ef3ad51b2660",
+      "consumer_commit": "1fd1b70663665f8f78f8ab444ec8c2cab3b942b1",
+      "descriptor_sha256": "a42feb1816557727c1a7ebdd51747fc3c70e0d759822f77daaad7aac5a4cc7f1",
+      "descriptor_url": "http://127.0.0.1:4180/bundle-04/okf-explorer.json",
+      "failed_requests": [],
+      "observed_at": "2026-10-29T07:43:44.049Z",
+      "page_errors": [],
+      "records": 24068,
+      "schema": "xgov-browser-acceptance.v1",
+      "snapshot_id": "f3beca697efe582dd91f965dc8c3833b28b7b2c77919c127c5ebcd461ecc4a01",
+      "status": "passed"
+    },
+    "facets": {
+      "browser": "156.0.8078.48",
+      "checks": [
+        {
+          "expected": 18782,
+          "id": "facet-domain",
+          "observed": 18782,
+          "passed": true,
+          "value": "unclassified"
+        },
+        {
+          "expected": 12451,
+          "id": "facet-capability",
+          "observed": 12451,
+          "passed": true,
+          "value": "unclassified"
+        },
+        {
+          "expected": 10811,
+          "id": "facet-content_type",
+          "observed": 10811,
+          "passed": true,
+          "value": "unclassified"
+        },
+        {
+          "expected": 2247,
+          "id": "facet-publisher",
+          "observed": 2247,
+          "passed": true,
+          "value": "ministryofjustice"
+        },
+        {
+          "expected": 3206,
+          "id": "facet-language",
+          "observed": 3206,
+          "passed": true,
+          "value": "JavaScript"
+        },
+        {
+          "expected": 4226,
+          "id": "facet-language_family",
+          "observed": 4226,
+          "passed": true,
+          "value": "javascript-typescript"
+        },
+        {
+          "expected": 10645,
+          "id": "facet-license",
+          "observed": 10645,
+          "passed": true,
+          "value": "MIT"
+        },
+        {
+          "expected": 15647,
+          "id": "facet-licence_status",
+          "observed": 15647,
+          "passed": true,
+          "value": "identifier-reported-unverified"
+        },
+        {
+          "expected": 15081,
+          "id": "facet-archived",
+          "observed": 15081,
+          "passed": true,
+          "value": "false"
+        },
+        {
+          "expected": 21867,
+          "id": "facet-is_fork",
+          "observed": 21867,
+          "passed": true,
+          "value": "false"
+        },
+        {
+          "expected": 10644,
+          "id": "facet-push_age",
+          "observed": 10644,
+          "passed": true,
+          "value": "over-3-years"
+        },
+        {
+          "expected": 8998,
+          "id": "facet-push_year",
+          "observed": 8998,
+          "passed": true,
+          "value": "2026"
+        },
+        {
+          "expected": 15563,
+          "id": "facet-description_status",
+          "observed": 15563,
+          "passed": true,
+          "value": "supplied"
+        },
+        {
+          "expected": 14326,
+          "id": "facet-sbom",
+          "observed": 14326,
+          "passed": true,
+          "value": "present"
+        },
+        {
+          "expected": 9742,
+          "id": "facet-sbom_resolution",
+          "observed": 9742,
+          "passed": true,
+          "value": "not-reported"
+        },
+        {
+          "expected": 14301,
+          "id": "facet-dependency_context",
+          "observed": 14301,
+          "passed": true,
+          "value": "unresolved-versions-reported"
+        },
+        {
+          "expected": 9742,
+          "id": "facet-package_volume",
+          "observed": 9742,
+          "passed": true,
+          "value": "not-reported"
+        },
+        {
+          "expected": 14326,
+          "id": "facet-quality_report_age",
+          "observed": 14326,
+          "passed": true,
+          "value": "within-48-hours-of-snapshot"
+        },
+        {
+          "expected": 24043,
+          "id": "facet-history_coverage",
+          "observed": 24043,
+          "passed": true,
+          "value": "not-collected"
+        },
+        {
+          "expected": 24043,
+          "id": "facet-recent_commit_band",
+          "observed": 24043,
+          "passed": true,
+          "value": "not-collected"
+        },
+        {
+          "expected": 24043,
+          "id": "facet-churn_availability",
+          "observed": 24043,
+          "passed": true,
+          "value": "not-collected"
+        },
+        {
+          "expected": 24043,
+          "id": "facet-recent_contributor",
+          "observed": 24043,
+          "passed": true,
+          "value": "not-collected"
+        },
+        {
+          "expected": 24043,
+          "id": "facet-historical_contributor",
+          "observed": 24043,
+          "passed": true,
+          "value": "not-collected"
+        },
+        {
+          "expected": 24068,
+          "id": "facet-metadata_change",
+          "observed": 24068,
+          "passed": true,
+          "value": "baseline-unavailable"
+        },
+        {
+          "expected": 24068,
+          "id": "facet-metadata_change_degree",
+          "observed": 24068,
+          "passed": true,
+          "value": "baseline-unavailable"
+        },
+        {
+          "expected": 1,
+          "id": "hyphenated-repository-search",
+          "passed": true
+        },
+        {
+          "expected": 0,
+          "id": "zero-result-search",
+          "passed": true
+        }
+      ],
+      "console_errors": [],
+      "consumer_app_tree_sha256": "3a8ccd958e125d79f07e8755878e21ddf10eb60f9bef28364890ef3ad51b2660",
+      "consumer_commit": "1fd1b70663665f8f78f8ab444ec8c2cab3b942b1",
+      "descriptor_sha256": "a42feb1816557727c1a7ebdd51747fc3c70e0d759822f77daaad7aac5a4cc7f1",
+      "descriptor_url": "http://127.0.0.1:4180/bundle-04/okf-explorer.json",
+      "failed_requests": [],
+      "observed_at": "2026-10-29T07:43:33.772Z",
+      "page_errors": [],
+      "records": 24068,
+      "schema": "xgov-browser-acceptance.v1",
+      "snapshot_id": "f3beca697efe582dd91f965dc8c3833b28b7b2c77919c127c5ebcd461ecc4a01",
+      "status": "passed"
+    },
+    "semantics-history": {
+      "browser": "156.0.8078.48",
+      "checks": [
+        {
+          "counts": {
+            "available": 25,
+            "not-collected": 24043
+          },
+          "id": "history-coverage-notice",
+          "passed": true
+        },
+        {
+          "expected": 24043,
+          "id": "history-state-facet-labels",
+          "passed": true,
+          "state": "not-collected"
+        },
+        {
+          "contributor": "AndriaTurner",
+          "historical": 299,
+          "id": "history-counts-period-tables-and-provenance",
+          "observation_sha256": "2e9c32ed9b98ed517af9f54c84cdbaa2fdb8124ef78d3b3ed337ca998543bdef",
+          "passed": true,
+          "recent": 8
+        },
+        {
+          "assertion_id": "urn:okf:xgov:assertion:0d7028a9d7391ab2f719986d03ff22f9d315ef423421569cc662ba80986c463a",
+          "id": "semantic-assertion-inverse-measurement-and-source",
+          "passed": true
+        },
+        {
+          "id": "contributor-target-and-inverse-source-navigation",
+          "passed": true
+        },
+        {
+          "id": "missing-history-is-not-zero",
+          "passed": true,
+          "repository": "alan-turing-institute/ai-rss-feeds"
+        },
+        {
+          "id": "narrow-viewport-navigation-and-reading",
+          "passed": true,
+          "width": 390
+        },
+        {
+          "id": "repository-deep-link-reload",
+          "passed": true,
+          "url": "http://127.0.0.1:4180/explore/?bundle=http%3A%2F%2F127.0.0.1%3A4180%2Fbundle-04%2Fokf-explorer.json&view=narrative&q=111Online%2Fnhs111-resources#record:cmVwb3NpdG9yaWVzLzExMW9ubGluZSUyRm5oczExMS1yZXNvdXJjZXMubWQ"
+        }
+      ],
+      "console_errors": [],
+      "consumer_app_tree_sha256": "3a8ccd958e125d79f07e8755878e21ddf10eb60f9bef28364890ef3ad51b2660",
+      "consumer_commit": "1fd1b70663665f8f78f8ab444ec8c2cab3b942b1",
+      "descriptor_sha256": "a42feb1816557727c1a7ebdd51747fc3c70e0d759822f77daaad7aac5a4cc7f1",
+      "descriptor_url": "http://127.0.0.1:4180/bundle-04/okf-explorer.json",
+      "failed_requests": [],
+      "observed_at": "2026-10-29T07:43:46.686Z",
+      "page_errors": [],
+      "records": 24068,
+      "schema": "xgov-browser-acceptance.v1",
+      "snapshot_id": "f3beca697efe582dd91f965dc8c3833b28b7b2c77919c127c5ebcd461ecc4a01",
+      "status": "passed"
+    }
+  }
+}
