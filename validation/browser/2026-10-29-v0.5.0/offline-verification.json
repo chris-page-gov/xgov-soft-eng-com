@@ -1,0 +1,68 @@
+{
+  "archive_bytes": 69030647,
+  "archive_member_count": 5400,
+  "archive_sha256": "2513a8eaa7f916aca799bf844ed0f75d415abc0cd42e47b7bda646db0a1a1809",
+  "build_id": "624f1a14ed907ce0bf59ed87f85446b4354df68107d7a64943b72841fdb49c60",
+  "checks": [
+    "archive-membership-hashes",
+    "manifest-identities",
+    "complete-record-inventory",
+    "facet-postings-counts",
+    "python-sbom-intersection",
+    "runtime-rdf-parity",
+    "history-states-and-accounts",
+    "history-measure-reconciliation",
+    "security-classification-regressions",
+    "targeted-discovery-and-inverse-adjacency"
+  ],
+  "checksum_status": "checked",
+  "controlled_input_count": 93,
+  "errors": [],
+  "facts": {
+    "available_profiles_checked": 77,
+    "catalogue_records": 24019,
+    "classification_regressions": {
+      "hmrc/vulnerabilities": true,
+      "public-health-scotland/covid-vulnerability": false
+    },
+    "exact_repository": "https://github.com/111Online/nhs111-resources",
+    "facet_values": 1795,
+    "history_examples": {
+      "111Online/nhs111-resources": {
+        "active_weeks": 7,
+        "additions": 38,
+        "deletions": 5,
+        "historical_commits": 299,
+        "observation_sha256": "2e9c32ed9b98ed517af9f54c84cdbaa2fdb8124ef78d3b3ed337ca998543bdef",
+        "recent_commits": 8,
+        "window": {
+          "end_exclusive": "2026-10-25T00:00:00+00:00",
+          "label": "13 complete Sunday-to-Sunday weeks",
+          "start": "2026-07-26T00:00:00+00:00"
+        }
+      }
+    },
+    "history_state_counts": {
+      "available": 77,
+      "empty-or-unavailable": 4,
+      "not-collected": 22069,
+      "pending-provider-statistics": 1860,
+      "response-size-limit": 1,
+      "unavailable-response": 8
+    },
+    "python_sbom_total": 1608,
+    "rdf_assertions_checked": 116619,
+    "target_adjacency_count": 11
+  },
+  "history_source_count": 1950,
+  "output_count": 3351,
+  "pin_status": "checked",
+  "schema": "xgov-ai-evaluation-result.v1",
+  "source_sha256": "10c76a0c8be90f216457be6f0d6bfa6aeaf5ed918c72eb41351b6674d08b9a02",
+  "status": "passed",
+  "untested": [
+    "live-http",
+    "browser-ui",
+    "classification-accuracy-beyond-declared-regressions"
+  ]
+}

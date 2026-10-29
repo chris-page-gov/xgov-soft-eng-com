@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "checks": [
+    "Three numbered starter steps",
+    "Copyable starter prompt",
+    "All three early examples linked",
+    "Copilot public report navigation"
+  ],
+  "examples": [
+    {
+      "name": "Claude report",
+      "href": "/chris-page-gov/xgov-soft-eng-com/blob/98cfab9fa38b1b3766da0acecede5d9ba1d0bad7/docs/ai-evaluations/2026-10-29/claude.md"
+    },
+    {
+      "name": "Gemini report",
+      "href": "/chris-page-gov/xgov-soft-eng-com/blob/98cfab9fa38b1b3766da0acecede5d9ba1d0bad7/docs/ai-evaluations/2026-10-29/gemini.md"
+    },
+    {
+      "name": "Copilot report",
+      "href": "/chris-page-gov/xgov-soft-eng-com/blob/98cfab9fa38b1b3766da0acecede5d9ba1d0bad7/docs/ai-evaluations/2026-10-29/copilot.md"
+    }
+  ],
+  "scope": "Four functional GitHub README checks; not a zero-console-error assertion. GitHub global navigation logged one unrelated404."
+}

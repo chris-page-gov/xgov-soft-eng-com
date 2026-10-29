@@ -1,0 +1,57 @@
+{
+  "browser": "156.0.8078.48",
+  "checks": [
+    {
+      "detail": "Producer-declared report link opens the collection",
+      "id": "explorer-report-link",
+      "passed": true
+    },
+    {
+      "detail": "Catalogue links to reports",
+      "id": "catalogue-report-link",
+      "passed": true
+    },
+    {
+      "detail": "Six HTML report pages return 200 with matching headings",
+      "id": "report-collection-pages",
+      "passed": true
+    },
+    {
+      "detail": "Claude links to the later UI capture review with 35 requests",
+      "id": "claude-capture-update",
+      "passed": true
+    },
+    {
+      "detail": "All 16 report HTML/source/provenance outputs match the frozen build manifest",
+      "id": "report-source-hashes",
+      "passed": true
+    },
+    {
+      "detail": "Public-edition supporting-file hashes match",
+      "id": "report-provenance-hashes",
+      "passed": true
+    },
+    {
+      "detail": "Six pages fit a 390px viewport",
+      "id": "report-mobile-layout",
+      "passed": true
+    },
+    {
+      "detail": "Reviewed report and capture-index sources contain no local paths",
+      "id": "report-no-private-paths",
+      "passed": true
+    }
+  ],
+  "console_errors": [],
+  "consumer_app_tree_sha256": "e1aad43dc8236e387654c86d67f1575ebdd4fd94256ea1e9628a879829e34c4a",
+  "consumer_commit": "2922cede88d4cd2b3a84473ffd772055b9f409c1",
+  "descriptor_sha256": "a7969e4f7c70e95833839eaeaa733587767f13c17e6a6963d61fd7c960e3274c",
+  "descriptor_url": "https://chris-page-gov.github.io/xgov-soft-eng-com/okf-explorer.json",
+  "failed_requests": [],
+  "observed_at": "2026-10-29T19:00:04.308Z",
+  "page_errors": [],
+  "records": 24019,
+  "schema": "xgov-browser-acceptance.v1",
+  "snapshot_id": "624f1a14ed907ce0bf59ed87f85446b4354df68107d7a64943b72841fdb49c60",
+  "status": "passed"
+}
