@@ -547,7 +547,7 @@
         "planes": [
           "runtime"
         ],
-        "command": "python scripts/assure.py",
+        "command": "uv run --locked --group assurance python scripts/assure.py",
         "source": "AGENTS.md",
         "review_status": "reviewed-local-guidance",
         "network": "none",
@@ -767,7 +767,7 @@
   "limitations": [
     "The public lifecycle does not invoke SBOM matching or admit private reports. A separate manual public-data pilot writes only private candidate advisory matches under .sbom-pilot/; no real scans were run during implementation.",
     "Scheduled executions may be delayed by GitHub.",
-    "Publication-method v1 has no scheduled-release mode: manual denotes invocation of reviewed release commands; the separate CI workflow retains the daily cron behind OKF_DAILY_REFRESH_ENABLED=true, with manual dispatch always available. No repository branch protection is claimed.",
+    "Publication-method v1 has no scheduled-release mode: manual denotes invocation of reviewed release commands; the separate CI workflow retains the daily cron behind OKF_DAILY_REFRESH_ENABLED=true, with manual dispatch always available. Main branch protection is governed separately by config/repository-protection.json and its read-only live checker; local checks alone do not prove GitHub settings.",
     "Pages runs the three ordinary-Chrome suites after deployment. This producer workflow does not claim cross-engine or human usability acceptance. A post-deployment failure requires investigation; no automatic rebuild or rollback is performed.",
     "Daily refresh is operationally paused by the owner using the repository Actions variable; hourly history collection is separate and remains enabled. Scheduled triggers are not a punctuality guarantee.",
     "Public SBOM data analysis does not require or imply repository-owner approval. Its tool preparation and execution are outside this publication lifecycle; unclear or restricted access/reuse bases need review. No schedule is added or changed."

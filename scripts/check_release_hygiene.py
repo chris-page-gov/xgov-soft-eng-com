@@ -38,6 +38,11 @@ def check_changelog(text):
     return True
 
 
+def check_pr_title(event, title):
+    if event == 'pull_request':
+        check_subject(title or '')
+
+
 def check_history(root,baseline,allow_synthetic_head=False):
     head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
     rows=subprocess.check_output(['git','log','--format=%H%x09%P%x09%s',baseline+'..HEAD'],cwd=root,text=True).splitlines()
@@ -60,6 +65,7 @@ def main():
         if args.message_file:check_subject(args.message_file.read_text().splitlines()[0])
         else:
             check_changelog((ROOT/'CHANGELOG.md').read_text())
+            check_pr_title(os.environ.get('GITHUB_EVENT_NAME'), os.environ.get('OKF_PR_TITLE'))
             synthetic=os.environ.get('GITHUB_EVENT_NAME')=='pull_request' and bool(re.fullmatch(r'refs/pull/[1-9][0-9]*/merge',os.environ.get('GITHUB_REF','')))
             check_history(ROOT,LEGACY_BASELINE,synthetic)
         print('Release hygiene checks passed.')

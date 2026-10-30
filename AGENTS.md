@@ -10,8 +10,10 @@
   CHANGELOG.md before rebuilding. Build requires a changelog update for changed
   implementation inputs; check verifies deterministic output and doc hashes.
 - Required checks: unittest discover -s tests -v; catalogue.py build; catalogue.py
-  check. Before release also run scripts/assure.py with requirements-assurance.txt
-  in a disposable environment. Production build/search use only the stdlib.
+  check; check_repository_protection.py --local. Before release also run
+  uv run --locked --group assurance python scripts/assure.py. Production
+  build/search use only the stdlib. The assurance group and hash-checked CI
+  requirements export must remain synchronised; see docs/repository-protection.md.
 - Public GitHub publication and daily refresh were explicitly authorised on
   28 October 2026. Publish only admitted public sources, reviewed repository
   files and exact checked outputs. Keep credentials and account usage outside.
@@ -37,3 +39,7 @@
   during implementation; synthetic tests and public tooling downloads are allowed.
 - Use Conventional Commits and Keep a Changelog; see CONTRIBUTING.md. Preserve
   the published legacy baseline rather than rewriting remote history.
+- Main changes use a pull request and the required GitHub Actions validate
+  check, including for the sole owner. Do not bypass, disable or weaken the
+  rules to merge. No second-person approval is required. Recheck live policy
+  with the read-only protection checker after settings changes.

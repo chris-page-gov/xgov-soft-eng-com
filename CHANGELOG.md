@@ -8,6 +8,10 @@ daily dataset snapshots have separate identifiers.
 
 ### Added
 
+- A declared sole-maintainer repository protection baseline, read-only live
+  drift checks and synthetic tests for required checks, review settings,
+  trusted Actions, dependency hashes, incomplete settings, conflicting classic
+  protection and private reporting.
 - A bounded public SBOM data pilot with explicit admission, documented access
   and reuse basis, no implied owner approval, private JSON/Markdown reports,
   synthetic tests and a no-network dry-run.
@@ -21,6 +25,13 @@ daily dataset snapshots have separate identifiers.
 
 ### Changed
 
+- Require pull requests and current GitHub Actions validation for `main`, with
+  no external approval requirement or standing bypass. Block branch deletion
+  and force pushes, resolve review conversations and use Conventional Commit
+  pull-request titles for merge defaults.
+- Lock the assurance toolchain's transitive dependencies and archive hashes;
+  CI installs the matching export with hash verification. Read-only checkouts
+  discard Git credentials. Catalogue and history schedules are unchanged.
 - Separate public-data matching from genuinely owner-approved source analysis
   or testing, retaining the existing approval and reporting workflow.
 - Retain declared development/build/test/CI contexts and dependency requirement
