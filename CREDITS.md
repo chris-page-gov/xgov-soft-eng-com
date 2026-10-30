@@ -6,15 +6,48 @@ endorsement, scan permission, legal ownership or current maintainership.
 
 ## Repository and SBOM catalogue
 
+The original project is
+[uk-x-gov-software-community/xgov-opensource-repo-scraper](https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper),
+part of the [UK Cross Government Software Engineering Community](https://github.com/uk-x-gov-software-community).
+It supplies the published repository feed and upstream SBOM collection and
+publication pipeline used as the foundation for this experiment.
+
 The scraper’s recorded human contributors are:
 
 - [Chris Nesbitt-Smith (@chrisns)](https://github.com/chrisns) — 70 recorded commits.
-- [Alex Smith (@asmith-nhsx)](https://github.com/asmith-nhsx) — 1 recorded commits.
-- [Chris Hyland (@chrishylanduk)](https://github.com/chrishylanduk) — 1 recorded commits.
+- [Alex Smith (@asmith-nhsx)](https://github.com/asmith-nhsx) — 1 recorded commit.
+- [Chris Hyland (@chrishylanduk)](https://github.com/chrishylanduk) — 1 recorded commit.
 
 In particular, acknowledge Chris Nesbitt-Smith’s substantial work on the
 repository catalogue and SBOM pipeline. Preserve the original MIT notice in
 [third-party notices](THIRD_PARTY_NOTICES.md) when reusing this material.
+
+### Original SBOM implementation evidence
+
+Public commit history and the merged pull request were checked on
+30 October 2026. They record Chris Nesbitt-Smith (`@chrisns`) as author of:
+
+| Upstream work | Original evidence |
+| --- | --- |
+| Initial SBOM collection and CycloneDX commands | [8 March 2026, commit 16d8239](https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/commit/16d82394f1b0c9650e529b3a5f4767a5373e66c6) |
+| Raw SPDX collection through GitHub's API | [8 March 2026, commit 8684eb5](https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/commit/8684eb5b25a3b1f402b1f559abfb547975aeaff3) |
+| Separate scheduled SBOM collection workflow | [8 March 2026, commit d5dc579](https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/commit/d5dc5795475f5066c06cc00301edf8fad22e115a) |
+| Consolidated CycloneDX publication | [16 March 2026, commit f0f8403](https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/commit/f0f84033c8152705d4143c9d041564f42af4a0de) |
+| Version-resolution and development/runtime scope classification | [PR #40](https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/pull/40), [merged commit 21d40c0](https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper/commit/21d40c08cc33b47de9dccee0fa9ee27c2bf0793c) |
+
+These are recorded authorship statements, not a claim that Git captures every
+contribution or establishes sole authorship. Alex Smith and Chris Hyland are
+credited above for wider scraper work; the reviewed evidence does not identify
+them as authors of these SBOM changes. Original package authors and repository
+contributors retain their own credit and licences.
+
+The upstream project collects GitHub dependency-graph SBOM data. This
+repository's OKF+ layer and manual, bounded candidate-advisory matching runner
+are subsequent additions. The runner uses
+[Grype by Anchore and its contributors](https://github.com/anchore/grype);
+credit also belongs to the [SPDX](https://github.com/spdx/spdx-spec) and
+[CycloneDX](https://github.com/CycloneDX/specification) standards communities.
+Tool and format credits do not relicense SBOM data or underlying packages.
 
 ## Wider community projects
 
