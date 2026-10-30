@@ -12,6 +12,24 @@ reported contributor history. It uses the community's
 Suggested classifications are unreviewed. Missing history is not zero activity,
 and an SBOM reference is not evidence of a vulnerability.
 
+## Credits and original SBOM work
+
+This experiment builds on the
+[UK Cross Government Software Engineering Community](https://github.com/uk-x-gov-software-community)
+and its [xgov-opensource-repo-scraper](https://github.com/uk-x-gov-software-community/xgov-opensource-repo-scraper),
+which supplies the underlying catalogue and published SBOM collection pipeline.
+Special thanks to [Chris Nesbitt-Smith (@chrisns)](https://github.com/chrisns),
+the recorded author of the original SBOM collection and CycloneDX publication
+work and later scope/version-resolution improvements. Thanks also to
+[Alex Smith (@asmith-nhsx)](https://github.com/asmith-nhsx),
+[Chris Hyland (@chrishylanduk)](https://github.com/chrishylanduk) and the wider
+community for their catalogue contributions.
+
+This repository adds the experimental OKF+ discovery layer and bounded public
+SBOM advisory-matching pilot. See [full credits and commit evidence](CREDITS.md)
+and the [preserved upstream MIT notice](THIRD_PARTY_NOTICES.md). Attribution
+does not imply endorsement, current maintainership or approval to test code.
+
 The repository uses a [sole-maintainer protection baseline](docs/repository-protection.md):
 pull requests, required checks, bounded publication and a
 [private vulnerability reporting route](https://github.com/chris-page-gov/xgov-soft-eng-com/security/advisories/new).

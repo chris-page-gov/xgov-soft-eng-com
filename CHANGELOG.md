@@ -25,6 +25,8 @@ daily dataset snapshots have separate identifiers.
 
 ### Changed
 
+- Credit the original community GitHub repository and SBOM author prominently
+  in the README, with dated commit evidence and wider contributor/tool credits.
 - Require pull requests and current GitHub Actions validation for `main`, with
   no external approval requirement or standing bypass. Block branch deletion
   and force pushes, resolve review conversations and use Conventional Commit
