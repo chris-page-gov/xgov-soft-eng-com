@@ -32,7 +32,7 @@ def verify_archive(archive,manifest):
     found=set()
     with tarfile.open(archive,mode="r|gz") as tar:
         for member in tar:
-            if any(part.casefold() in (".consent",".sbom-pilot",".git",".venv","__pycache__",".ds_store") for part in Path(member.name).parts):
+            if any(part.casefold() in (".consent",".sbom-pilot",".account-security","node_modules",".git",".venv","__pycache__",".ds_store") for part in Path(member.name).parts):
                 raise ValueError("Private or local-only material cannot enter a release archive")
             if member.name not in expected:raise ValueError("Undeclared content cannot enter a release archive: "+member.name)
             if member.name in found:raise ValueError("Duplicate declared archive member")

@@ -5,6 +5,9 @@
 
 # Local environments and caches
 .venv/
+node_modules/
+.account-security/
+.[aA][cC][cC][oO][uU][nN][tT]-[sS][eE][cC][uU][rR][iI][tT][yY]/
 __pycache__/
 .pytest_cache/
 

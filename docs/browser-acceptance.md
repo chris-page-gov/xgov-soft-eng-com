@@ -53,12 +53,14 @@ bound to its own producer snapshot and consumer tree.
 
 ## Repeat the browser matrix
 
-Use ordinary installed Chrome and Playwright CLI 0.1.17. Open the exact
+Install the [locked npm tooling](npm-tooling.md) with lifecycle scripts and
+audit requests disabled. Use ordinary installed Chrome and the local
+Playwright CLI 0.1.17. Open the exact
 Explorer URL with its bundle parameter, then run:
 
 ```sh
-playwright-cli --session xgov-acceptance open "https://chris-page-gov.github.io/okf-explorer/explore/?bundle=https%3A%2F%2Fchris-page-gov.github.io%2Fxgov-soft-eng-com%2Fokf-explorer.json" --browser chrome --headed
-playwright-cli --session xgov-acceptance run-code --filename scripts/browser_acceptance.js
+./node_modules/.bin/playwright-cli --session xgov-acceptance open "https://chris-page-gov.github.io/okf-explorer/explore/?bundle=https%3A%2F%2Fchris-page-gov.github.io%2Fxgov-soft-eng-com%2Fokf-explorer.json" --browser chrome --headed
+./node_modules/.bin/playwright-cli --session xgov-acceptance run-code --filename scripts/browser_acceptance.js
 ```
 
 The script requires this catalogue's profile. It reads the checked catalogue

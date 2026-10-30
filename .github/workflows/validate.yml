@@ -15,15 +15,31 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '26.7.0'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install the lock file without running package scripts
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.12.11'
       - run: python -m pip install --require-hashes -r requirements-assurance.txt
+      - run: python scripts/check_npm_lock.py --runtime
+      - run: ./node_modules/.bin/playwright-cli --version
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+          NO_UPDATE_NOTIFIER: '1'
       - run: python scripts/check_release_hygiene.py
         env:
           OKF_PR_TITLE: ${{ github.event.pull_request.title }}
       - run: python scripts/check_repository_protection.py --local
       - run: python -m unittest discover -s tests -v
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
       - run: python scripts/catalogue.py build
       - run: python scripts/catalogue.py check
       - run: python scripts/assure.py

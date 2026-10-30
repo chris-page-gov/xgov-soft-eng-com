@@ -8,6 +8,10 @@ daily dataset snapshots have separate identifiers.
 
 ### Added
 
+- A repeatable account-security review procedure with private findings and
+  owner actions kept outside Git, public bundles, Pages and release archives.
+- Locked npm browser tooling, including transitive versions and integrity
+  digests, with clean-install checks and local CLI execution in CI.
 - A declared sole-maintainer repository protection baseline, read-only live
   drift checks and synthetic tests for required checks, review settings,
   trusted Actions, dependency hashes, incomplete settings, conflicting classic
@@ -25,6 +29,10 @@ daily dataset snapshots have separate identifiers.
 
 ### Changed
 
+- Disable npm lifecycle scripts, audit requests and update notifiers during tooling use;
+  preserve existing catalogue/history schedules and the no-real-scans boundary.
+- Exclude private account-review data and installed npm dependencies from all
+  publication planes, including forced Git tracking and symlink admission.
 - Credit the original community GitHub repository and SBOM author prominently
   in the README, with dated commit evidence and wider contributor/tool credits.
 - Require pull requests and current GitHub Actions validation for `main`, with

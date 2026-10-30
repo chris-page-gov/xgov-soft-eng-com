@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import subprocess
 import tomllib
+import check_npm_lock
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = 'chris-page-gov/xgov-soft-eng-com'
@@ -111,6 +112,7 @@ def validate_local(root):
     lock = tomllib.loads((root / 'uv.lock').read_text())
     requirements = (root / 'requirements-assurance.txt').read_text()
     validate_requirements(lock, requirements)
+    check_npm_lock.validate(root)
     return policy
 
 
