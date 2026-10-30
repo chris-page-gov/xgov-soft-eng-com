@@ -18,4 +18,6 @@ output/
 .playwright-cli/
 source/last-check.json
 .consent/
+.sbom-pilot/
+.[sS][bB][oO][mM]-[pP][iI][lL][oO][tT]/
 source/history/

@@ -20,7 +20,32 @@ There is no universal permission grant in these conventions. This project’s
 JSON permission record is a custom administrative format, not an ISO or IETF
 authorisation standard. A contributor list is not proof of approval authority.
 Published policies can contain relevant permission, but this implementation
-requires an explicitly reviewed approval record rather than inferring consent.
+requires an explicitly reviewed approval record for owner-scoped testing rather
+than inferring consent.
+
+## Public SBOM data analysis
+
+The `public-sbom-data-analysis` mode is separately authorised for reading
+already-published public SBOM documents and matching their package identities
+locally against a pinned advisory database. It does not require individual
+repository-owner consent for that limited data-analysis activity. This is not
+owner approval, security-testing permission or permission to reuse every
+element of a published SBOM. Before admitting a source, record its exact URL,
+retrieval date, digest and any stated licence or reuse terms; assess document
+access and reuse rights separately. Public accessibility alone is not a reuse
+grant. Where the basis is unclear or restricted, exclude the document pending
+review. Do not represent this operational scope as a legal determination.
+
+The mode is limited to anonymous retrieval through normal published URLs or
+official public SBOM APIs and local matching of that data. Dry-run makes no
+requests; implementation tests did not fetch catalogue SBOMs. It does not
+inspect repository source or code, resolve dependencies,
+probe images or services, contact owners, or use AI. Candidate advisory matches
+and reports remain private in `.sbom-pilot/`; they are not vulnerability
+findings or permission to disclose. The existing `.consent/` workflow remains
+in force for separately scoped source analysis, testing or disclosure work.
+See the [runner guide](public-sbom-pilot.md) for admission, pins, bounds and
+private outputs. No approval record is required or created for this mode.
 
 ## Prepare a request
 
@@ -39,6 +64,9 @@ Replace the fingerprint with the SHA-256 of the exact proposed SBOM. For
 non-executing source analysis use mode repository-static-analysis and the
 exact 40-character source commit SHA. These are alternative scopes; approval
 for one does not cover the other. Live service testing is outside this tool.
+These commands are for an expressly owner-agreed engagement. They are not a
+prerequisite for the separate public-data mode and must not be used to imply
+that a published document's owner approved its analysis.
 
 Review the resulting .consent/OWNER__REPOSITORY/request.md. Ask the owner or
 authorised delegate to confirm scope, tool/version, dates, conditions, a stop
@@ -76,8 +104,19 @@ restricted local file permissions. Git ignores the directory and release
 packaging rejects it. Local file modes do not replace managed device security,
 access control, encryption or your organisation’s retention policy.
 
-There is no scanner runner yet. A future runner must call check immediately
-before work and again before preparing a private report. Revocation or changed
-scope must stop work; a check does not technically prevent someone invoking a
-separate scanner themselves. No public finding, email, issue or advisory is
-automatically sent or published by this feature.
+The public-data matcher is invoked with the explicit `public-sbom-data-analysis`
+mode and uses a pinned scanner and advisory database in an offline, network-
+isolated run. Preview the small manifest with:
+
+```sh
+uv run --locked python scripts/sbom_pilot.py run \
+  --manifest examples/public-sbom-pilot.json --dry-run
+```
+
+An actual local match requires the explicit `--execute` option. Its runner is
+limited to supplied public SBOM inputs and local advisory data; it does not
+replace or approve the existing consent workflow. Candidate results stay
+private, and no public finding, email, issue or advisory is automatically sent
+or published. Owner-scoped work continues to require the separate approval
+record, checked immediately before work and before preparing a private report.
+Revocation or changed scope must stop that work.

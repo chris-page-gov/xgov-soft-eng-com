@@ -47,9 +47,16 @@ def check_history(root,baseline,allow_synthetic_head=False):
         check_subject(subject)
 
 
+def check_private_tracking(root):
+    paths=subprocess.check_output(['git','ls-files','-z'],cwd=root).decode().split('\0')
+    if any(any(part.casefold() in ('.consent','.sbom-pilot') for part in path.split('/')) for path in paths if path):
+        raise ValueError('Private approval or SBOM pilot data must not be tracked by Git')
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--message-file',type=Path);args=parser.parse_args()
     try:
+        check_private_tracking(ROOT)
         if args.message_file:check_subject(args.message_file.read_text().splitlines()[0])
         else:
             check_changelog((ROOT/'CHANGELOG.md').read_text())

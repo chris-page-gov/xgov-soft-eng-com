@@ -14,7 +14,7 @@ from urllib.parse import quote
 import catalogue as c
 
 MAX_BYTES = 1024 * 1024 * 1024
-PRIVATE_PARTS = {".consent", ".git", ".venv", "__pycache__", ".ds_store"}
+PRIVATE_PARTS = {".consent", ".sbom-pilot", ".git", ".venv", "__pycache__", ".ds_store"}
 EXPLORER = "https://chris-page-gov.github.io/okf-explorer/explore/?bundle="
 DESCRIPTOR_URL = "https://chris-page-gov.github.io/xgov-soft-eng-com/okf-explorer.json"
 

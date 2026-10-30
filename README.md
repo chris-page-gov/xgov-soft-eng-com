@@ -131,6 +131,12 @@ The upstream project already collects SBOMs on a scheduled Action. This pack
 consumes public metadata; it does not clone or execute catalogued code or
 perform estate-wide vulnerability matching.
 
+The separate [public SBOM data pilot](docs/public-sbom-pilot.md) defaults to a
+no-network dry-run. It can later match up to ten explicitly admitted published
+SBOMs locally, with fixed scanner/database pins and private candidate reports.
+This mode does not require or imply individual repository-owner approval.
+No real scan or catalogue SBOM retrieval was performed during implementation.
+
 A separate hourly Action progressively enriches every catalogued repository
 with all available GitHub contributor statistics. Collection is bounded and
 coverage remains explicit while the full backfill runs. It retains recent and

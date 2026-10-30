@@ -3,6 +3,7 @@
 
 This module never sends messages, starts a scanner or decides legal authority.
 An operator must review the owner's response and authority before recording it.
+Public-data admission bases are separate records and never owner approvals.
 """
 import argparse
 import base64
@@ -21,6 +22,21 @@ import urllib.request
 import catalogue as c
 
 MODES=("published-sbom-advisory-match","repository-static-analysis")
+PUBLIC_DATA_MODE="public-sbom-data-analysis"
+
+
+def public_data_basis(entry):
+    """An input admission basis, never an owner grant or a testing permission."""
+    basis=entry.get('access_reuse',{})
+    if basis.get('status') not in ('documented','unclear','restricted'):
+        raise ValueError('Record a documented, unclear or restricted access/reuse basis')
+    if basis['status']!='documented':
+        return {'status':'review-required','reason':'access-reuse-'+basis['status'],'owner_approval_claimed':False}
+    for key in ('basis','evidence_url'):
+        if not isinstance(basis.get(key),str) or not basis[key].strip():
+            raise ValueError('Documented public-data admission needs a basis and evidence URL')
+    return {'status':'eligible-for-retrieval','mode':PUBLIC_DATA_MODE,'basis':basis,
+            'authority':'recorded-public-data-access-and-reuse-basis','owner_approval_claimed':False}
 
 
 def target(value):

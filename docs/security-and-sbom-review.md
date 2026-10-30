@@ -81,8 +81,18 @@ inventory format. [VEX](https://cyclonedx.org/capabilities/vex/) represents
 product-specific vulnerability applicability/exploitability statements.
 [OSV-Scanner documentation](https://google.github.io/osv-scanner/supported-languages-and-lockfiles/)
 explains why resolved lockfiles are preferable to unresolved manifests.
-No catalogue-wide vulnerability scan or online package/advisory query has been
-performed by this experiment.
+No catalogue-wide vulnerability scan or online package/advisory query had been
+performed by this experiment as at its review date. A separately scoped
+`public-sbom-data-analysis` mode is now defined for local matching against
+already-published public SBOM data, without individual repository-owner
+consent. It retrieves only explicitly admitted public documents in a later
+execution; dry-run and implementation tests do not fetch SBOMs. It does not
+inspect source or code, probe images or
+services, invoke AI, or publish candidate matches. It does not constitute
+owner-approved testing. See the [permission policy](permission-and-disclosure.md)
+and [runner guide](public-sbom-pilot.md). Synthetic tests and tooling
+preparation are verified separately from real matching, which has not run.
+The [later Blue proposal](sbom-daybreak-pilot.md) remains a separate decision.
 
 ## Open issues
 

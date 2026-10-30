@@ -1,0 +1,55 @@
+{
+  "schema": "xgov-sbom-toolchain-pins.v1",
+  "recorded_at": "2026-10-30",
+  "scanner": {
+    "version": "0.121.0",
+    "release_url": "https://github.com/anchore/grype/releases/tag/v0.121.0",
+    "checksums_url": "https://github.com/anchore/grype/releases/download/v0.121.0/grype_0.121.0_checksums.txt",
+    "checksums_sha256": "938761709760ee0e94ebca564a757b6658ab4efddc0d19ecc6ede12f22d2fdd0",
+    "platforms": {
+      "darwin_arm64": {
+        "url": "https://github.com/anchore/grype/releases/download/v0.121.0/grype_0.121.0_darwin_arm64.tar.gz",
+        "bytes": 29343080,
+        "sha256": "7be39d3a0428c664ce0183e4aba31ed9accffce9eda7e7f6fa84e9c512285f27",
+        "binary_sha256": "4fc87cd48bc1d85bb46f6d61dc3ff8f9f2730e3e51cb94423adee1a3a47d11ba"
+      },
+      "linux_amd64": {
+        "url": "https://github.com/anchore/grype/releases/download/v0.121.0/grype_0.121.0_linux_amd64.tar.gz",
+        "bytes": 32504199,
+        "sha256": "64e07133d3486115de647a66581461dccf5c732748a0a3119077395565f15519",
+        "binary_sha256": "bd511334178bc3002eb9eb58880f89e01e35f7fed7cfbe671171127a8afa3596"
+      }
+    }
+  },
+  "database": {
+    "url": "https://grype.anchore.io/databases/v6/vulnerability-db_v6.1.10_2026-10-30T00:25:15Z_1793341408.tar.zst",
+    "bytes": 197159249,
+    "sha256": "1e1b9cf2cbfaf16b770e4d75d7beb4840dc4254ca2281682fe5ec3700a4251a8",
+    "built": "2026-10-30T06:23:28Z",
+    "schema_version": "v6.1.10",
+    "listing_url": "https://grype.anchore.io/databases/v6/latest.json",
+    "listing_sha256": "77efc8d053c14390a9327902786d94ca105c0d4dba74e48bedc5be8716aa2776",
+    "files": {
+      "6/vulnerability.db": "80515f7de59537f10d65256fb81923724147e0f1009a7cbfe12b00af43abd93f",
+      "6/import.json": "00b04d0f9867f5b76144caf01a299b8153d36edc2995ce03da00741848787d71"
+    },
+    "unpacked_bytes": 2554044416,
+    "file_bytes": {
+      "6/vulnerability.db": 3375517696,
+      "6/import.json": 98
+    },
+    "import_metadata": {
+      "digest": "xxh64:877823e35406fb5b",
+      "source": "manual import",
+      "client_version": "v6.1.10"
+    },
+    "build_date_basis": "Verified against db_metadata in the imported SQLite database and the official listing.",
+    "archive_files": {
+      "vulnerability.db": {
+        "sha256": "0e7b5cf8136bda26b6496ac89124e746f9397a34536dd23dc68ed44b10a7c7a0",
+        "bytes": 2554044416
+      }
+    }
+  },
+  "verification": "Downloaded bytes checked against official HTTPS release/API digests, release checksums and database listing. Extracted binary/database hashes recorded. No signature verification or SBOM matching is claimed. Offline database import/layout and version metadata checked; no SBOM was supplied."
+}
