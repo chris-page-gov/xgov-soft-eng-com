@@ -40,6 +40,11 @@ Signed commits and linear history are not mandatory in this baseline.
   eight direct and transitive packages. The CI requirements export contains
   their archive hashes and is installed with `pip --require-hashes`.
   Production catalogue generation and search still use the standard library.
+- Browser tooling has a complete npm lock for the CLI and its transitive
+  packages. CI uses immutable installation with lifecycle scripts, audit
+  requests and browser downloads disabled, then runs the local CLI. The
+  Python-only history worker uses static lock checks without requiring Node.
+  See [npm tooling](npm-tooling.md) for pins, checks and update instructions.
 
 GitHub recommends
 [least-privilege tokens and immutable Action pins](https://docs.github.com/en/actions/reference/security/secure-use).
@@ -116,10 +121,14 @@ effective GitHub rules. The first protection pull request exercises the normal
 required-check merge route. The daily refresh pause and hourly history
 schedule remain separate and unchanged. No real scans run as part of this work.
 
+The account-security review and npm transitive lock follow-up were completed
+on 30 October 2026. Account observations and owner actions stay private in
+`.account-security/`; the public [review procedure](account-security-review.md)
+defines scope, evidence states and repeatable checks without publishing account
+inventories. Review completion does not close unresolved owner actions or prove
+notification delivery, recovery access or absence of compromise.
+
 This is a measurable maintenance baseline. It is not an exhaustive security,
-accessibility or supply-chain certification. Account passkeys/2FA, recovery
-codes, token/app permissions and notification delivery need separate owner
-review. Browser tooling retains its documented pinned CLI version; its npm
-transitive supply chain needs a separate lock review. Real Grype matching and
-Linux network isolation remain unexercised. New scanning services, additional
+accessibility or supply-chain certification. Real Grype matching and Linux
+network isolation remain unexercised. New scanning services, additional
 automation and any public findings require separate decisions.

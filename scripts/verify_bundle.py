@@ -32,7 +32,7 @@ def encoded(value):
 
 def safe(name):
     parts=name.split('/')
-    return name.startswith(PREFIX) and '\\' not in name and all(p not in ('','.','..') for p in parts) and not any(p.casefold() in ('.consent','.sbom-pilot','.git','.venv','__pycache__','.ds_store') for p in parts)
+    return name.startswith(PREFIX) and '\\' not in name and all(p not in ('','.','..') for p in parts) and not any(p.casefold() in ('.consent','.sbom-pilot','.account-security','node_modules','.git','.venv','__pycache__','.ds_store') for p in parts)
 
 
 def read_archive(path):

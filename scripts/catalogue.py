@@ -162,10 +162,10 @@ def matching_terms(row, concept, taxonomy):
 
 
 def controlled_inputs(root):
-    patterns = ["config/**/*", "scripts/**/*.py", "scripts/**/*.js", "tests/**/*.py", "schemas/**/*", "docs/**/*", "examples/public-sbom-pilot.json", "*.md", "okf.*.json", "pyproject.toml", "uv.lock", "requirements-assurance.txt", "LICENSE", ".gitignore", ".python-version", ".github/workflows/*", ".githooks/*", "source/README.md", "source/security-helper-inventory.json", "source/contributors-inventory.json", "source/history/index.json", "source/upstream/*", "source/sbom-review/*"]
+    patterns = ["config/**/*", "scripts/**/*.py", "scripts/**/*.js", "tests/**/*.py", "schemas/**/*", "docs/**/*", "examples/public-sbom-pilot.json", "*.md", "okf.*.json", "pyproject.toml", "uv.lock", "requirements-assurance.txt", "package.json", "package-lock.json", ".npmrc", "LICENSE", ".gitignore", ".python-version", ".github/workflows/*", ".githooks/*", "source/README.md", "source/security-helper-inventory.json", "source/contributors-inventory.json", "source/history/index.json", "source/upstream/*", "source/sbom-review/*"]
     paths=[p for pattern in patterns for p in sorted(root.glob(pattern)) if p.is_file() and "__pycache__" not in p.parts and p.name!=".DS_Store"]
     for p in paths:
-        if any(part.casefold() in ('.consent','.sbom-pilot') for part in p.resolve().parts):raise ValueError('Private material cannot become a controlled public input')
+        if any(part.casefold() in ('.consent','.sbom-pilot','.account-security','node_modules') for part in p.resolve().parts):raise ValueError('Private material cannot become a controlled public input')
     return {p.relative_to(root).as_posix(): digest(p.read_bytes()) for p in paths}
 
 
@@ -488,7 +488,7 @@ def promote(root, receipt, baseline=None):
     if (root/"generated/build-manifest.json").exists():
         old_inputs=read(root/"generated/build-manifest.json")["controlled_inputs"]
         new_inputs=controlled_inputs(root)
-        implementation=lambda p: p.startswith(("scripts/","config/","schemas/","tests/",".github/")) or p in ("pyproject.toml","uv.lock","okf.semantic.json","okf.publication.json")
+        implementation=lambda p: p.startswith(("scripts/","config/","schemas/","tests/",".github/")) or p in ("pyproject.toml","uv.lock","package.json","package-lock.json",".npmrc","okf.semantic.json","okf.publication.json")
         changed=any(old_inputs.get(p)!=new_inputs.get(p) for p in set(old_inputs)|set(new_inputs) if implementation(p))
         if changed and old_inputs.get("CHANGELOG.md")==new_inputs.get("CHANGELOG.md"):
             raise ValueError("Controlled implementation changed: update CHANGELOG.md and relevant documentation before rebuilding")

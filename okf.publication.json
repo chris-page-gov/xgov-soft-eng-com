@@ -329,6 +329,18 @@
         "role": "policy"
       },
       {
+        "path": "package.json",
+        "role": "policy"
+      },
+      {
+        "path": "package-lock.json",
+        "role": "policy"
+      },
+      {
+        "path": ".npmrc",
+        "role": "policy"
+      },
+      {
         "path": "schemas/**",
         "role": "schema"
       },
@@ -421,7 +433,10 @@
         "schemas/**",
         "tests/**",
         "generated/**",
-        "examples/public-sbom-pilot.json"
+        "examples/public-sbom-pilot.json",
+        "package.json",
+        "package-lock.json",
+        ".npmrc"
       ],
       "command_ids": [
         "tests",
@@ -599,7 +614,7 @@
         "planes": [
           "browser"
         ],
-        "command": "playwright-cli --session xgov-acceptance run-code --filename scripts/browser_acceptance.js",
+        "command": "./node_modules/.bin/playwright-cli --session xgov-acceptance run-code --filename scripts/browser_acceptance.js",
         "source": "docs/browser-acceptance.md",
         "review_status": "reviewed-local-guidance",
         "network": "bounded-read",
@@ -635,7 +650,7 @@
         "planes": [
           "browser"
         ],
-        "command": "playwright-cli --session xgov-acceptance run-code --filename scripts/browser_reports.js",
+        "command": "./node_modules/.bin/playwright-cli --session xgov-acceptance run-code --filename scripts/browser_reports.js",
         "source": "docs/browser-acceptance.md",
         "review_status": "reviewed-local-guidance",
         "network": "bounded-read",
@@ -653,7 +668,10 @@
       "tests/**",
       ".github/workflows/**",
       "okf.*.json",
-      "requirements-assurance.txt"
+      "requirements-assurance.txt",
+      "package.json",
+      "package-lock.json",
+      ".npmrc"
     ],
     "documentation_paths": [
       "README.md",
@@ -765,6 +783,8 @@
     ]
   },
   "limitations": [
+    "Private .account-security/ account-review observations and installed node_modules/ are excluded from source admission, tracked files, public bundles, Pages and archives. Only the generic review procedure is public; no credentials are revealed or changed by the review.",
+    "Browser tooling uses the exact Node/npm/Playwright versions and a SHA-512 npm lock with lifecycle scripts and audit requests disabled. Static lock checks need only Python; runtime checks are explicit and run in the Node-enabled validation/Pages jobs. No browser download, new schedule or real scan is introduced.",
     "The public lifecycle does not invoke SBOM matching or admit private reports. A separate manual public-data pilot writes only private candidate advisory matches under .sbom-pilot/; no real scans were run during implementation.",
     "Scheduled executions may be delayed by GitHub.",
     "Publication-method v1 has no scheduled-release mode: manual denotes invocation of reviewed release commands; the separate CI workflow retains the daily cron behind OKF_DAILY_REFRESH_ENABLED=true, with manual dispatch always available. Main branch protection is governed separately by config/repository-protection.json and its read-only live checker; local checks alone do not prove GitHub settings.",

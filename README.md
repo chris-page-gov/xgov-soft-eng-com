@@ -33,6 +33,8 @@ does not imply endorsement, current maintainership or approval to test code.
 The repository uses a [sole-maintainer protection baseline](docs/repository-protection.md):
 pull requests, required checks, bounded publication and a
 [private vulnerability reporting route](https://github.com/chris-page-gov/xgov-soft-eng-com/security/advisories/new).
+The [account review procedure](docs/account-security-review.md) keeps findings
+private; [npm tooling](docs/npm-tooling.md) records the browser dependency lock.
 
 ## Try it with your AI
 

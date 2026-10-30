@@ -93,6 +93,13 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
           node-version: '26.7.0'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install the locked browser CLI without running package scripts
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: python scripts/check_npm_lock.py --runtime
       - name: Read the published release identity
         env:
           GH_TOKEN: ${{ github.token }}
@@ -101,14 +108,16 @@ jobs:
       - name: Verify the public pack in ordinary Chrome
         env:
           npm_config_cache: ${{ runner.temp }}/xgov-browser-npm
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+          NO_UPDATE_NOTIFIER: '1'
         run: |
           google-chrome --version
           mkdir -p output/playwright/ci
-          npx --yes --package @playwright/cli@0.1.17 playwright-cli --session xgov-ci open 'https://chris-page-gov.github.io/okf-explorer/explore/?bundle=https%3A%2F%2Fchris-page-gov.github.io%2Fxgov-soft-eng-com%2Fokf-explorer.json' --browser chrome
-          npx --yes --package @playwright/cli@0.1.17 playwright-cli --session xgov-ci run-code --filename scripts/browser_acceptance.js > output/playwright/ci/facets.txt
-          npx --yes --package @playwright/cli@0.1.17 playwright-cli --session xgov-ci run-code --filename scripts/browser_combinations.js > output/playwright/ci/combinations.txt
-          npx --yes --package @playwright/cli@0.1.17 playwright-cli --session xgov-ci run-code --filename scripts/browser_semantics_history.js > output/playwright/ci/semantics-history.txt
-          npx --yes --package @playwright/cli@0.1.17 playwright-cli --session xgov-ci run-code --filename scripts/browser_reports.js > output/playwright/ci/reports.txt
+          ./node_modules/.bin/playwright-cli --session xgov-ci open 'https://chris-page-gov.github.io/okf-explorer/explore/?bundle=https%3A%2F%2Fchris-page-gov.github.io%2Fxgov-soft-eng-com%2Fokf-explorer.json' --browser chrome
+          ./node_modules/.bin/playwright-cli --session xgov-ci run-code --filename scripts/browser_acceptance.js > output/playwright/ci/facets.txt
+          ./node_modules/.bin/playwright-cli --session xgov-ci run-code --filename scripts/browser_combinations.js > output/playwright/ci/combinations.txt
+          ./node_modules/.bin/playwright-cli --session xgov-ci run-code --filename scripts/browser_semantics_history.js > output/playwright/ci/semantics-history.txt
+          ./node_modules/.bin/playwright-cli --session xgov-ci run-code --filename scripts/browser_reports.js > output/playwright/ci/reports.txt
           python scripts/collect_browser_receipts.py --manifest "$RUNNER_TEMP/xgov-browser-release/build-manifest.json" --logs output/playwright/ci --output output/playwright/ci/browser-verification.json
       - name: Retain verification results
         if: always()

@@ -31,6 +31,11 @@
   explicit coverage, default-branch limitations and minimal account data.
 - Never admit .consent/, private starters, private reports or approval evidence
   into a public build/archive. Permission tooling creates unsent drafts only.
+- Account-security observations belong only in the ignored .account-security/
+  directory with private permissions. Keep account inventories, session and
+  token details out of Git, public documentation, bundles, Pages and archives.
+  Review authentication settings read-only; do not reveal recovery codes,
+  expand token scopes or change credentials to complete an assessment.
 - Public SBOM data matching uses the explicit public-sbom-data-analysis mode.
   It does not require or imply individual repository-owner approval. Admit only
   already-published documents with a recorded access/reuse basis; unclear or
@@ -43,3 +48,8 @@
   check, including for the sole owner. Do not bypass, disable or weaken the
   rules to merge. No second-person approval is required. Recheck live policy
   with the read-only protection checker after settings changes.
+- Browser tooling uses package-lock.json and the pinned Node/npm versions.
+  Install with npm ci --ignore-scripts --no-audit --no-fund, disable Playwright
+  browser downloads and invoke the local CLI. Do not use npx or npm audit for
+  acceptance. Static npm lock checks must remain usable without Node so the
+  Python-only history worker and offline verifier keep working.

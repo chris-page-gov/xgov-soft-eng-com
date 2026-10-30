@@ -54,8 +54,8 @@ def check_history(root,baseline,allow_synthetic_head=False):
 
 def check_private_tracking(root):
     paths=subprocess.check_output(['git','ls-files','-z'],cwd=root).decode().split('\0')
-    if any(any(part.casefold() in ('.consent','.sbom-pilot') for part in path.split('/')) for path in paths if path):
-        raise ValueError('Private approval or SBOM pilot data must not be tracked by Git')
+    if any(any(part.casefold() in ('.consent','.sbom-pilot','.account-security','node_modules') for part in path.split('/')) for path in paths if path):
+        raise ValueError('Private approval, account review, SBOM pilot or installed dependency data must not be tracked by Git')
 
 
 def main():
