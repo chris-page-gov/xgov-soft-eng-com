@@ -1,10 +1,13 @@
 # A bounded SBOM and Daybreak Blue pilot
 
-Recommendation prepared on 29 October 2026. This is a proposed next step, not a
-scanner implementation, an authorisation record or a new vulnerability finding.
+Policy and pilot scope updated on 30 October 2026. The public-data matching
+runner is implemented with synthetic regression checks and verified tooling
+preparation. No real SBOM matching has run. This document is not an
+authorisation record, a vulnerability finding or human acceptance.
 
-Start with reproducible inventory and advisory matching. Then use Daybreak Blue
-to investigate a small candidate queue and review remediation. The present
+The current step is reproducible inventory and advisory matching. A later,
+separate decision could use Daybreak Blue to investigate a small candidate
+queue and review remediation; this runner does not invoke AI. The present
 catalogue is a discovery and evidence layer; it does not establish which
 software is deployed or vulnerable.
 
@@ -26,10 +29,13 @@ date differ substantially, so freshness must be checked per document.
 
 ## Suggested first pilot
 
-Choose ten named repositories with owners who agree to the relevant scope.
-Include resolved package versions, unresolved versions, an older document and
-different dependency contexts. Prefer systems where the team can also explain
-the deployed build; that makes applicability review useful.
+For `public-sbom-data-analysis`, use only already-published public SBOM
+documents whose access and reuse basis has been reviewed and recorded. This
+limited local matching mode does not require individual repository-owner
+consent; it does not amount to owner approval for testing. Include resolved
+package versions, unresolved versions, an older document and different
+dependency contexts. Any subsequent source review or testing needs its own
+scope and genuine owner approval.
 
 | Stage | Deliverable | Evidence boundary |
 | --- | --- | --- |
@@ -38,10 +44,27 @@ the deployed build; that makes applicability review useful.
 | Blue investigation | A private, evidence-linked disposition for each candidate, with relevant source/configuration at an approved commit | Static reachability and applicability reasoning retain unknowns and require review |
 | Remediation | Reviewed upgrade/configuration proposal, regression evidence and owner reporting | No automatic fixes, public vulnerability labels or disclosure |
 
-Use Grype as the initial reproducible matcher to extend the earlier pilot.
-It accepts existing SPDX and CycloneDX SBOMs. Download and pin the advisory
-database, then perform the matching locally in an isolated environment without
-uploading package identities. Keep its database age and digest with results.
+Use the bounded [public-data runner](public-sbom-pilot.md) as the reproducible matcher to extend the earlier
+pilot. It accepts supplied SPDX and CycloneDX SBOMs. Pin the scanner and
+advisory database, then perform matching offline in a network-isolated
+environment without uploading package identities. Keep the database age and
+digest with results. Dry-run does not fetch SBOMs; a later explicit execution
+can retrieve admitted documents from their existing public URLs. The bounded dry-run
+preview is:
+
+```sh
+uv run --locked python scripts/sbom_pilot.py run \
+  --manifest examples/public-sbom-pilot.json --dry-run
+```
+
+Actual matching requires the explicit `--execute` option. Inputs and candidate
+matches are retained only under the private `.sbom-pilot/` root. The runner
+does not probe repositories, dependencies, images or services, inspect source
+or code, and does not invoke AI. OS-level network isolation is part of the run boundary;
+the application's offline configuration alone is not a substitute.
+
+Grype accepts existing SPDX and CycloneDX SBOMs. Keep its database age and
+digest with results.
 See [supported targets](https://oss.anchore.com/docs/guides/vulnerability/scan-targets/)
 and [offline operation](https://oss.anchore.com/docs/guides/vulnerability/getting-started/).
 OSV-Scanner can provide a comparison on a subset; its
@@ -54,44 +77,42 @@ reduce noise, but excluding a build tool does not establish that it creates no
 supply-chain risk. Count unresolved identities and version ranges as coverage
 gaps rather than name-only vulnerability findings.
 
-## Where Blue adds most value
+## Separately scoped model-assisted review
 
-Official [OpenAI documentation](https://learn.chatgpt.com/docs/cyber-safety#choose-the-right-model)
-places Blue in authorised defensive discovery, triage, secure code review and
-patch validation. For this pilot, use it to reconcile advisory aliases and
-fixed ranges, inspect the relevant approved code/configuration, explain likely
-applicability and review a proposed fix. It can also find code-level weaknesses
-that an inventory matcher cannot see, as a separately scoped source review.
+The public-data matching mode does not invoke Daybreak Blue or any other AI.
+Any later model-assisted review is separate work: it needs a defined scope,
+appropriate authority for the evidence supplied, privacy review and a distinct
+decision to use the model. A model's availability does not grant permission to
+send it SBOMs, source, candidate findings or private evidence.
 
-Blue cannot repair missing versions, infer a deployed environment from an SBOM,
-or turn model confidence into a verified finding. Preserve the progression:
-advisory match, affected package, reachable code, then demonstrated deployed
-exposure. An owner or reviewer confirms each disposition.
+An advisory match cannot repair missing versions or infer a deployed
+environment from an SBOM. Preserve the progression: advisory match, affected
+package, reachable code, then demonstrated deployed exposure. An owner or
+reviewer confirms each disposition.
 
 Record applicability decisions in a VEX-compatible design with product scope,
 evidence, issuer, observation time and review status. Do not publish a
-not-affected assertion on model output alone. CycloneDX
+not-affected assertion on unreviewed model output. CycloneDX
 [VEX](https://cyclonedx.org/capabilities/vex/) provides a format for communicating
 product-specific applicability; conformance would need schema validation.
 
 ## Permission, privacy and cost
 
-Use the existing [permission and reporting workflow](permission-and-disclosure.md).
-An approval for matching one published SBOM does not authorise source analysis
-at another commit, external source transfer or live service testing. The tool
-creates unsent drafts and checks private records; there is no scanner runner
-or model gateway enforcing those checks yet.
+Follow the [permission and reporting policy](permission-and-disclosure.md).
+The public-data mode is limited to local matching of already-published SBOMs
+and is not owner-approved testing. Any separately scoped source analysis,
+external source transfer or live service testing still requires genuine,
+reviewed owner approval recorded through `.consent/`. The runner does not
+enforce or manufacture that approval, and no AI or model gateway is part of
+this pilot.
 
-Use only the approved Daybreak account/project/surface. Confirm its current
-access and applicable costs before starting. Access is not a spending budget.
 Do not install dependencies or execute repository code as part of this pilot;
-keep source excerpts, candidate findings, approval evidence and reports private.
-Use the agreed owner route for any later communication.
+keep any later source excerpts, candidate findings, approval evidence and
+reports private. Use the agreed owner route for any later communication.
 
 Success means reproducible matches, documented coverage gaps, a traceable
 review decision for every candidate, useful remediation and measured review
-effort. It does not certify the catalogue as secure. Once that small pilot is
-useful, add a permission-checking runner, private report retention and only
-then a bounded recurring service. Public catalogue exports should initially
-contain coverage and capability metadata, with reviewed disclosure decisions
-kept separate from raw findings.
+effort. It does not certify the catalogue as secure. Do not turn the pilot into
+a recurring service or publish candidate matches. Public catalogue exports
+should contain only reviewed coverage and capability metadata, with disclosure
+decisions kept separate from raw private results.

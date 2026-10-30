@@ -1,6 +1,6 @@
 {
   "schema": "okf-repository-publication-contract.v1",
-  "modified": "2026-10-29",
+  "modified": "2026-10-30",
   "locale": "en-GB",
   "time_zone": "Europe/London",
   "repository": {
@@ -351,6 +351,10 @@
       {
         "path": "source/**",
         "role": "source-envelope"
+      },
+      {
+        "path": "examples/public-sbom-pilot.json",
+        "role": "policy"
       }
     ],
     "generated": [
@@ -416,7 +420,8 @@
         "scripts/**",
         "schemas/**",
         "tests/**",
-        "generated/**"
+        "generated/**",
+        "examples/public-sbom-pilot.json"
       ],
       "command_ids": [
         "tests",
@@ -760,10 +765,11 @@
     ]
   },
   "limitations": [
-    "No vulnerability scan or private report access.",
+    "The public lifecycle does not invoke SBOM matching or admit private reports. A separate manual public-data pilot writes only private candidate advisory matches under .sbom-pilot/; no real scans were run during implementation.",
     "Scheduled executions may be delayed by GitHub.",
     "Publication-method v1 has no scheduled-release mode: manual denotes invocation of reviewed release commands; the separate CI workflow retains the daily cron behind OKF_DAILY_REFRESH_ENABLED=true, with manual dispatch always available. No repository branch protection is claimed.",
     "Pages runs the three ordinary-Chrome suites after deployment. This producer workflow does not claim cross-engine or human usability acceptance. A post-deployment failure requires investigation; no automatic rebuild or rollback is performed.",
-    "Daily refresh is operationally paused by the owner using the repository Actions variable; hourly history collection is separate and remains enabled. Scheduled triggers are not a punctuality guarantee."
+    "Daily refresh is operationally paused by the owner using the repository Actions variable; hourly history collection is separate and remains enabled. Scheduled triggers are not a punctuality guarantee.",
+    "Public SBOM data analysis does not require or imply repository-owner approval. Its tool preparation and execution are outside this publication lifecycle; unclear or restricted access/reuse bases need review. No schedule is added or changed."
   ]
 }

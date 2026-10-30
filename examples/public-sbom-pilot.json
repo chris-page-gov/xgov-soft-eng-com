@@ -1,0 +1,23 @@
+{
+  "schema": "xgov-public-sbom-pilot.v1",
+  "mode": "public-sbom-data-analysis",
+  "inputs": [
+    {
+      "id": "sds-addresses-retained-example",
+      "repository": "surreydigitalservices/sds-addresses",
+      "url": "https://www.uk-x-gov-software-community.org.uk/xgov-opensource-repo-scraper/sbom/surreydigitalservices/sds-addresses.json.gz",
+      "publication": {
+        "kind": "published-document",
+        "evidence_url": "https://www.uk-x-gov-software-community.org.uk/xgov-opensource-repo-scraper/sbom/surreydigitalservices/sds-addresses.json.gz"
+      },
+      "expected_sha256": "1d50b48d754d42f67aa60baf37770cbcd0753c783a06d645f90163b86c17026b",
+      "source_revision": null,
+      "access_reuse": {
+        "status": "documented",
+        "licence": "CC0-1.0",
+        "evidence_url": "https://www.uk-x-gov-software-community.org.uk/xgov-opensource-repo-scraper/sbom/surreydigitalservices/sds-addresses.json.gz",
+        "basis": "The previously retained document with this compressed SHA-256 declares dataLicense CC0-1.0 for SPDX metadata. This basis covers those SBOM bytes, not dependency code or owner-approved testing. Source receipt retained on 28 October 2026; changed bytes or licence require review."
+      }
+    }
+  ]
+}

@@ -6,6 +6,31 @@ daily dataset snapshots have separate identifiers.
 
 ## [Unreleased]
 
+### Added
+
+- A bounded public SBOM data pilot with explicit admission, documented access
+  and reuse basis, no implied owner approval, private JSON/Markdown reports,
+  synthetic tests and a no-network dry-run.
+- Fifty-two synthetic pilot regressions cover admission, pins, private-output
+  exclusion, bounded report expansion and resumable input/report integrity,
+  including reserved control-file names and unknown repository references.
+- Verified Grype 0.121.0 binary/archive pins and one exact advisory database
+  snapshot, offline OS network isolation, integrity-checked caching, rate/time/
+  size limits and resumable checkpoints. No real scans or catalogue SBOM
+  retrievals were performed during implementation.
+
+### Changed
+
+- Separate public-data matching from genuinely owner-approved source analysis
+  or testing, retaining the existing approval and reporting workflow.
+- Retain declared development/build/test/CI contexts and dependency requirement
+  scopes alongside runtime and unknown views, without dropping packages.
+- Preserve a resumable checkpoint when tool verification exhausts the work
+  budget before any SBOM request or matching process starts.
+- Reject private pilot data from tracked Git files, public controlled inputs,
+  Pages, release archives and the standalone bundle verifier. Catalogue and
+  contributor-history schedules remain unchanged.
+
 ## [0.5.1] - 2026-10-29
 
 ### Added

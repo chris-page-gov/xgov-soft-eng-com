@@ -1,0 +1,62 @@
+{
+  "dry_run": {
+    "eligible_for_retrieval": 1,
+    "inputs": 1,
+    "network_requests": 0,
+    "owner_approval_claimed": false,
+    "scanner_invocations": 0
+  },
+  "limitations": [
+    "Only synthetic SBOMs and mocked matching were tested; real SBOM matching has not started.",
+    "macOS tool preparation exercised; Linux namespace/matching path remains mocked.",
+    "No repository-specific findings, communication, model calls or schedule changes.",
+    "Local frozen source validation is not a new public bundle or deployment."
+  ],
+  "local_frozen_build": {
+    "archive_bytes": 62975500,
+    "archive_members": 3463,
+    "assertions_validated": 113825,
+    "build_id": "61189064e8186c9b9e25398356cac61bfbb503ed76c51d22df110b0c0e9f4e22",
+    "deterministic_lockstep": "passed",
+    "offline_checks": 10,
+    "pages_staging": "passed",
+    "private_members": 0,
+    "published": false,
+    "rdf_triples_parsed": 3159441,
+    "records": 24068,
+    "remote_contexts": 0,
+    "repository_contracts_validated": 2
+  },
+  "mode": "public-sbom-data-analysis",
+  "observed_at": "2026-10-30T11:53:27.370689+00:00",
+  "schema": "xgov-sbom-pilot-implementation-verification.v1",
+  "source_sha256": {
+    "config/sbom-pilot-pins.json": "92f17907fa0c21040d411e2f53f4f88a853c944b45d6f19894c7f20430512a29",
+    "examples/public-sbom-pilot.json": "b84a075015523858c4b3e39abc6ae872a4c68cddcb039b410ab8bb6c2765781a",
+    "scripts/permissions.py": "f64c0713cf24abcfd8af772866c4bbb8e273eb15bbf5e4958a0ba7bf357858ce",
+    "scripts/sbom_pilot.py": "8cf46b9c3dd7bbf04de93fa51adaea2b0459e7fbd20e9894b783038ce5c2d0f0",
+    "tests/test_sbom_pilot.py": "d16c5b6747a460461b353e6740e240f3d97bdbf67050d4e2f93854899efeb1e8"
+  },
+  "status": "implementation-checks-passed",
+  "tests": {
+    "real_sbom_matching_exercised": false,
+    "synthetic_pilot_cases": 52,
+    "total": 122
+  },
+  "tool_preparation": {
+    "database_built": "2026-10-30T06:23:28Z",
+    "database_sha256": "1e1b9cf2cbfaf16b770e4d75d7beb4840dc4254ca2281682fe5ec3700a4251a8",
+    "platform": "darwin_arm64",
+    "sbom_requests": 0,
+    "scanner_matches_started": false,
+    "scanner_version": "0.121.0",
+    "signature_verification_claimed": false,
+    "status": "passed",
+    "two_prepared_db_hashes_agreed": true
+  },
+  "unchanged_workflow_sha256": {
+    "history.yml": "2f265a67149c456486421bc215eec75a2dd25b57bcb5b40bd5083149e1c9cff3",
+    "pages.yml": "67c3fbcebe777606b19cd169912ebf4092aa0997a4361930cc3ee02c00a6516c",
+    "refresh.yml": "0a21075ec35118478a6633c1d475eba65f0eb14b43410ae9ddcb786874fe4eb1"
+  }
+}

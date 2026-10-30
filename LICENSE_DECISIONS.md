@@ -13,6 +13,17 @@ notice for frozen metadata and copied source evidence. Per-repository licences
 are unverified source metadata. Missing licences and NOASSERTION stay
 unresolved; public availability alone does not establish reuse permission.
 
+The separately scoped `public-sbom-data-analysis` mode may read SBOM documents
+already published at public URLs and match their package data locally. This
+operational scope does not itself grant copyright or other reuse rights, and
+does not treat public access as permission. Record the source URL, retrieval
+date and digest, inspect any stated licence and access terms, and assess the
+basis for the proposed analytical reuse before admission. Exclude sources with
+restricted access or unresolved reuse terms pending review; do not present
+this policy as a legal conclusion or as repository-owner approval for testing.
+Keep raw inputs and candidate advisory matches in the private `.sbom-pilot/`
+area, outside public builds and archives.
+
 The sample SPDX document declares dataLicense CC0-1.0 for SPDX metadata, not
 the dependency code. Preserve underlying package licences. The quality summary
 is attributed to its upstream project, not a blanket grant over all software.

@@ -29,5 +29,11 @@
   explicit coverage, default-branch limitations and minimal account data.
 - Never admit .consent/, private starters, private reports or approval evidence
   into a public build/archive. Permission tooling creates unsent drafts only.
+- Public SBOM data matching uses the explicit public-sbom-data-analysis mode.
+  It does not require or imply individual repository-owner approval. Admit only
+  already-published documents with a recorded access/reuse basis; unclear or
+  restricted inputs need review. Keep .sbom-pilot/ out of Git, public bundles,
+  Pages and archives. No real matching or catalogue SBOM retrieval was authorised
+  during implementation; synthetic tests and public tooling downloads are allowed.
 - Use Conventional Commits and Keep a Changelog; see CONTRIBUTING.md. Preserve
   the published legacy baseline rather than rewriting remote history.
