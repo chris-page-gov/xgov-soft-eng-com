@@ -23,9 +23,13 @@ timestamp. source/last-check.json records retrieval. The 48-hour warning
 measures successful retrieval, not freshness of each upstream repository.
 HTTP Last-Modified, push time and SBOM creation time are distinct observations.
 
-Before release run tests, build, check and scripts/assure.py. The last command
-uses the pinned direct dependencies in requirements-assurance.txt in a
-disposable environment; production build/search remain standard-library-only.
+Before release run tests, build, check and
+`uv run --locked --group assurance python scripts/assure.py`. The assurance
+group in `uv.lock` pins direct and transitive dependencies. CI installs the
+matching `requirements-assurance.txt` export with `--require-hashes` in its
+disposable runner; production build/search remain standard-library-only.
+See [repository protection](repository-protection.md) for drift checks,
+dependency updates and the sole-maintainer merge procedure.
 
 Workflows pin Ubuntu 24.04 and Python 3.12.11. GitHub's Ubuntu 26.04 runner
 does not provide that exact Python build, as confirmed by the initial run and

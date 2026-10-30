@@ -1,0 +1,50 @@
+{
+  "schema": "xgov-repository-policy.v1",
+  "repository": "chris-page-gov/xgov-soft-eng-com",
+  "ruleset": {
+    "name": "Protect main for a sole maintainer",
+    "target": "branch",
+    "enforcement": "active",
+    "bypass_actors": [],
+    "conditions": {"ref_name": {"include": ["refs/heads/main"], "exclude": []}},
+    "rules": [
+      {"type": "deletion"},
+      {"type": "non_fast_forward"},
+      {"type": "pull_request", "parameters": {
+        "required_approving_review_count": 0,
+        "dismiss_stale_reviews_on_push": true,
+        "require_code_owner_review": false,
+        "require_last_push_approval": false,
+        "require_extra_approval_for_unattributed_changes": true,
+        "required_reviewers": [],
+        "required_review_thread_resolution": true,
+        "allowed_merge_methods": ["merge", "squash", "rebase"]
+      }},
+      {"type": "required_status_checks", "parameters": {
+        "required_status_checks": [{"context": "validate", "integration_id": 15368}],
+        "strict_required_status_checks_policy": true,
+        "do_not_enforce_on_create": false
+      }}
+    ]
+  },
+  "repository_settings": {
+    "delete_branch_on_merge": true,
+    "allow_update_branch": true,
+    "allow_auto_merge": false,
+    "allow_merge_commit": true,
+    "allow_squash_merge": true,
+    "allow_rebase_merge": true,
+    "merge_commit_title": "PR_TITLE",
+    "merge_commit_message": "PR_BODY",
+    "squash_merge_commit_title": "PR_TITLE",
+    "squash_merge_commit_message": "PR_BODY"
+  },
+  "actions_permissions": {"enabled": true, "allowed_actions": "selected", "sha_pinning_required": true},
+  "selected_actions": {"github_owned_allowed": true, "verified_allowed": false, "patterns_allowed": []},
+  "workflow_permissions": {"default_workflow_permissions": "read", "can_approve_pull_request_reviews": false},
+  "private_vulnerability_reporting": {"enabled": true},
+  "vulnerability_alerts": true,
+  "classic_branch_protection": null,
+  "automated_security_fixes": {"enabled": true, "paused": false},
+  "security_features": ["secret_scanning", "secret_scanning_push_protection", "dependabot_security_updates"]
+}

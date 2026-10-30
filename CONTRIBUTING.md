@@ -4,6 +4,19 @@ Use British English, keep documentation and generated artefacts in lockstep,
 and preserve source attribution. Private material, permission responses and
 unverified vulnerability details must not enter this public repository.
 
+## Pull requests
+
+Use a branch and pull request for changes to `main`, including changes by the
+sole maintainer. Keep the branch up to date and wait for the required `validate`
+check from GitHub Actions. Resolve review conversations before merging. No
+second-person approval is required; this is a documented sole-maintainer
+workflow. The owner still reviews the diff and evidence before merging.
+
+Use a Conventional Commit title for the pull request. Title edits rerun CI.
+Merge and squash defaults use that title; automatic merging is disabled.
+Merged branches are removed automatically. See the
+[protection baseline and recovery procedure](docs/repository-protection.md).
+
 ## Commits
 
 Use [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):

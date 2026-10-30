@@ -12,6 +12,10 @@ reported contributor history. It uses the community's
 Suggested classifications are unreviewed. Missing history is not zero activity,
 and an SBOM reference is not evidence of a vulnerability.
 
+The repository uses a [sole-maintainer protection baseline](docs/repository-protection.md):
+pull requests, required checks, bounded publication and a
+[private vulnerability reporting route](https://github.com/chris-page-gov/xgov-soft-eng-com/security/advisories/new).
+
 ## Try it with your AI
 
 You do not need to clone this repository, install Python or provide GitHub
