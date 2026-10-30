@@ -39,6 +39,9 @@ basis needs evidence and an explanation; a licence can apply to the SBOM data
 without applying to the software. The runner compares any embedded document
 licence with a licence recorded in the manifest. It does not decide legal
 sufficiency or independently verify a statement entered by an operator.
+Input identifiers must be JSON strings, even when they contain only digits.
+Numbers and other JSON types are rejected during admission, before retrieval,
+so filenames and persisted checkpoint keys use the same identity.
 Repository references are optional and are not independently verified; leave
 one absent rather than invent an association. Input identifiers `checkpoint`
 and `batch-review` are reserved for the runner's control files.

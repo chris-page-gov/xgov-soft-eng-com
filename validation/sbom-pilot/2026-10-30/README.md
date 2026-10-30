@@ -6,6 +6,12 @@ finding was published and no model or maintainer communication was invoked.
 The [machine-readable receipt](implementation-verification.json) binds the
 runner, pins, example and synthetic test source by SHA-256.
 
+The merge review corrected one admission edge case: numeric JSON identifiers
+previously passed the preview but could not be used consistently for filenames
+and persisted JSON keys. Non-text identifiers are now rejected before any
+retrieval; quoted numeric identifiers remain valid. The same 122-test suite,
+frozen-source checks, archive verification and Pages staging passed again.
+
 - All 122 unit/regression tests passed, including 52 synthetic pilot cases.
 - The example dry-run admitted one entry for later retrieval, with zero
   requests, zero scanner invocations and no claimed owner approval.

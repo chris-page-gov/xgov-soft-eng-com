@@ -105,9 +105,14 @@ class PilotTests(unittest.TestCase):
         for m in (manifest(*(entry('input-'+str(n)) for n in range(11))),manifest(entry(),entry())):
             with self.assertRaises(ValueError):p.manifest_plan(m)
 
-    def test_control_file_names_cannot_collide_with_reports(self):
+    def test_text_identifiers_cannot_collide_with_control_files_or_json_keys(self):
         for name in ('checkpoint','batch-review'):
             with self.assertRaisesRegex(ValueError,'reserved'):p.manifest_plan(manifest(entry(name)))
+        for value in (0,123,None,True,['input'],{'input':1}):
+            row=entry();row['id']=value
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(ValueError,'text input identifiers'):p.manifest_plan(manifest(row))
+        self.assertEqual(p.manifest_plan(manifest(entry('123')))['inputs'][0]['id'],'123')
 
     def test_unknown_repository_is_not_fabricated_for_public_document(self):
         root=self.root();install(root);row=entry();del row['repository']

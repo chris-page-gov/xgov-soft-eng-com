@@ -31,6 +31,11 @@ daily dataset snapshots have separate identifiers.
   Pages, release archives and the standalone bundle verifier. Catalogue and
   contributor-history schedules remain unchanged.
 
+### Fixed
+
+- Reject non-text SBOM input identifiers during admission, before retrieval,
+  preventing numeric JSON keys from breaking report filenames and resume.
+
 ## [0.5.1] - 2026-10-29
 
 ### Added

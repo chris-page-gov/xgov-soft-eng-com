@@ -258,7 +258,7 @@ def manifest_plan(manifest):
     if not isinstance(rows,list) or not 1<=len(rows)<=limits['documents']:raise ValueError('Name one to ten explicit SBOM inputs')
     seen=set();plan=[]
     for row in rows:
-        if not isinstance(row,dict) or not re.fullmatch('[a-z0-9][a-z0-9-]{0,63}',str(row.get('id',''))) or row['id'] in seen or row['id'] in ('checkpoint','batch-review'):raise ValueError('Use distinct bounded input identifiers; checkpoint and batch-review are reserved')
+        if not isinstance(row,dict) or not isinstance(row.get('id'),str) or not re.fullmatch('[a-z0-9][a-z0-9-]{0,63}',row['id']) or row['id'] in seen or row['id'] in ('checkpoint','batch-review'):raise ValueError('Use distinct bounded text input identifiers; checkpoint and batch-review are reserved')
         seen.add(row['id']);public_url(row['url'])
         if row.get('repository') is not None:permissions.target(row['repository'])
         publication=row.get('publication',{})
