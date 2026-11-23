@@ -29,6 +29,7 @@ daily dataset snapshots have separate identifiers.
 
 ### Changed
 
+- Link the central current and historical OKF standards register and public bundle catalogue.
 - Disable npm lifecycle scripts, audit requests and update notifiers during tooling use;
   preserve existing catalogue/history schedules and the no-real-scans boundary.
 - Exclude private account-review data and installed npm dependencies from all

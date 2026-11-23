@@ -53,3 +53,11 @@
   browser downloads and invoke the local CLI. Do not use npx or npm audit for
   acceptance. Static npm lock checks must remain usable without Node so the
   Python-only history worker and offline verifier keep working.
+
+<!-- okf-standards:start -->
+## OKF standards references
+
+Read [the central standards and bundle catalogue reference](https://github.com/chris-page-gov/okf-explorer/blob/main/docs/okf-standards.md)
+before changing specification links or an OKF version declaration. Resolve the
+implemented version through the shared register and preserve historical pins.
+<!-- okf-standards:end -->
