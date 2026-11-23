@@ -175,3 +175,7 @@ README enrichment and human review are separate next steps.
 
 Code is MIT licensed. See [licence decisions](LICENSE_DECISIONS.md) and
 [third-party notices](THIRD_PARTY_NOTICES.md) for source boundaries.
+
+## OKF standards and bundle discovery
+
+The [central standards register](https://github.com/chris-page-gov/okf-explorer/blob/main/docs/okf-standards.md) records current and historical OKF specifications, version-specific pins and the public bundle catalogue. Use the [machine-readable register](https://raw.githubusercontent.com/chris-page-gov/okf-explorer/main/registry/okf-standards.json) to resolve the version implemented by this repository.
