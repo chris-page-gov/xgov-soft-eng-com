@@ -26,11 +26,6 @@ jobs:
       producer_commit: ${{ steps.snapshot.outputs.producer_commit }}
     permissions:
       contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     env:
       GH_TOKEN: ${{ github.token }}
       SNAPSHOT_RUN_ID: ${{ github.event.workflow_run.id }}
@@ -47,7 +42,7 @@ jobs:
       - name: Bootstrap the hash-locked uv command
         run: |
           python -m pip install --require-hashes -r requirements-assurance.txt
-          python -c 'from importlib.metadata import version; assert version("uv") == "0.12.2"'
+          python -c 'from importlib.metadata import version; assert version("uv") == "0.13.4"'
           python -m uv --version
           python -c 'import sysconfig; print(sysconfig.get_path("scripts"))' >> "$GITHUB_PATH"
           python -m uv sync --locked --group assurance
@@ -77,14 +72,27 @@ jobs:
           printf 'producer_commit=%s\n' "$snapshot_commit" >> "$GITHUB_OUTPUT"
       - name: Verify and stage the existing candidate without rebuilding
         run: uv run --locked python scripts/pages.py --release "$RUNNER_TEMP/xgov-snapshot" "$RUNNER_TEMP/xgov-pages"
-      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
         with:
           path: ${{ runner.temp }}/xgov-pages
-      - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
+          include-hidden-files: true
+  deploy:
+    needs: publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
+      - uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
         id: deploy
   verify:
-    needs: publish
+    needs: [publish, deploy]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -100,7 +108,7 @@ jobs:
       - name: Bootstrap the hash-locked uv command
         run: |
           python -m pip install --require-hashes -r requirements-assurance.txt
-          python -c 'from importlib.metadata import version; assert version("uv") == "0.12.2"'
+          python -c 'from importlib.metadata import version; assert version("uv") == "0.13.4"'
           python -m uv --version
           python -c 'import sysconfig; print(sysconfig.get_path("scripts"))' >> "$GITHUB_PATH"
           python -m uv sync --locked --group assurance

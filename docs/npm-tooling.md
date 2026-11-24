@@ -43,11 +43,16 @@ suite, which includes the lock checker regressions. Package lifecycle scripts
 remain disabled during installation, including for optional packages that
 declare an install script.
 
-The protected validation job first bootstraps `uv` 0.12.2 from the exact
+The protected validation job first bootstraps `uv` 0.13.4 from the exact
 version and hashes in `requirements-assurance.txt`, then runs
 `uv sync --locked --group assurance` and every repository Python command with
 `uv run --locked`. That bootstrap file is exported from `uv.lock` and the local
-protection check requires an exact match. Explorer acceptance uses its pinned
+protection check requires an exact match. The project's `required-version`
+also rejects older uv executables before project operations, so a vulnerable
+global command cannot silently replace the checked bootstrap. Version 0.13.4
+removes the compromised emSign root from the bundled CA store; see the
+[upstream advisory](https://github.com/astral-sh/uv/security/advisories/GHSA-hq85-5cpj-mr62).
+Explorer acceptance uses its pinned
 pnpm 10.34.7 Linux binary; the workflow checks the SHA-256 published in the
 [pnpm v10.34.7 release](https://github.com/pnpm/pnpm/releases/tag/v10.34.7)
 before execution. It installs the Explorer lock without lifecycle scripts and
