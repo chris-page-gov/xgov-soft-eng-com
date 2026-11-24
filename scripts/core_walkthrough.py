@@ -5,6 +5,7 @@ import html
 import json
 import re
 from pathlib import Path
+from urllib.parse import quote, urlencode
 
 
 SCHEME = 'capabilities'
@@ -128,6 +129,10 @@ def generate(output: Path, core_descriptor: dict) -> dict:
         'desktop': {'path': 'walkthrough/core-taxonomy.svg', 'sha256': _sha256(svg.encode('utf-8'))},
         'mobile': {'path': 'walkthrough/core-taxonomy-mobile.svg', 'sha256': _sha256(mobile_svg.encode('utf-8'))},
     }
+    reader_url = ("https://chris-page-gov.github.io/okf-explorer/explore/?"
+                  + urlencode({"bundle": core_descriptor["bundle_id"], "view": "reader"})
+                  + "#" + quote(ROUTE, safe="/"))
+    evidence["reader_url"] = reader_url
     evidence_bytes = (json.dumps(evidence, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
     evidence_path = output / 'walkthrough/evidence/core-taxonomy.json'
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
@@ -135,7 +140,7 @@ def generate(output: Path, core_descriptor: dict) -> dict:
 
     page = f'''<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>What does the notifications concept mean?</title><style>
 body{{font:1rem/1.55 system-ui,sans-serif;max-width:980px;margin:2rem auto;padding:0 1rem;color:#172b4d}}h1,h2{{line-height:1.2}}a{{color:#005ea5}}.answer,.limits,.sources{{border:1px solid #8795a1;border-radius:.6rem;padding:1rem;margin:1rem 0}}figure{{margin:1.5rem 0}}figure picture,figure img{{display:block;width:100%;height:auto}}.digest,.sources code{{overflow-wrap:anywhere}}.digest{{font-family:ui-monospace,monospace;font-size:.9rem}}</style></head><body>
-<p><a href="../index.md">XGov OKF bundle index</a> · <a href="../okf-core-explorer.json">Core Reader projection</a></p>
+<p><a href="../index.md">XGov OKF bundle index</a> · <a href="../okf-core-explorer.json">Core Reader projection</a> · <a href="{esc(reader_url)}">Open this concept in Explorer</a></p>
 <h1>What does the notifications concept mean?</h1>
 <section class="answer"><h2>Worked question</h2><p><strong>{esc(QUESTION)}</strong></p>
 <p>The linked concept records <strong>{match_count:,} repositories matching experimental name and description rules</strong>. Its terms are {esc(', '.join(rule.get('terms', [])))}. The taxonomy says the rules match whole tokens or phrases in repository names and descriptions; labels are proposals, not government classifications. Read the count as a result of that rule, not proof that any repository can provide the service.</p>

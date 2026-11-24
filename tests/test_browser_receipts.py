@@ -7,9 +7,19 @@ import unittest
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 import collect_browser_receipts as b
+import catalogue
 
 
 class BrowserReceiptTests(unittest.TestCase):
+    def test_public_browser_suites_require_the_current_producer_profile(self):
+        scripts = tuple((b.ROOT / 'scripts').glob('browser_*.js'))
+        self.assertEqual(len(scripts), 4)
+        for path in scripts:
+            with self.subTest(script=path.name):
+                text = path.read_text()
+                self.assertIn(catalogue.PROFILE, text)
+                self.assertNotIn('blob/main/docs/semantic-model.md', text)
+
     def fixture(self,root):
         quality=b'{"counts":{"records":2}}\n';(root/'quality.json').write_bytes(quality)
         manifest={'build_id':'a'*64,'outputs':{'okf-explorer.json':'b'*64,'quality.json':hashlib.sha256(quality).hexdigest()}}

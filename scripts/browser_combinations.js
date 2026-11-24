@@ -15,7 +15,7 @@ async (page) => {
   const appRoot = await page.evaluate(() => new URL('../', location.href).href);
   const consumer = await (await page.request.get(appRoot + 'okf-publication-identity.json')).json();
   const app = await (await page.request.get(appRoot + 'okf-explorer-build-manifest.json')).json();
-  if (descriptor.profile !== 'https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/docs/semantic-model.md') throw new Error('This journey applies only to the cross-government software catalogue');
+  if (descriptor.profile !== 'https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/profiles/xgov-software/v2/index.md') throw new Error('This journey applies only to the cross-government software catalogue');
   const definitions = (await read('data/facet-definitions.json')).facets;
   const distributions = await read('data/facets.json');
   const receipt = {schema: 'xgov-browser-acceptance.v1', observed_at: new Date().toISOString(), descriptor_url: descriptorUrl, snapshot_id: descriptor.snapshot_id, records: descriptor.counts.records, descriptor_sha256: descriptorHash, consumer_commit: consumer.commit, consumer_app_tree_sha256: app.tree_sha256, browser: page.context().browser()?.version(), checks: [], console_errors: [], page_errors: [], failed_requests: []};

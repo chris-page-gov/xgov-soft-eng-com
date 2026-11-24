@@ -17,7 +17,7 @@ async (page) => {
   page.on('console',onConsole);page.on('pageerror',onPageError);page.on('requestfailed',onRequest);
   const check=(id,detail)=>receipt.checks.push({id,passed:true,detail});
   try {
-    if(descriptor.profile!=='https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/docs/semantic-model.md')throw Error('Unexpected producer');
+    if(descriptor.profile!=='https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/profiles/xgov-software/v2/index.md')throw Error('Unexpected producer');
     await page.setViewportSize({width:1440,height:1000});
     const declared=descriptor.related_links?.find(link=>link.kind==='evaluation-reports');
     if(!declared||declared.url!==base+'reports/')throw Error('Report link is not bound to this catalogue');
