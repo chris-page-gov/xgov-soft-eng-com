@@ -14,6 +14,12 @@ separate npm package policy. The
 producer's ordinary public checks continue to use installed Chrome and the
 locked local CLI; automatic browser downloads remain disabled during install.
 
+The Python bootstrap verifies the hash-locked uv distribution's exact version
+through package metadata. Its displayed banner may also contain build and
+platform details. Bootstrap invokes that Python interpreter's uv module and
+adds its scripts directory to later steps' PATH, keeping a pre-installed
+runner executable from taking precedence over the verified distribution.
+
 ## Baseline findings on 28 October 2026
 
 The published v0.2.1 pack loaded in Chrome, but Explorer rejected its static

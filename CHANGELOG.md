@@ -109,6 +109,10 @@ daily dataset snapshots have separate identifiers.
 
 ### Fixed
 
+- Check the installed uv distribution version after hash-locked installation,
+  invoke that interpreter's uv module for bootstrap, and put its executable
+  directory on the following steps' PATH. The exact 0.12.2 version remains
+  required; build and platform details in its banner are allowed.
 - Bind frozen-release Pages promotion to the reviewed source inventory and
   current producer code. Retain the separate checked-in source baseline;
   reject changed, missing or extra archive source hashes and code drift.
