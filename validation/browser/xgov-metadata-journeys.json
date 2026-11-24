@@ -5,7 +5,7 @@
     "schema": "okf-explorer-large-corpus.v1",
     "id": "https://chris-page-gov.github.io/xgov-soft-eng-com/okf-explorer.json",
     "version": "0.6.0",
-    "snapshot": "7f9ecf92a1beebbdc85fd04dfb8b802fddf7f131fb343aa0e8c8779552da608b"
+    "snapshot": "2947b2628e0b541f9632ede4a7e23bee92ef74d769b8460adeed3bfb2c122673"
   },
   "journeys": [
     {
@@ -188,8 +188,20 @@
           "selector": "aside[aria-label=\"Record details\"] h2:text-is(\"alphagov/notifications-api\")"
         },
         {
+          "type": "wait_for",
+          "selector": "aside[aria-label=\"Record details\"] button[role=tab]:text-is(\"Overview\")"
+        },
+        {
           "type": "click",
           "selector": "aside[aria-label=\"Record details\"] summary:text-is(\"Overview\")"
+        },
+        {
+          "type": "wait_for",
+          "selector": "aside[aria-label=\"Record details\"] details[open]:has(> summary:text-is(\"Overview\")) dd:has-text(\"MIT\")"
+        },
+        {
+          "type": "wait_for",
+          "selector": "aside[aria-label=\"Record details\"] details[open]:has(> summary:text-is(\"Overview\")) small:text-is(\"source-reported-unverified\")"
         }
       ],
       "assertions": [

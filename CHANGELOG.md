@@ -109,6 +109,21 @@ daily dataset snapshots have separate identifiers.
 
 ### Fixed
 
+- Bind frozen-release Pages promotion to the reviewed source inventory and
+  current producer code. Retain the separate checked-in source baseline;
+  reject changed, missing or extra archive source hashes and code drift.
+- Wait for the completed record's own Overview tab before opening its
+  disclosure and checking the source-reported licence qualification.
+- Install only the pinned Explorer consumer's Chromium before its two canonical
+  acceptance runs, with a 10-minute limit. Keep dependency lifecycle scripts
+  off and use installed Chrome for the producer's ordinary public checks.
+- Verify the downloaded pnpm executable directly in the consumer directory,
+  respecting the producer's separate npm policy, before the runner applies
+  the next step's PATH update. The version-only probe requires the actual
+  consumer working directory; its package-policy check does not use `--dir`
+  to change project context. Resolve all publication command identifiers and
+  keep their input paths and ports in step with CI.
+
 - Reject non-text SBOM input identifiers during admission, before retrieval,
   preventing numeric JSON keys from breaking report filenames and resume.
 

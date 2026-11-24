@@ -6,6 +6,14 @@ Checks bind the producer snapshot and the Explorer build being exercised.
 Browser acceptance establishes these journeys, not semantic truth, human
 acceptance, security assurance or completeness of GitHub's statistics.
 
+The pinned Explorer consumer wrapper launches its own Chromium directly. CI
+therefore installs that one pinned browser explicitly, with a 10-minute limit,
+after installing the consumer dependencies without lifecycle scripts. The
+pnpm version probe runs in that consumer directory, respecting the producer's
+separate npm package policy. The
+producer's ordinary public checks continue to use installed Chrome and the
+locked local CLI; automatic browser downloads remain disabled during install.
+
 ## Baseline findings on 28 October 2026
 
 The published v0.2.1 pack loaded in Chrome, but Explorer rejected its static

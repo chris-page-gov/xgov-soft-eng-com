@@ -123,6 +123,36 @@ def create_candidate(root, destination, *, check=True):
     return receipt
 
 
+def check_release_inputs(root, manifest):
+    """Bind code to this checkout and frozen source bytes to their reviewed inventory."""
+    controlled = c.controlled_inputs(root)
+    published = manifest.get('published_input_set')
+    if published and published != {'scope': 'checked-in baseline'}:
+        name = 'source/published-inputs-2026-10-29.json'
+        raw = (Path(root) / name).read_bytes()
+        inventory = c.read(Path(root) / name)
+        if (inventory.get('schema') != 'xgov-pinned-published-inputs.v1'
+                or published != inventory.get('source_release')):
+            raise ValueError('Release source identity differs from the reviewed pinned inventory')
+        expected = {key: value for key, value in controlled.items() if not key.startswith('source/')}
+        expected[name] = c.digest(raw)
+        for row in inventory.get('files', []):
+            relative = row.get('path', '')
+            _safe_relative(relative)
+            checksum = row.get('sha256', '')
+            if (not relative.startswith('source/') or relative in expected
+                    or len(checksum) != 64 or any(ch not in '0123456789abcdef' for ch in checksum)):
+                raise ValueError('Unsafe, repeated or unbound pinned source input')
+            expected[relative] = checksum
+        if manifest.get('controlled_inputs') != expected:
+            raise ValueError('Release build inputs differ from the checked-out producer or pinned source inventory')
+    else:
+        expected = {key: value for key, value in controlled.items() if key != 'source/history/index.json'}
+        actual = {key: value for key, value in manifest.get('controlled_inputs', {}).items() if key != 'source/history/index.json'}
+        if actual != expected:
+            raise ValueError('Release build inputs differ from the checked-out producer')
+
+
 def prepare_release(root, release, destination):
     """Verify an assured release; extract only generated data, never its code."""
     import archive as packager
@@ -139,9 +169,7 @@ def prepare_release(root, release, destination):
         checked.add(name)
     if checked!=expected:raise ValueError('Release checksum list is incomplete')
     manifest=c.read(release/'build-manifest.json')
-    controlled={name:sha for name,sha in c.controlled_inputs(root).items() if name!='source/history/index.json'}
-    if any(manifest['controlled_inputs'].get(name)!=sha for name,sha in controlled.items()):raise ValueError('Release build inputs differ from the checked-out producer')
-    if set(manifest['controlled_inputs'])-set(controlled)-{'source/history/index.json'}:raise ValueError('Release has undeclared additional producer inputs')
+    check_release_inputs(root, manifest)
     packager.verify_archive(release/'xgov-okf.tar.gz',manifest)
     with tempfile.TemporaryDirectory(prefix='xgov-pages-release-') as directory:
         extracted=Path(directory)/'xgov-okf'

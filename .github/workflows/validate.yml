@@ -76,6 +76,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 1
       - name: Install the exact pinned pnpm executable
+        working-directory: .ci/okf-explorer/apps/okf-explorer
         run: |
           curl --fail --location --silent --show-error \
             https://github.com/pnpm/pnpm/releases/download/v10.34.7/pnpm-linux-x64 \
@@ -83,7 +84,7 @@ jobs:
           echo '44af1568f2682877e43d8918c344d420e022c3d1cc88a11b0dba3e20f9261450  '"$RUNNER_TEMP/pnpm" | sha256sum --check
           chmod 0755 "$RUNNER_TEMP/pnpm"
           echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
-          test "$(pnpm --version)" = '10.34.7'
+          test "$("$RUNNER_TEMP/pnpm" --version)" = '10.34.7'
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
           node-version: '26.13.1'
@@ -97,6 +98,10 @@ jobs:
           npm_config_fund: 'false'
           NO_UPDATE_NOTIFIER: '1'
         run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Install only the pinned consumer Chromium
+        working-directory: .ci/okf-explorer/apps/okf-explorer
+        timeout-minutes: 10
+        run: pnpm exec playwright install chromium
       - name: Run exact-identity Explorer acceptance for the metadata graph
         run: >-
           pnpm --dir .ci/okf-explorer/apps/okf-explorer

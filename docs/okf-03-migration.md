@@ -36,6 +36,13 @@ binds the exact restored source/history files and generated projections into
 one verifiable candidate. The standard build uses no source API, GitHub
 metadata lookup, SBOM request, code execution or model call.
 
+Pages promotion compares producer code and documentation with the current
+checkout, and all frozen source hashes with the reviewed input inventory.
+It does not compare a 29 October archive with the separate 28 October local
+baseline. Changed, missing and additional archive source entries fail before
+any generated files are staged. The complete archive is then independently
+hashed; archived code is never executed.
+
 ## Core, profile and extension boundary
 
 `config/taxonomy.json` remains the authored source of 47 typed concepts. The
