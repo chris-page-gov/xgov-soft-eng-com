@@ -109,6 +109,11 @@ daily dataset snapshots have separate identifiers.
 
 ### Fixed
 
+- Separate Pages archive preparation, deployment and live verification into
+  dependent jobs. The deployment action now sees a completed artefact upload;
+  only its job receives Pages-write and OIDC permissions. Keep the complete
+  hidden-file roster, use the reviewed Pages action pins, and reject weakened
+  job dependencies in the local protection check.
 - Check the installed uv distribution version after hash-locked installation,
   invoke that interpreter's uv module for bootstrap, and put its executable
   directory on the following steps' PATH. The exact 0.12.2 version remains

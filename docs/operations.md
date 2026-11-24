@@ -73,17 +73,22 @@ dispatch for the current producer commit. It selects that exact snapshot tag,
 verifies its commit, asset checksums, archive members and controlled producer
 inputs, then extracts only generated data. It never runs code from an archive.
 The candidate is copied without rebuilding and must fit within 1 GiB including
-its landing page and publication receipt. The deployment uses standard public
-GitHub-hosted runners with only contents-read, Pages-write and OIDC permissions.
+its landing page and publication receipt. The preparation job uses only
+`contents: read`. A separate deployment job waits for the completed upload
+and receives `pages: write` and `id-token: write`. The live verification job
+retains `contents: read` and waits for both jobs. All three use standard public
+GitHub-hosted runners. The Pages actions are SHA-pinned, and the upload retains
+the complete declared hidden-file roster.
 
 The static page links to the descriptor, source repository, semantic manifest
-and publication receipt. A new snapshot replaces the Pages data; immutable
+and publication receipt. A new snapshot replaces the Pages data; checksum-pinned
 release archives remain the reproduction route for older snapshots. Browser
 integrity bindings reject mixed data after an update rather than combining
 different snapshots. Private grants and private starter outputs are excluded.
 
-Run python scripts/pages.py for a local copy, or pass --release with a directory
-containing all six assets from one snapshot. An existing destination is never
+Run `uv run --locked python scripts/pages.py` for a local copy, or pass
+`--release` with a directory containing all eight assets from one snapshot.
+An existing destination is never
 overwritten. The separate, contents-read verification job checks all 40 declared browser
 checks against that release after deployment, then retains a JSON receipt.
 It has no Pages-write or OIDC permission. It pins Node 26.13.1, npm 11.20.0 and
@@ -93,7 +98,7 @@ job runs the local CLI against runner-installed Chrome. Static Python checks
 do not require Node; the Node-enabled jobs also verify active runtime versions.
 See [npm tooling](npm-tooling.md). A failed verification requires
 investigation of the existing deployed candidate; it does not trigger a
-rebuild or automatic rollback. Keep the preceding immutable release for
+rebuild or automatic rollback. Keep the preceding checksum-pinned release for
 recovery. Verify the exact public URL before advertising it as working.
 
 ## Consumer limits

@@ -112,6 +112,15 @@ def validate_local(root):
                      'xgov-metadata-journeys.json', 'xgov-core-journeys.json'):
         if required not in validation:
             raise ValueError('Missing validation workflow invariant: ' + required)
+    pages = (root / '.github/workflows/pages.yml').read_text()
+    sections = dict(re.findall(r'^  ([a-z]+):\n(.*?)(?=^  [a-z]+:\n|\Z)', pages, re.M | re.S))
+    if ('deploy-pages@' in sections.get('publish', '')
+            or '    needs: publish\n' not in sections.get('deploy', '')
+            or '    needs: [publish, deploy]\n' not in sections.get('verify', '')):
+        raise ValueError('Pages deployment must follow completed staging and precede verification')
+    for job in ('publish', 'verify'):
+        if any(value in sections.get(job, '') for value in ('pages: write', 'id-token: write')):
+            raise ValueError('Only the Pages deployment job may have Pages or OIDC write permissions')
     lock = tomllib.loads((root / 'uv.lock').read_text())
     requirements = (root / 'requirements-assurance.txt').read_text()
     validate_requirements(lock, requirements)
