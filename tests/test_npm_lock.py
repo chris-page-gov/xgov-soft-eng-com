@@ -15,8 +15,16 @@ class NpmLockTests(unittest.TestCase):
         with patch.object(check_npm_lock.subprocess, 'check_output', side_effect=AssertionError('Static checks must not execute Node/npm')):
             self.assertTrue(check_npm_lock.validate(ROOT))
 
+    def test_ci_pins_explorer_package_manager_asset_and_runs_both_acceptance_cases(self):
+        workflow = (ROOT / '.github/workflows/validate.yml').read_text()
+        self.assertIn(check_npm_lock.PNPM_LINUX_X64_SHA256, workflow)
+        self.assertIn('xgov-metadata-journeys.json', workflow)
+        self.assertIn('xgov-core-journeys.json', workflow)
+        self.assertIn('uv sync --locked --group assurance', workflow)
+        self.assertIn('uv run --locked python', workflow)
+
     def test_runtime_verification_is_explicit_and_rejects_version_drift(self):
-        for versions in (['v25.0.0\n'], ['v26.7.0\n', '11.0.0\n']):
+        for versions in (['v25.0.0\n'], ['v26.7.0\n', '11.0.0\n'], ['v26.13.1\n', '11.19.0\n']):
             with patch.object(check_npm_lock.subprocess, 'check_output', side_effect=versions), self.assertRaises(ValueError):
                 check_npm_lock.validate(ROOT, check_runtime=True)
 

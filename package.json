@@ -4,10 +4,10 @@
   "private": true,
   "description": "Locked browser acceptance tooling for the public catalogue",
   "engines": {
-    "node": "26.7.0",
-    "npm": "11.19.0"
+    "node": "26.13.1",
+    "npm": "11.20.0"
   },
-  "packageManager": "npm@11.19.0",
+  "packageManager": "npm@11.20.0",
   "scripts": {
     "check:npm-lock": "uv run --locked --offline python scripts/check_npm_lock.py",
     "test:npm-lock": "uv run --locked --offline python -m unittest tests.test_npm_lock -v"

@@ -9,37 +9,110 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
-        with:
-          node-version: '26.7.0'
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - name: Install the lock file without running package scripts
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
-        run: npm ci --ignore-scripts --no-audit --no-fund
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.12.11'
-      - run: python -m pip install --require-hashes -r requirements-assurance.txt
-      - run: python scripts/check_npm_lock.py --runtime
+      - name: Bootstrap the hash-locked uv command
+        run: |
+          python -m pip install --require-hashes -r requirements-assurance.txt
+          python -c 'from importlib.metadata import version; assert version("uv") == "0.12.2"'
+          python -m uv --version
+          python -c 'import sysconfig; print(sysconfig.get_path("scripts"))' >> "$GITHUB_PATH"
+          python -m uv sync --locked --group assurance
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '26.13.1'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install the locked producer browser CLI without lifecycle scripts
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+          npm_config_audit: 'false'
+          npm_config_fund: 'false'
+          NO_UPDATE_NOTIFIER: '1'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: uv run --locked python scripts/check_npm_lock.py --runtime
       - run: ./node_modules/.bin/playwright-cli --version
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
           NO_UPDATE_NOTIFIER: '1'
-      - run: python scripts/check_release_hygiene.py
+      - run: uv run --locked python scripts/check_release_hygiene.py
         env:
           OKF_PR_TITLE: ${{ github.event.pull_request.title }}
-      - run: python scripts/check_repository_protection.py --local
-      - run: python -m unittest discover -s tests -v
+      - run: uv run --locked python scripts/check_repository_protection.py --local
+      - run: uv run --locked python -m unittest discover -s tests -v
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
-      - run: python scripts/catalogue.py build
-      - run: python scripts/catalogue.py check
-      - run: python scripts/assure.py
+      - name: Restore the exact 29 October publication source
+        run: >-
+          uv run --locked python scripts/hydrate_published_inputs.py
+          --output "$RUNNER_TEMP/xgov-published-inputs"
+          --copy-archive-to "$RUNNER_TEMP/xgov-published-reference.tar.gz"
+      - name: Build the complete pinned publication candidate
+        run: >-
+          uv run --locked python scripts/catalogue.py
+          --inputs-root "$RUNNER_TEMP/xgov-published-inputs" build
+      - run: >-
+          uv run --locked python scripts/catalogue.py
+          --inputs-root "$RUNNER_TEMP/xgov-published-inputs" check
+      - run: uv run --locked python scripts/check_core_projection.py
+      - run: >-
+          uv run --locked python scripts/check_migration_parity.py
+          --reference-archive "$RUNNER_TEMP/xgov-published-reference.tar.gz"
+      - run: uv run --locked python scripts/assure.py
+      - name: Package and independently verify the offline AI test pack
+        run: >-
+          umask 077 && uv run --locked python scripts/archive.py
+          --inputs-root "$RUNNER_TEMP/xgov-published-inputs"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: chris-page-gov/okf-explorer
+          ref: dad79889fae1accf1aec66ae9ddf1dc635d40c82
+          path: .ci/okf-explorer
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Install the exact pinned pnpm executable
+        working-directory: .ci/okf-explorer/apps/okf-explorer
+        run: |
+          curl --fail --location --silent --show-error \
+            https://github.com/pnpm/pnpm/releases/download/v10.34.7/pnpm-linux-x64 \
+            --output "$RUNNER_TEMP/pnpm"
+          echo '44af1568f2682877e43d8918c344d420e022c3d1cc88a11b0dba3e20f9261450  '"$RUNNER_TEMP/pnpm" | sha256sum --check
+          chmod 0755 "$RUNNER_TEMP/pnpm"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+          test "$("$RUNNER_TEMP/pnpm" --version)" = '10.34.7'
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '26.13.1'
+          cache: pnpm
+          cache-dependency-path: .ci/okf-explorer/apps/okf-explorer/pnpm-lock.yaml
+      - name: Install the pinned Explorer dependencies without lifecycle scripts
+        working-directory: .ci/okf-explorer/apps/okf-explorer
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+          npm_config_audit: 'false'
+          npm_config_fund: 'false'
+          NO_UPDATE_NOTIFIER: '1'
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Install only the pinned consumer Chromium
+        working-directory: .ci/okf-explorer/apps/okf-explorer
+        timeout-minutes: 10
+        run: pnpm exec playwright install chromium
+      - name: Run exact-identity Explorer acceptance for the metadata graph
+        run: >-
+          pnpm --dir .ci/okf-explorer/apps/okf-explorer
+          acceptance:bundle -- --bundle-root "$GITHUB_WORKSPACE/generated"
+          --journeys "$GITHUB_WORKSPACE/validation/browser/xgov-metadata-journeys.json"
+          --output "$RUNNER_TEMP/xgov-metadata-acceptance.json" --port 4282
+      - name: Run exact-identity Explorer acceptance for all typed core sources
+        run: >-
+          pnpm --dir .ci/okf-explorer/apps/okf-explorer
+          acceptance:bundle -- --bundle-root "$GITHUB_WORKSPACE/generated"
+          --journeys "$GITHUB_WORKSPACE/validation/browser/xgov-core-journeys.json"
+          --output "$RUNNER_TEMP/xgov-core-acceptance.json" --port 4283

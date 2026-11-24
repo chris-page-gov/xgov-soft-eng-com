@@ -1,6 +1,6 @@
 {
   "schema": "okf-repository-publication-contract.v1",
-  "modified": "2026-10-30",
+  "modified": "2026-11-23",
   "locale": "en-GB",
   "time_zone": "Europe/London",
   "repository": {
@@ -12,7 +12,7 @@
   },
   "semantic_contract": {
     "path": "okf.semantic.json",
-    "profile": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/docs/semantic-model.md"
+    "profile": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/profiles/xgov-software/v2/index.md"
   },
   "source_families": [
     {
@@ -22,7 +22,8 @@
       "kind": "json",
       "paths": [
         "source/current.json",
-        "source/snapshots/*.json"
+        "source/snapshots/*.json",
+        "source/published-inputs-2026-10-29.json"
       ],
       "formats": [
         "application/json"
@@ -418,6 +419,7 @@
         "source/**"
       ],
       "command_ids": [
+        "hydrate-published-inputs",
         "refresh",
         "history"
       ]
@@ -442,6 +444,10 @@
         "tests",
         "build",
         "check",
+        "core-projection",
+        "install-consumer-chromium",
+        "consumer-metadata-acceptance",
+        "consumer-core-acceptance",
         "assure"
       ]
     },
@@ -485,7 +491,10 @@
       ],
       "command_ids": [
         "browser",
-        "browser-receipts"
+        "browser-receipts",
+        "install-consumer-chromium",
+        "consumer-metadata-acceptance",
+        "consumer-core-acceptance"
       ]
     },
     {
@@ -523,11 +532,24 @@
         "planes": [
           "runtime"
         ],
-        "command": "uv run --locked python scripts/catalogue.py build",
+        "command": "uv run --locked python scripts/catalogue.py --inputs-root $RUNNER_TEMP/xgov-published-inputs build",
         "source": "AGENTS.md",
         "review_status": "reviewed-local-guidance",
         "network": "none",
         "mutates": "generated-only",
+        "timeout_minutes": 10
+      },
+      {
+        "id": "hydrate-published-inputs",
+        "kind": "build",
+        "planes": [
+          "source"
+        ],
+        "command": "uv run --locked python scripts/hydrate_published_inputs.py --output $RUNNER_TEMP/xgov-published-inputs --copy-archive-to $RUNNER_TEMP/xgov-published-reference.tar.gz",
+        "source": "source/published-inputs-2026-10-29.json",
+        "review_status": "reviewed-local-guidance",
+        "network": "bounded-read",
+        "mutates": "external-state",
         "timeout_minutes": 10
       },
       {
@@ -536,12 +558,78 @@
         "planes": [
           "runtime"
         ],
-        "command": "uv run --locked python scripts/catalogue.py check",
+        "command": "uv run --locked python scripts/catalogue.py --inputs-root $RUNNER_TEMP/xgov-published-inputs check",
         "source": "AGENTS.md",
         "review_status": "reviewed-local-guidance",
         "network": "none",
         "mutates": "none",
         "timeout_minutes": 10
+      },
+      {
+        "id": "core-projection",
+        "kind": "check",
+        "planes": [
+          "runtime"
+        ],
+        "command": "uv run --locked python scripts/check_core_projection.py",
+        "source": "profiles/xgov-software/v2/index.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "none",
+        "mutates": "none",
+        "timeout_minutes": 10
+      },
+      {
+        "id": "migration-parity",
+        "kind": "check",
+        "planes": [
+          "semantic",
+          "release"
+        ],
+        "command": "uv run --locked python scripts/check_migration_parity.py --reference-archive $RUNNER_TEMP/xgov-published-reference.tar.gz",
+        "source": "docs/okf-03-migration.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "none",
+        "mutates": "none",
+        "timeout_minutes": 10
+      },
+      {
+        "id": "install-consumer-chromium",
+        "kind": "setup",
+        "planes": [
+          "browser"
+        ],
+        "command": "pnpm --dir .ci/okf-explorer/apps/okf-explorer exec playwright install chromium",
+        "source": "docs/browser-acceptance.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "dependency-install",
+        "mutates": "generated-only",
+        "timeout_minutes": 10
+      },
+      {
+        "id": "consumer-metadata-acceptance",
+        "kind": "verify",
+        "planes": [
+          "browser"
+        ],
+        "command": "pnpm --dir .ci/okf-explorer/apps/okf-explorer acceptance:bundle -- --bundle-root $GITHUB_WORKSPACE/generated --journeys $GITHUB_WORKSPACE/validation/browser/xgov-metadata-journeys.json --output $RUNNER_TEMP/xgov-metadata-acceptance.json --port 4282",
+        "source": "docs/browser-acceptance.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "bounded-read",
+        "mutates": "generated-only",
+        "timeout_minutes": 20
+      },
+      {
+        "id": "consumer-core-acceptance",
+        "kind": "verify",
+        "planes": [
+          "browser"
+        ],
+        "command": "pnpm --dir .ci/okf-explorer/apps/okf-explorer acceptance:bundle -- --bundle-root $GITHUB_WORKSPACE/generated --journeys $GITHUB_WORKSPACE/validation/browser/xgov-core-journeys.json --output $RUNNER_TEMP/xgov-core-acceptance.json --port 4283",
+        "source": "docs/browser-acceptance.md",
+        "review_status": "reviewed-local-guidance",
+        "network": "bounded-read",
+        "mutates": "generated-only",
+        "timeout_minutes": 20
       },
       {
         "id": "tests",
@@ -575,7 +663,7 @@
         "planes": [
           "release"
         ],
-        "command": "uv run --locked python scripts/archive.py",
+        "command": "uv run --locked python scripts/archive.py --inputs-root $RUNNER_TEMP/xgov-published-inputs",
         "source": "AGENTS.md",
         "review_status": "reviewed-local-guidance",
         "network": "none",
@@ -626,7 +714,7 @@
         "planes": [
           "browser"
         ],
-        "command": "python scripts/collect_browser_receipts.py --manifest release/build-manifest.json --logs output/playwright/ci --output output/playwright/ci/browser-verification.json",
+        "command": "uv run --locked python scripts/collect_browser_receipts.py --manifest release/build-manifest.json --logs output/playwright/ci --output output/playwright/ci/browser-verification.json",
         "source": "scripts/collect_browser_receipts.py",
         "review_status": "reviewed-local-guidance",
         "network": "none",
@@ -704,7 +792,10 @@
         "command_ids": [
           "browser",
           "browser-receipts",
-          "browser-reports"
+          "browser-reports",
+          "install-consumer-chromium",
+          "consumer-metadata-acceptance",
+          "consumer-core-acceptance"
         ]
       },
       "cross_engine": {

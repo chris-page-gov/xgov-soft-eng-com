@@ -6,6 +6,20 @@ Checks bind the producer snapshot and the Explorer build being exercised.
 Browser acceptance establishes these journeys, not semantic truth, human
 acceptance, security assurance or completeness of GitHub's statistics.
 
+The pinned Explorer consumer wrapper launches its own Chromium directly. CI
+therefore installs that one pinned browser explicitly, with a 10-minute limit,
+after installing the consumer dependencies without lifecycle scripts. The
+pnpm version probe runs in that consumer directory, respecting the producer's
+separate npm package policy. The
+producer's ordinary public checks continue to use installed Chrome and the
+locked local CLI; automatic browser downloads remain disabled during install.
+
+The Python bootstrap verifies the hash-locked uv distribution's exact version
+through package metadata. Its displayed banner may also contain build and
+platform details. Bootstrap invokes that Python interpreter's uv module and
+adds its scripts directory to later steps' PATH, keeping a pre-installed
+runner executable from taking precedence over the verified distribution.
+
 ## Baseline findings on 28 October 2026
 
 The published v0.2.1 pack loaded in Chrome, but Explorer rejected its static
@@ -76,7 +90,7 @@ loads; a missing or incorrect count still fails after the bounded wait.
 Failed receipts retain the journey's bounded error message for diagnosis.
 
 The Pages workflow runs all three suites after deployment in a separate
-contents-read job, with Ubuntu 24.04, Node 26.7.0, Playwright CLI 0.1.17 and
+contents-read job, with Ubuntu 24.04, Node 26.13.1, Playwright CLI 0.1.17 and
 runner-installed Chrome. It compares all 40 checks with the exact released
 build manifest, quality-file checksum, descriptor hash, snapshot and consumer
 identity. CLI exit codes alone never establish success. Validated JSON results
@@ -144,3 +158,28 @@ The initial local mobile check identified overflowing long evidence links in
 the Gemini report. The renderer now wraps long text; the browser check covers
 all six report pages at 390 pixels. These report checks supplement the
 existing facets, semantic and contributor journeys.
+
+## OKF core 0.3 source and extension journeys
+
+The migration candidate carries a separate core projection for all 47 typed
+taxonomy documents alongside the large source-backed metadata extension graph.
+The pinned 29 October release inputs are restored by the checksum-verifying
+hydrator and used by both the producer build and the independent Explorer
+acceptance. The metadata journey opens the API, local-development and release
+records; checks the source-reported licence and SBOM-reference boundary; and
+distinguishes available from provider-pending contributor-history observations.
+The release record is a source-backed missing-field control, not proof that an
+upstream licence or SBOM does not exist.
+
+The separate core journeys open the “Send notifications and messages” concept,
+check its experimental count and caveats, and capture the rendered taxonomy
+source link. That link opens a new browser tab, so the canonical page-scoped
+journey receipt records its exact URL while a separate local HTTP check verifies
+the linked taxonomy bytes. The core question makes no repository, licence or
+SBOM claim. These local receipts do not establish a deployed Pages journey.
+
+Search journey clicks target the visible `.result-open` button within the exact
+heading, while the ranked-result marker remains on its containing article. This
+keeps the test aligned with the actual accessible control.
+The metadata journey pins the complete generated bundle ID; the separate core
+journey pins the source-feed hash for its authored Markdown projection.

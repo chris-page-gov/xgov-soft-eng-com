@@ -28,8 +28,14 @@ def _safe_relative(name):
     return path
 
 
-def _landing(count, reports=False):
+def _landing(count, reports=False, walkthroughs=()):
     explorer_url = EXPLORER + quote(DESCRIPTOR_URL, safe="")
+    walkthrough_links = [
+        ('walkthrough/core-taxonomy.html', 'Core taxonomy walkthrough'),
+        ('walkthrough/notification-software.html', 'Notification software evidence walkthrough'),
+    ]
+    visible_walkthroughs = [f'<a href="{path}">{label}</a>' for path, label in walkthrough_links if path in walkthroughs]
+    walkthrough_markup = ('    <p>' + ' · '.join(visible_walkthroughs) + '</p>\n') if visible_walkthroughs else ''
     return ("<!doctype html>\n<html lang=\"en-GB\">\n<head>\n"
             "  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
             "  <link rel=\"icon\" href=\"data:,\">\n  <title>Experimental cross-government software catalogue</title>\n</head>\n<body>\n"
@@ -38,7 +44,8 @@ def _landing(count, reports=False):
             "    <p>It presents source-reported metadata. Suggested classifications are unreviewed; coverage is limited to the admitted sources and recorded collection period. Repository rights and reported licences are not independently verified. This is not a security assessment.</p>\n"
             f"    <p><a href=\"{html.escape(DESCRIPTOR_URL, quote=True)}\">View the OKF Explorer descriptor</a></p>\n"
             f"    <p><a href=\"{html.escape(explorer_url, quote=True)}\">Open in OKF Explorer</a></p>\n"
-            + ("    <p><a href=\"reports/\">Early AI evaluation examples</a> · <a href=\"reports/claude-capture-review.html\">Claude UI capture review</a></p>\n" if reports else "") +
+            + walkthrough_markup +
+            ("    <p><a href=\"reports/\">Early AI evaluation examples</a> · <a href=\"reports/claude-capture-review.html\">Claude UI capture review</a></p>\n" if reports else "") +
             "    <p><a href=\"publication-receipt.json\">Publication receipt and checksums</a> · <a href=\"semantic/manifest.json\">Semantic graph</a> · <a href=\"https://github.com/chris-page-gov/xgov-soft-eng-com\">Source code, documentation and credits</a></p>\n"
             "  </main>\n</body>\n</html>\n").encode("utf-8")
 
@@ -88,7 +95,11 @@ def create_candidate(root, destination, *, check=True):
     receipt = {"schema": "xgov-pages-candidate.v1", "build_id": manifest.get("build_id"),
                "descriptor_sha256": hashes[descriptor_name], "generated_files": hashes,
                "records": record_count, "checks": ["manifest-bound generated output hashes verified"]}
-    sources["index.html"] = _landing(record_count, reports="reports/index.html" in outputs)
+    sources["index.html"] = _landing(
+        record_count,
+        reports="reports/index.html" in outputs,
+        walkthroughs=outputs.keys(),
+    )
     sources["publication-receipt.json"] = c.encoded(receipt)
     if sum(map(len,sources.values())) > MAX_BYTES:
         raise ValueError('Pages candidate exceeds the 1 GiB size limit including delivery files')
@@ -112,6 +123,36 @@ def create_candidate(root, destination, *, check=True):
     return receipt
 
 
+def check_release_inputs(root, manifest):
+    """Bind code to this checkout and frozen source bytes to their reviewed inventory."""
+    controlled = c.controlled_inputs(root)
+    published = manifest.get('published_input_set')
+    if published and published != {'scope': 'checked-in baseline'}:
+        name = 'source/published-inputs-2026-10-29.json'
+        raw = (Path(root) / name).read_bytes()
+        inventory = c.read(Path(root) / name)
+        if (inventory.get('schema') != 'xgov-pinned-published-inputs.v1'
+                or published != inventory.get('source_release')):
+            raise ValueError('Release source identity differs from the reviewed pinned inventory')
+        expected = {key: value for key, value in controlled.items() if not key.startswith('source/')}
+        expected[name] = c.digest(raw)
+        for row in inventory.get('files', []):
+            relative = row.get('path', '')
+            _safe_relative(relative)
+            checksum = row.get('sha256', '')
+            if (not relative.startswith('source/') or relative in expected
+                    or len(checksum) != 64 or any(ch not in '0123456789abcdef' for ch in checksum)):
+                raise ValueError('Unsafe, repeated or unbound pinned source input')
+            expected[relative] = checksum
+        if manifest.get('controlled_inputs') != expected:
+            raise ValueError('Release build inputs differ from the checked-out producer or pinned source inventory')
+    else:
+        expected = {key: value for key, value in controlled.items() if key != 'source/history/index.json'}
+        actual = {key: value for key, value in manifest.get('controlled_inputs', {}).items() if key != 'source/history/index.json'}
+        if actual != expected:
+            raise ValueError('Release build inputs differ from the checked-out producer')
+
+
 def prepare_release(root, release, destination):
     """Verify an assured release; extract only generated data, never its code."""
     import archive as packager
@@ -128,9 +169,7 @@ def prepare_release(root, release, destination):
         checked.add(name)
     if checked!=expected:raise ValueError('Release checksum list is incomplete')
     manifest=c.read(release/'build-manifest.json')
-    controlled={name:sha for name,sha in c.controlled_inputs(root).items() if name!='source/history/index.json'}
-    if any(manifest['controlled_inputs'].get(name)!=sha for name,sha in controlled.items()):raise ValueError('Release build inputs differ from the checked-out producer')
-    if set(manifest['controlled_inputs'])-set(controlled)-{'source/history/index.json'}:raise ValueError('Release has undeclared additional producer inputs')
+    check_release_inputs(root, manifest)
     packager.verify_archive(release/'xgov-okf.tar.gz',manifest)
     with tempfile.TemporaryDirectory(prefix='xgov-pages-release-') as directory:
         extracted=Path(directory)/'xgov-okf'

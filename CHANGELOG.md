@@ -8,6 +8,54 @@ daily dataset snapshots have separate identifiers.
 
 ### Added
 
+- An OKF core 0.3 taxonomy projection with all 47 typed Markdown concepts,
+  complete source-bound frontmatter and body, explicit stable semantic routes,
+  and a separate source-backed metadata extension graph.
+- A replayable, checksum-pinned hydration contract for the 29 October 2026
+  published source and contributor-history inputs, distinct from the checked-in
+  28 October baseline.
+- An independent source-to-Reader check for all core concepts, semantic roles
+  and source paths; exact input-root archive packaging keeps the frozen history
+  files and generated projections in one verified release candidate.
+- A versioned XGov software discovery profile and a source-linked worked
+  notification-services question with explicit evidence limits, source-bound
+  desktop and mobile evidence diagrams and exact record controls.
+- A separate core-only taxonomy walkthrough with its own worked question,
+  accessible desktop and mobile SVG source paths, exact concept and taxonomy
+  digests, and negative controls that do not reuse repository licence or SBOM
+  evidence.
+- Add a distinct Reader journey for the source-reported MIT field and its
+  `source-reported-unverified` basis, alongside the separate missing-field
+  release record journey. The core-only question remains free of repository-specific claims.
+- Render the core source diagram with labelled colours, use a stacked mobile
+  layout and bind both SVG variants to the evidence file. The generated guides
+  use a data favicon so they do not issue an unrelated site-root request, and
+  wrap long source hashes within the mobile source trail.
+- Wrap long digest and archive references in the metadata walkthrough's mobile
+  source trail so the page remains within a narrow viewport.
+- Extend the bounded offline archive verifier to check the complete core
+  Markdown projection and pinned notification question, with independent
+  positive and negative source controls. The hydrator can also retain a
+  separately checksum-verified copy of its exact input archive.
+- Extend the shared offline evaluation prompt to inspect every typed core
+  document and answer the source-linked notification reuse question while
+  keeping core concepts separate from metadata extensions.
+- Run protected CI Python checks through hash-locked uv and add exact-consumer
+  Explorer journeys for the metadata graph and separate core source bundle.
+- Keep the publication command review label within the versioned contract’s
+  permitted values.
+- Classify pinned-input restoration as an external staging-tree mutation in
+  the publication lifecycle contract.
+- Classify temporary Explorer acceptance receipts under the allowed external
+  state mutation category and document the pinned pnpm executable.
+- Bind notification search clicks to the actual visible result button rather
+  than its parent result-card marker.
+- Align the large-corpus descriptor snapshot aliases with the Reader's
+  complete-bundle identity checks while preserving the source-feed hash in an
+  explicit field.
+- Bind metadata and core browser journeys to their respective complete-bundle
+  and source-feed identities.
+
 - A repeatable account-security review procedure with private findings and
   owner actions kept outside Git, public bundles, Pages and release archives.
 - Locked npm browser tooling, including transitive versions and integrity
@@ -28,6 +76,12 @@ daily dataset snapshots have separate identifiers.
   retrievals were performed during implementation.
 
 ### Changed
+
+- Move the active semantic contract to the shared OKF 0.3 contract schema while
+  retaining frozen v1 schemas, identifiers, assertions and release assets.
+- Use only the shared v2 contract’s declared output roles: the taxonomy projection
+  is an Explorer runtime resource and the walkthroughs are semantic validation outputs.
+- Pin browser acceptance to Node 26.13.1 and its bundled npm 11.20.0.
 
 - Link the central current and historical OKF standards register and public bundle catalogue.
 - Disable npm lifecycle scripts, audit requests and update notifiers during tooling use;
@@ -54,6 +108,25 @@ daily dataset snapshots have separate identifiers.
   contributor-history schedules remain unchanged.
 
 ### Fixed
+
+- Check the installed uv distribution version after hash-locked installation,
+  invoke that interpreter's uv module for bootstrap, and put its executable
+  directory on the following steps' PATH. The exact 0.12.2 version remains
+  required; build and platform details in its banner are allowed.
+- Bind frozen-release Pages promotion to the reviewed source inventory and
+  current producer code. Retain the separate checked-in source baseline;
+  reject changed, missing or extra archive source hashes and code drift.
+- Wait for the completed record's own Overview tab before opening its
+  disclosure and checking the source-reported licence qualification.
+- Install only the pinned Explorer consumer's Chromium before its two canonical
+  acceptance runs, with a 10-minute limit. Keep dependency lifecycle scripts
+  off and use installed Chrome for the producer's ordinary public checks.
+- Verify the downloaded pnpm executable directly in the consumer directory,
+  respecting the producer's separate npm policy, before the runner applies
+  the next step's PATH update. The version-only probe requires the actual
+  consumer working directory; its package-policy check does not use `--dir`
+  to change project context. Resolve all publication command identifiers and
+  keep their input paths and ports in step with CI.
 
 - Reject non-text SBOM input identifiers during admission, before retrieval,
   preventing numeric JSON keys from breaking report filenames and resume.

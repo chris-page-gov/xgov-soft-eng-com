@@ -19,6 +19,8 @@ class PagesTests(unittest.TestCase):
             "okf-explorer.json": c.encoded({"counts": {}, "title": "Experimental"}),
             "record-summary.json": c.encoded({"one": {"title": "Public"}, "two": {"title": "Public"}}),
             "data/index.json": b'{"public":true}\n',
+            "walkthrough/core-taxonomy.html": b'<h1>Core taxonomy</h1>\n',
+            "walkthrough/notification-software.html": b'<h1>Notification evidence</h1>\n',
         }
         for name, data in payloads.items():
             target = generated / name
@@ -42,6 +44,8 @@ class PagesTests(unittest.TestCase):
             landing = (destination / "index.html").read_text()
             self.assertIn("2 repository records", landing)
             self.assertIn("Open in OKF Explorer", landing)
+            self.assertIn('href="walkthrough/core-taxonomy.html"', landing)
+            self.assertIn('href="walkthrough/notification-software.html"', landing)
             receipt = json.loads((destination / "publication-receipt.json").read_bytes())
             self.assertEqual(receipt["build_id"], "fixture-build")
             self.assertEqual(receipt["descriptor_sha256"], result["descriptor_sha256"])
@@ -117,6 +121,47 @@ class PagesTests(unittest.TestCase):
             root=Path(tmp);(root/'SHA256SUMS').write_text('a'*64+'  ../outside\n')
             with self.assertRaisesRegex(ValueError,'Unexpected release checksum entry'):
                 pages.prepare_release(root,root,root/'pages')
+
+    def pinned_release_fixture(self, root):
+        inventory = {'schema': 'xgov-pinned-published-inputs.v1',
+                     'source_release': {'tag': 'frozen-source', 'archive_sha256': 'a'*64},
+                     'files': [{'path': 'source/current.json', 'sha256': 'b'*64},
+                               {'path': 'source/history/frozen.json', 'sha256': 'c'*64}]}
+        name = 'source/published-inputs-2026-10-29.json'
+        c.write(root/name, inventory)
+        controlled = {'scripts/pages.py': 'd'*64, 'source/current.json': 'e'*64,
+                      name: c.digest((root/name).read_bytes())}
+        manifest = {'published_input_set': inventory['source_release'],
+                    'controlled_inputs': {'scripts/pages.py': 'd'*64,
+                                         name: controlled[name],
+                                         **{row['path']: row['sha256'] for row in inventory['files']}}}
+        return controlled, manifest
+
+    def test_frozen_release_uses_reviewed_source_inventory_and_current_code(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);controlled,manifest=self.pinned_release_fixture(root)
+            with patch.object(c, 'controlled_inputs', return_value=controlled):
+                pages.check_release_inputs(root, manifest)
+                controlled['scripts/pages.py']='f'*64
+                with self.assertRaisesRegex(ValueError, 'build inputs differ'):
+                    pages.check_release_inputs(root, manifest)
+
+    def test_frozen_release_rejects_changed_missing_and_extra_source_hashes(self):
+        for change in ('changed', 'missing', 'extra'):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp);controlled,manifest=self.pinned_release_fixture(root)
+                if change=='changed': manifest['controlled_inputs']['source/current.json']='e'*64
+                elif change=='missing': del manifest['controlled_inputs']['source/history/frozen.json']
+                else: manifest['controlled_inputs']['source/unlisted.json']='f'*64
+                with patch.object(c, 'controlled_inputs', return_value=controlled), self.assertRaisesRegex(ValueError, 'build inputs differ'):
+                    pages.check_release_inputs(root, manifest)
+
+    def test_frozen_release_rejects_a_different_source_release_identity(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);controlled,manifest=self.pinned_release_fixture(root)
+            manifest['published_input_set']={**manifest['published_input_set'], 'tag': 'different'}
+            with patch.object(c, 'controlled_inputs', return_value=controlled), self.assertRaisesRegex(ValueError, 'source identity differs'):
+                pages.check_release_inputs(root, manifest)
 
 
 if __name__ == "__main__":

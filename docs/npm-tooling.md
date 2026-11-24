@@ -3,7 +3,9 @@
 The Pages browser check uses the exact `@playwright/cli` version 0.1.17. Its
 complete dependency tree, package versions and SHA-512 integrity values are
 recorded in `package-lock.json`. `package.json` and `setup-node` pin Node
-26.7.0 and npm 11.19.0. The npm configuration selects the public npm registry,
+26.13.1 and npm 11.20.0. Node's official ARM64 archive is pinned to SHA-256
+`aec2514ea1ceb2ba52455e9ec65986f6749a06dd759e5db2a72e6889668c9735` from the
+[Node 26.13.1 release](https://nodejs.org/en/blog/release/v26.13.1). The npm configuration selects the public npm registry,
 requires exact versions, and disables lifecycle scripts, audit and funding
 requests.
 Update notifications are disabled as well; browser CI sets
@@ -28,7 +30,7 @@ URLs, disabled lifecycle scripts, immutable CI installation and local CLI
 invocation. Static checks use only Python, so history collection and offline
 bundle verification do not acquire a Node dependency. The explicit `--runtime`
 check also verifies the active Node and npm versions; CI runs it after installing
-the pinned Node release, which bundles npm 11.19.0. Run the checks with:
+the pinned Node release, which bundles npm 11.20.0. Run the checks with:
 
 ```sh
 uv run --locked --offline python scripts/check_npm_lock.py
@@ -40,6 +42,17 @@ The normal validation workflow also runs `npm ci` and the repository test
 suite, which includes the lock checker regressions. Package lifecycle scripts
 remain disabled during installation, including for optional packages that
 declare an install script.
+
+The protected validation job first bootstraps `uv` 0.12.2 from the exact
+version and hashes in `requirements-assurance.txt`, then runs
+`uv sync --locked --group assurance` and every repository Python command with
+`uv run --locked`. That bootstrap file is exported from `uv.lock` and the local
+protection check requires an exact match. Explorer acceptance uses its pinned
+pnpm 10.34.7 Linux binary; the workflow checks the SHA-256 published in the
+[pnpm v10.34.7 release](https://github.com/pnpm/pnpm/releases/tag/v10.34.7)
+before execution. It installs the Explorer lock without lifecycle scripts and
+runs separate metadata-graph and core-source journeys against their exact
+bundle identities.
 
 To update the tooling, review the desired CLI/Node/npm releases and edit their
 exact pins in the manifest, checker and workflows together. Regenerate the lock

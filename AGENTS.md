@@ -9,8 +9,10 @@
 - Changes to code, config, schemas or workflows must update relevant docs and
   CHANGELOG.md before rebuilding. Build requires a changelog update for changed
   implementation inputs; check verifies deterministic output and doc hashes.
-- Required checks: unittest discover -s tests -v; catalogue.py build; catalogue.py
-  check; check_repository_protection.py --local. Before release also run
+- Required checks: unittest discover -s tests -v; restore the exact pinned
+  published input set with scripts/hydrate_published_inputs.py; catalogue.py
+  build and check with the same explicit --inputs-root; check the OKF core
+  projection; and check_repository_protection.py --local. Before release also run
   uv run --locked --group assurance python scripts/assure.py. Production
   build/search use only the stdlib. The assurance group and hash-checked CI
   requirements export must remain synchronised; see docs/repository-protection.md.
@@ -21,8 +23,9 @@
   credit purchases or billing changes. Do not execute catalogued code.
 - Do not open upstream issues, contact maintainers or label repositories
   vulnerable without a separately scoped task and supporting evidence.
-- The semantic profile uses a custom experimental profile. Do not claim canonical
-  Bundle Wiki v1 conformance, human acceptance or exhaustive domain coverage.
+- The semantic profile is producer-specific and experimental. The shared v2
+  contract schema does not establish full Bundle Wiki v2 profile conformance.
+  Do not claim human acceptance or exhaustive domain coverage.
 - External schema fields such as license, normalized, and assertion_status,
   upstream evidence, titles and MIT notices are intentional language exceptions.
 
