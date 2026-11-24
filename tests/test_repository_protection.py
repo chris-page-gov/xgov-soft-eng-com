@@ -80,6 +80,20 @@ class RepositoryProtectionTests(unittest.TestCase):
     def test_checked_in_workflow_and_lock_satisfy_the_local_policy(self):
         self.assertEqual(protection.validate_local(ROOT)['repository'], protection.REPOSITORY)
 
+    def test_patched_uv_bootstrap_remains_usable(self):
+        for version in ('0.13.4', '0.14.0', '1.0.0'):
+            self.assertTrue(protection.validate_uv_bootstrap(
+                {'package': [{'name': 'uv', 'version': version}]}))
+
+    def test_missing_affected_and_ambiguous_uv_bootstraps_are_rejected(self):
+        for packages in ([], [{'name': 'uv', 'version': '0.12.2'}],
+                         [{'name': 'UV', 'version': '0.13.3'}],
+                         [{'name': 'uv', 'version': '0.13.4rc1'}],
+                         [{'name': 'uv', 'version': '0.13.4'},
+                          {'name': 'uv', 'version': '0.12.2'}]):
+            with self.subTest(packages=packages), self.assertRaises(ValueError):
+                protection.validate_uv_bootstrap({'package': packages})
+
     def test_pages_cannot_deploy_before_staging_or_verify_before_deployment(self):
         path = ROOT / '.github/workflows/pages.yml'
         original = Path.read_text

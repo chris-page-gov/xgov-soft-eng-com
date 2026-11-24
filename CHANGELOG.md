@@ -136,6 +136,15 @@ daily dataset snapshots have separate identifiers.
 - Reject non-text SBOM input identifiers during admission, before retrieval,
   preventing numeric JSON keys from breaking report filenames and resume.
 
+### Security
+
+- Validate both bundle scopes with the exact released Explorer 0.9.0 revision.
+- Pin the assurance dependency and every active CI bootstrap to uv 0.13.4.
+  This removes the compromised emSign root from uv's bundled CA store
+  ([GHSA-hq85-5cpj-mr62](https://github.com/astral-sh/uv/security/advisories/GHSA-hq85-5cpj-mr62)).
+  Regenerate the dependency lock and hash-checked requirements together. This
+  is a build-tool correction; the admitted knowledge sources are unchanged.
+
 ## [0.5.1] - 2026-10-29
 
 ### Added

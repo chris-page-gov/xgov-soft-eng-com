@@ -72,6 +72,17 @@ def validate_requirements(lock, requirements):
     return True
 
 
+def validate_uv_bootstrap(lock):
+    """Keep the known compromised bundled CA out of the release bootstrap."""
+    versions = [row.get('version', '') for row in lock.get('package', [])
+                if row.get('name', '').casefold() == 'uv']
+    if not versions or any(not re.fullmatch(r'\d+\.\d+\.\d+', version)
+                           or tuple(map(int, version.split('.'))) < (0, 13, 4)
+                           for version in versions):
+        raise ValueError('The uv bootstrap requires a stable patched release at or above 0.13.4')
+    return True
+
+
 def validate_local(root):
     policy = json.loads((root / 'config/repository-protection.json').read_text())
     if policy.get('repository') != REPOSITORY:
@@ -122,6 +133,11 @@ def validate_local(root):
         if any(value in sections.get(job, '') for value in ('pages: write', 'id-token: write')):
             raise ValueError('Only the Pages deployment job may have Pages or OIDC write permissions')
     lock = tomllib.loads((root / 'uv.lock').read_text())
+    validate_uv_bootstrap(lock)
+    bootstrap = tomllib.loads((root / 'pyproject.toml').read_text()).get('tool', {}).get('uv', {})
+    versions = {row['version'] for row in lock['package'] if row['name'].casefold() == 'uv'}
+    if len(versions) != 1 or bootstrap.get('required-version') != '==' + next(iter(versions)):
+        raise ValueError('The required uv executable must match the patched locked distribution')
     requirements = (root / 'requirements-assurance.txt').read_text()
     validate_requirements(lock, requirements)
     check_npm_lock.validate(root)
