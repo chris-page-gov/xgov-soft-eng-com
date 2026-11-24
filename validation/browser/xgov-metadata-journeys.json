@@ -5,7 +5,7 @@
     "schema": "okf-explorer-large-corpus.v1",
     "id": "https://chris-page-gov.github.io/xgov-soft-eng-com/okf-explorer.json",
     "version": "0.6.0",
-    "snapshot": "b5570fb42b774bf75f3246686d8b44cadda61e9496b20b169485c3e6aa75384f"
+    "snapshot": "8e615888af41128bf561fe59499514d2a1e046fdf86fde086aa435168d853189"
   },
   "journeys": [
     {

@@ -146,5 +146,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: public-browser-verification
-          path: output/playwright/ci/browser-verification.json
+          path: |
+            output/playwright/ci/browser-verification.json
+            output/playwright/ci/*.txt
           if-no-files-found: ignore

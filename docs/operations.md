@@ -196,3 +196,16 @@ controls. No external scheduler or paid service has been configured here.
 
 References: [GitHub schedule behaviour](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
 and [repository variables](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#vars-context).
+
+
+## Walkthrough and public browser verification
+
+The core taxonomy walkthrough opens its exact compact descriptor and
+notifications concept in Explorer. The notification-software walkthrough
+opens each of its three selected metadata records in the separate full
+descriptor. A source JSON link is retained beside each human journey.
+
+All four hosted browser suites require the declared xgov-software v2 profile.
+The verification job retains its raw CLI text beside the collected receipt,
+including failures before a structured browser result is returned. A successful
+deployment remains separate from those browser checks and formal acceptance.

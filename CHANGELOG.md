@@ -109,6 +109,11 @@ daily dataset snapshots have separate identifiers.
 
 ### Fixed
 
+- Open the compact notifications concept and all three worked metadata records
+  directly in Explorer from their respective visual walkthroughs.
+- Bind all four public browser suites to the current v2 profile and retain
+  their raw CLI receipts when verification fails.
+
 - Separate Pages archive preparation, deployment and live verification into
   dependent jobs. The deployment action now sees a completed artefact upload;
   only its job receives Pages-write and OIDC permissions. Keep the complete

@@ -5,6 +5,7 @@ import hashlib
 import html
 import json
 from pathlib import Path
+from urllib.parse import quote, urlencode
 
 ARCHIVE_URL = 'https://github.com/chris-page-gov/xgov-soft-eng-com/releases/download/snapshot-40941783959-1/xgov-okf.tar.gz'
 TARGETS = (
@@ -88,6 +89,9 @@ def generate(output: Path, records: list[dict], inputs_root: Path) -> dict:
             for item in record.get('classification_evidence', {}).get(scheme, [])
         ) or 'No matching experimental taxonomy suggestion'
         repo_url = row.get('url', '')
+        reader_url = ("https://chris-page-gov.github.io/okf-explorer/explore/?"
+                      + urlencode({"bundle": "https://chris-page-gov.github.io/xgov-soft-eng-com/okf-explorer.json", "view": "reader"})
+                      + "#" + quote(record["route"], safe="/"))
         cards.append(
             '<article class="record"><h3>' + esc(identity) + '</h3>'
             '<p><strong>Source-reported licence:</strong> ' + esc(licence) + '</p>'
@@ -95,6 +99,7 @@ def generate(output: Path, records: list[dict], inputs_root: Path) -> dict:
             '<p><strong>Experimental classification:</strong> ' + esc(evidence_label) + '</p>'
             '<p><strong>History state:</strong> ' + esc(history_state) + '</p>'
             '<p><a href="' + esc(repo_url) + '">Repository source</a></p>'
+            '<p><a href="' + esc(reader_url) + '">Open this record in Explorer</a></p>'
             '<p class="digest">Record route ' + esc(record['route']) + '<br>Source SHA-256 '
             + esc(record['provenance']['source_sha256']) + '</p></article>'
         )

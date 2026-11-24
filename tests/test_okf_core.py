@@ -1,9 +1,12 @@
 import hashlib
+import html
 import json
 from pathlib import Path
+import re
 import sys
 import tempfile
 import unittest
+from urllib.parse import parse_qs, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import okf_core
@@ -76,6 +79,13 @@ class CoreProjectionTests(unittest.TestCase):
             self.assertIn('fill:#f0f4f8', svg)
             self.assertIn('viewBox="0 0 420 700"', mobile_svg)
             self.assertIn('0 authored core edges', mobile_svg)
+            reader_links = [urlsplit(html.unescape(value))
+                            for value in re.findall(r'href="([^"]+)"', page)
+                            if 'okf-explorer/explore/' in value]
+            self.assertEqual(len(reader_links), 1)
+            self.assertEqual(parse_qs(reader_links[0].query),
+                             {'bundle': ['https://example.test/core.json'], 'view': ['reader']})
+            self.assertEqual(reader_links[0].fragment, 'capabilities/notifications.md')
             self.assertEqual(evidence['diagrams']['desktop']['sha256'], hashlib.sha256(svg.encode()).hexdigest())
             self.assertEqual(evidence['diagrams']['mobile']['sha256'], hashlib.sha256(mobile_svg.encode()).hexdigest())
             self.assertEqual(evidence['taxonomy_source']['sha256'], hashlib.sha256(taxonomy_raw).hexdigest())
@@ -149,6 +159,15 @@ class WalkthroughTests(unittest.TestCase):
             self.assertIn('No SBOM reference reported', page)
             self.assertIn('pending-provider-statistics', page)
             self.assertIn('notification-software-mobile.svg', page)
+            reader_links = [urlsplit(html.unescape(value))
+                            for value in re.findall(r'href="([^"]+)"', page)
+                            if 'okf-explorer/explore/' in value]
+            self.assertEqual({link.fragment for link in reader_links},
+                             {record['route'] for record in records})
+            for link in reader_links:
+                self.assertEqual(parse_qs(link.query), {
+                    'bundle': ['https://chris-page-gov.github.io/xgov-soft-eng-com/okf-explorer.json'],
+                    'view': ['reader']})
             self.assertIn('Licence: MIT', mobile_diagram.decode())
             self.assertIn('History: pending-provider-statistics', mobile_diagram.decode())
             self.assertEqual(evidence['diagrams']['desktop']['sha256'], hashlib.sha256(desktop_diagram).hexdigest())
