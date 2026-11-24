@@ -17,9 +17,10 @@ MAX_BYTES=2*1024**3
 MAX_FILE=256*1024**2
 MAX_FILES=100000
 NS='urn:okf:xgov:'
+NSKOS='http://www.w3.org/2004/02/skos/core#'
 RDF='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 RDFS='http://www.w3.org/2000/01/rdf-schema#'
-CASE_IDS=['archive-membership-hashes','manifest-identities','complete-record-inventory','facet-postings-counts','python-sbom-intersection','runtime-rdf-parity','history-states-and-accounts','history-measure-reconciliation','security-classification-regressions','targeted-discovery-and-inverse-adjacency']
+CASE_IDS=['archive-membership-hashes','manifest-identities','complete-record-inventory','facet-postings-counts','python-sbom-intersection','runtime-rdf-parity','history-states-and-accounts','history-measure-reconciliation','security-classification-regressions','targeted-discovery-and-inverse-adjacency','okf-core-0.3-source-round-trip','core-taxonomy-question-source-walkthrough','notification-walkthrough-source-links-and-negative-controls']
 
 
 def digest(value):
@@ -28,6 +29,21 @@ def digest(value):
 
 def encoded(value):
     return json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()+b'\n'
+
+
+def parse_core_markdown(raw):
+    text=raw.decode('utf-8')
+    if not text.startswith('---\n'):raise ValueError('Typed core source has no frontmatter')
+    boundary=text.find('\n---\n',4)
+    if boundary<0:raise ValueError('Typed core frontmatter has no closing marker')
+    fields={}
+    for line in text[4:boundary].splitlines():
+        key,separator,value=line.partition(': ')
+        if not separator:raise ValueError('Typed core frontmatter is outside the JSON-valued YAML subset')
+        key=json.loads(key)
+        if key in fields:raise ValueError('Typed core frontmatter has duplicate keys')
+        fields[key]=json.loads(value)
+    return fields,text[boundary+len('\n---\n'):].encode('utf-8')
 
 
 def safe(name):
@@ -83,6 +99,7 @@ def verify(data,archive_hash,archive_bytes,checksums=None):
         checksum_status='checked'
     descriptor=generated('okf-explorer.json');dm=generated('data/manifest.json');sm=generated('semantic/manifest.json')
     require(descriptor['snapshot_id']==m['build_id']==dm['snapshot']==sm['build_id'],'Complete-bundle build identities disagree')
+    require(descriptor.get('snapshot')==m['build_id'] and descriptor.get('source_snapshot_sha256')==source['sha256'],'Large-corpus descriptor does not separate bundle and source snapshot identities')
     require(sm['snapshot']==sm['source_snapshot_iri']==NS+'snapshot:'+source['sha256'],'Source snapshot identity differs')
     for shard in [*sm['shards'],*[row for rows in dm['shards'].values() for row in rows]]:
         raw=data[PREFIX+'generated/'+shard['path']]
@@ -97,6 +114,113 @@ def verify(data,archive_hash,archive_bytes,checksums=None):
         original=feed_index[record['url'].casefold()]
         require(record['source_metrics']=={key:original[key] for key in ('stargazersCount','forksCount','openIssuesCount')},'Runtime source metrics differ')
     checks.append(CASE_IDS[2])
+
+    core_path=descriptor.get('entrypoints',{}).get('okf_core_reader')
+    require(core_path=='okf-core-explorer.json','Large-corpus descriptor has no canonical core Reader projection')
+    core=generated(core_path)
+    taxonomy=generated('source/taxonomy.json')
+    typed=[]
+    expected_routes={}
+    for scheme in ('domains','capabilities','content_types'):
+        for position,entry in enumerate(taxonomy.get(scheme,[])):
+            route=scheme.replace('_','-')+'/'+entry['id']+'.md'
+            source_path='concepts/'+scheme+'/'+entry['id']+'.md'
+            expected_routes[route]=(scheme,position,entry,source_path)
+    require(core.get('schema')=='okf-explorer-bundle.v0' and core.get('okf_version')=='0.3','Core Reader descriptor does not identify OKF 0.3')
+    require(core.get('bundle_id')=='https://chris-page-gov.github.io/xgov-soft-eng-com/okf-core-explorer.json','Core Reader identity differs')
+    require(core.get('snapshot')==source['sha256'] and core.get('version')==descriptor['version'],'Core Reader source snapshot or product version differs')
+    require(set(core.get('nodes',{}))==set(expected_routes),'Core projection route set differs from the exact typed taxonomy')
+    inventory={item['route']:item for item in core.get('meta',{}).get('source_documents',[])}
+    require(set(inventory)==set(expected_routes),'Core source document inventory does not cover each typed route exactly once')
+    taxonomy_sha=digest(data[PREFIX+'generated/source/taxonomy.json'])
+    for route,(scheme,position,entry,source_path) in expected_routes.items():
+        node=core['nodes'][route];item=inventory[route]
+        require(item.get('path')==source_path and node.get('source_path')==source_path,'Core source path differs from taxonomy projection')
+        raw=data[PREFIX+'generated/'+source_path]
+        require(item.get('sha256')==digest(raw)==node.get('source_sha256') and len(raw)==node.get('source_bytes'),'Core source digest or byte count differs')
+        frontmatter,body=parse_core_markdown(raw)
+        require(frontmatter==node.get('frontmatter') and all(node.get(key)==value for key,value in frontmatter.items()),'Core Reader frontmatter differs from actual Markdown bytes')
+        require(body==node.get('body','').encode('utf-8'),'Core Reader body differs from actual Markdown bytes')
+        require(frontmatter.get('okf_version')=='0.3' and frontmatter.get('type')=='Concept','Typed source does not declare OKF 0.3 Concept')
+        require(frontmatter.get('taxonomy_record')==entry and frontmatter.get('title')==entry['label'],'Core concept metadata differs from authoritative taxonomy input')
+        require(frontmatter.get('sources',{}).get('sha256')==taxonomy_sha and frontmatter.get('sources',{}).get('field')==f'/{scheme}/{position}','Core frontmatter source pointer is not bound to the exact taxonomy row')
+        require(node.get('core_role')=='concept' and node.get('route')==route and node.get('semantic_id')==frontmatter.get('@id')==item.get('semantic_id'),'Core role, semantic identity or route differs')
+        typed.append(frontmatter['@id'])
+    require(core.get('edges')==[] and core.get('meta',{}).get('core_reference_pairs')==0,'Core projection invents taxonomy relationships')
+    for page in core.get('meta',{}).get('navigation',[]):
+        raw=data[PREFIX+'generated/'+page['path']]
+        require(page['body'].encode('utf-8')==raw and page['source_sha256']==digest(raw),'Core Reader navigation does not preserve its Markdown bytes')
+    extension=descriptor.get('extensions',{}).get('okf-core.v0.3',{})
+    require(extension.get('typed_markdown_concepts')==len(typed)==47 and extension.get('core_reference_pairs')==0,'Large-corpus core coverage declaration differs')
+    require(extension.get('metadata_extension_records')==len(records) and all(row.get('core_role')=='extension' for row in records),'Large-corpus metadata rows are not clearly segregated as extensions')
+    vocabulary=generated('semantic/vocabulary.jsonld.gz')['@graph']
+    semantic_core={node['@id'] for node in vocabulary if node.get('@type')==NSKOS+'Concept' and node.get(NS+'coreRole')=='concept'}
+    semantic_extensions=[node for node in vocabulary if node.get('@type')==NSKOS+'Concept' and node.get(NS+'coreRole')=='extension']
+    require(semantic_core==set(typed) and len(semantic_core)==47 and all(node.get(NS+'coreRole') in ('concept','extension') for node in vocabulary if node.get('@type')==NSKOS+'Concept'),'Semantic vocabulary core and extension roles differ from source projection')
+    checks.append(CASE_IDS[10])
+
+    core_walkthrough_path=descriptor.get('entrypoints',{}).get('core_taxonomy_walkthrough')
+    require(core_walkthrough_path=='walkthrough/core-taxonomy.html','Core bundle has no separate taxonomy walkthrough')
+    core_page=data[PREFIX+'generated/'+core_walkthrough_path].decode('utf-8')
+    core_svg=data[PREFIX+'generated/walkthrough/core-taxonomy.svg'].decode('utf-8')
+    core_mobile_svg=data[PREFIX+'generated/walkthrough/core-taxonomy-mobile.svg'].decode('utf-8')
+    core_evidence_path='walkthrough/evidence/core-taxonomy.json'
+    core_evidence=json.loads(data[PREFIX+'generated/'+core_evidence_path])
+    core_bytes=data[PREFIX+'generated/okf-core-explorer.json']
+    concept=core['nodes']['capabilities/notifications.md']
+    concept_bytes=data[PREFIX+'generated/'+concept['source_path']]
+    taxonomy_bytes=data[PREFIX+'generated/source/taxonomy.json']
+    require(core_evidence.get('schema')=='xgov-core-taxonomy-walkthrough-evidence.v1','Core walkthrough evidence schema differs')
+    require(core_evidence.get('answer_scope')=='taxonomy-source-and-the-linked-core-concept-only','Core walkthrough borrows an unrelated answer scope')
+    require(core_evidence.get('core_bundle',{}).get('bundle_id')==core['bundle_id'] and core_evidence['core_bundle'].get('snapshot')==core['snapshot'] and core_evidence['core_bundle'].get('descriptor_sha256')==digest(core_bytes),'Core walkthrough is not bound to the exact core descriptor identity and bytes')
+    require(core_evidence.get('taxonomy_source',{}).get('sha256')==digest(taxonomy_bytes) and core_evidence['taxonomy_source'].get('path')=='source/taxonomy.json','Core walkthrough taxonomy source hash differs')
+    require(core_evidence.get('concept',{}).get('source_path')==concept['source_path'] and core_evidence['concept'].get('source_sha256')==digest(concept_bytes) and core_evidence['concept'].get('core_edges_in_bundle')==0,'Core walkthrough concept source digest or graph boundary differs')
+    require(core_evidence.get('taxonomy_source',{}).get('rule')==concept.get('taxonomy_record') and core_evidence['taxonomy_source'].get('field_pointer')==concept.get('sources',{}).get('field'),'Core walkthrough rule is not joined to the exact taxonomy field')
+    require(f"{core_evidence['concept']['experimental_match_count']:,} repositories matching experimental name and description rules" in core_page and 'not proof that any repository can provide the service' in core_page and 'zero count does not establish absence' in core_page,'Core walkthrough answer or negative controls are incomplete')
+    require('core-taxonomy.svg' in core_page and 'config/taxonomy.json' in core_page and 'concept-to-concept edges' in core_page,'Core walkthrough has no visual, source link or zero-edge qualification')
+    require('MIT' not in core_page and 'notifications-api' not in core_page,'Core walkthrough has borrowed repository-specific claims')
+    require('taxonomy and core concept only' in core_page and 'does not assess an individual repository' in core_page and 'make a claim about licence, SBOM' in core_page,'Core walkthrough does not keep its source scope explicit')
+    require('0 authored core edges' in core_svg and digest(core_svg.encode())==descriptor.get('extensions',{}).get('xgov-core-taxonomy-walkthrough.v1',{}).get('diagram_sha256'),'Core walkthrough SVG or diagram hash differs')
+    require('core-taxonomy-mobile.svg' in core_page and digest(core_mobile_svg.encode())==descriptor.get('extensions',{}).get('xgov-core-taxonomy-walkthrough.v1',{}).get('mobile_diagram_sha256'),'Core walkthrough mobile diagram is missing or its digest differs')
+    require(core_evidence.get('diagrams',{}).get('desktop',{}).get('sha256')==digest(core_svg.encode()) and core_evidence.get('diagrams',{}).get('mobile',{}).get('sha256')==digest(core_mobile_svg.encode()),'Core walkthrough evidence is not bound to both diagram bytes')
+    require(digest(data[PREFIX+'generated/'+core_evidence_path])==descriptor.get('extensions',{}).get('xgov-core-taxonomy-walkthrough.v1',{}).get('evidence_sha256'),'Core walkthrough evidence digest differs from descriptor')
+    checks.append(CASE_IDS[11])
+
+    published_set=m.get('published_input_set',{})
+    if published_set.get('tag')=='snapshot-40941783959-1':
+        walkthrough_path=descriptor.get('entrypoints',{}).get('notification_walkthrough')
+        require(walkthrough_path=='walkthrough/notification-software.html','Pinned published build lacks the source-linked notification walkthrough')
+        page=data[PREFIX+'generated/'+walkthrough_path].decode('utf-8')
+        evidence_path='walkthrough/evidence/notification-records.json'
+        evidence=json.loads(data[PREFIX+'generated/'+evidence_path])
+        notification_mobile_svg=data[PREFIX+'generated/walkthrough/notification-software-mobile.svg']
+        notification_desktop_svg=data[PREFIX+'generated/walkthrough/notification-software.svg']
+        require(evidence.get('schema')=='xgov-notification-walkthrough-evidence.v1','Walkthrough evidence schema differs')
+        require(evidence.get('source_release')=='snapshot-40941783959-1' and evidence.get('source_commit')=='58eb97ad52c50f9e3c869a57797a1d53e96636b4' and evidence.get('archive_sha256')=='da822774bcf48c3514324cbdd8aa68b8e5231a496f7f10169b827df4a4b4e8be','Walkthrough is not pinned to the exact published source archive')
+        require(evidence.get('catalogue_source_file')==source['path'] and evidence.get('catalogue_source_sha256')==source['sha256'],'Walkthrough source file differs from the build snapshot')
+        walkthrough_rows={item['repository'].casefold():item for item in evidence.get('records',[])}
+        wanted={'alphagov/notifications-api','alphagov/notifications-local','alphagov/notifications-release'}
+        require(set(walkthrough_rows)==wanted,'Walkthrough does not cover the exact three comparison records')
+        for identity,item in walkthrough_rows.items():
+            record=next(row for row in records if row['name'].casefold()==identity)
+            original=feed[item['source_row_index_zero_based']]
+            require(item.get('source_file')==source['path'] and item.get('source_file_sha256')==source['sha256'] and item.get('row')==original,'Walkthrough row differs from its exact source input')
+            row_bytes=json.dumps(original,ensure_ascii=False,separators=(',',':'),sort_keys=True).encode()
+            require(item.get('extracted_row_sha256')==digest(row_bytes) and item['source_row_index_zero_based'] in record.get('source_rows',[]),'Walkthrough extracted row hash or record join differs')
+            observation=record.get('history_observation')
+            if observation:
+                require(item.get('history_observation_path')==observation['path'] and item.get('history_observation_sha256')==observation['sha256'],'Walkthrough history observation differs from joined record')
+                expected_observation=data[PREFIX+observation['path']]
+                require(digest(expected_observation)==observation['sha256'] and evidence['history_observations'][observation['path']]['source']==json.loads(expected_observation),'Walkthrough embedded history evidence differs from exact source file')
+        api=walkthrough_rows['alphagov/notifications-api']['row'];local=walkthrough_rows['alphagov/notifications-local']['row'];release_row=walkthrough_rows['alphagov/notifications-release']['row']
+        require((api.get('license') or {}).get('spdxId')=='MIT' and api.get('sbom') and local.get('sbom') and not (local.get('license') or {}).get('spdxId') and not release_row.get('sbom') and not (release_row.get('license') or {}).get('spdxId'),'Walkthrough positive and negative licence/SBOM controls differ from source rows')
+        require('MIT' in page and 'not an inspected SBOM' in page and 'pending-provider-statistics' in page and 'does not establish that any code is safe' in page,'Walkthrough wording loses the source-reported, pending or reuse boundary')
+        require(all(identity in page for identity in wanted) and '<script' not in page.lower(),'Walkthrough is not a static, fully labelled three-record comparison')
+        require('notification-software-mobile.svg' in page and '<picture>' in page and evidence.get('diagrams',{}).get('desktop',{}).get('sha256')==digest(notification_desktop_svg) and evidence.get('diagrams',{}).get('mobile',{}).get('sha256')==digest(notification_mobile_svg),'Notification walkthrough desktop/mobile diagrams are not both source-evidence bound')
+        require(evidence.get('extraction_note','').find('not represented as a byte slice')>=0,'Walkthrough does not qualify its extracted-row digest as a derived hash')
+        checks.append(CASE_IDS[12])
+    else:
+        untested.append('notification walkthrough applies only to the pinned 29 October publication source set')
     specs=generated('data/facet-definitions.json')['facets'];facets=generated('data/facets.json');search=generated('data/search/manifest.json');indexes={}
     for spec in specs:
         wanted=collections.defaultdict(list)

@@ -19,6 +19,8 @@ class PagesTests(unittest.TestCase):
             "okf-explorer.json": c.encoded({"counts": {}, "title": "Experimental"}),
             "record-summary.json": c.encoded({"one": {"title": "Public"}, "two": {"title": "Public"}}),
             "data/index.json": b'{"public":true}\n',
+            "walkthrough/core-taxonomy.html": b'<h1>Core taxonomy</h1>\n',
+            "walkthrough/notification-software.html": b'<h1>Notification evidence</h1>\n',
         }
         for name, data in payloads.items():
             target = generated / name
@@ -42,6 +44,8 @@ class PagesTests(unittest.TestCase):
             landing = (destination / "index.html").read_text()
             self.assertIn("2 repository records", landing)
             self.assertIn("Open in OKF Explorer", landing)
+            self.assertIn('href="walkthrough/core-taxonomy.html"', landing)
+            self.assertIn('href="walkthrough/notification-software.html"', landing)
             receipt = json.loads((destination / "publication-receipt.json").read_bytes())
             self.assertEqual(receipt["build_id"], "fixture-build")
             self.assertEqual(receipt["descriptor_sha256"], result["descriptor_sha256"])

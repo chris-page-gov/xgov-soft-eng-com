@@ -11,10 +11,12 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = 'registry.npmjs.org'
-NODE_VERSION = '26.7.0'
-NPM_VERSION = '11.19.0'
+NODE_VERSION = '26.13.1'
+NPM_VERSION = '11.20.0'
 PLAYWRIGHT_CLI = '@playwright/cli'
 PLAYWRIGHT_VERSION = '0.1.17'
+PNPM_VERSION = '10.34.7'
+PNPM_LINUX_X64_SHA256 = '44af1568f2682877e43d8918c344d420e022c3d1cc88a11b0dba3e20f9261450'
 
 
 def validate(root=ROOT, check_runtime=False):
@@ -87,13 +89,19 @@ def validate(root=ROOT, check_runtime=False):
             raise ValueError(label + ' workflow must pin Node ' + NODE_VERSION)
         if 'npm ci --ignore-scripts --no-audit --no-fund' not in workflow:
             raise ValueError(label + ' workflow must install immutably with scripts and audits disabled')
-        if 'python scripts/check_npm_lock.py --runtime' not in workflow:
+        if 'uv run --locked python scripts/check_npm_lock.py --runtime' not in workflow:
             raise ValueError(label + ' workflow must verify the active Node and npm runtimes')
     if 'PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD' not in pages or './node_modules/.bin/playwright-cli' not in pages:
         raise ValueError('Pages must disable browser downloads and invoke the locked local CLI')
     if ('NO_UPDATE_NOTIFIER' not in pages or 'NO_UPDATE_NOTIFIER' not in validation
             or './node_modules/.bin/playwright-cli --version' not in validation):
         raise ValueError('CI must smoke-test the local CLI with update checks disabled')
+    pinned_pnpm_url = 'https://github.com/pnpm/pnpm/releases/download/v' + PNPM_VERSION + '/pnpm-linux-x64'
+    if (pinned_pnpm_url not in validation or PNPM_LINUX_X64_SHA256 not in validation
+            or "= '" + PNPM_VERSION + "'" not in validation
+            or 'pnpm install --frozen-lockfile --ignore-scripts' not in validation
+            or 'acceptance:bundle' not in validation):
+        raise ValueError('Validation must use the exact checksum-pinned Explorer package manager and acceptance wrapper')
     if 'npx ' in pages:
         raise ValueError('Pages must not resolve the CLI through npx')
     return True

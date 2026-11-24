@@ -3,6 +3,7 @@
 import gzip
 import hashlib
 import io
+import argparse
 from pathlib import Path
 import shutil
 import tarfile
@@ -48,17 +49,25 @@ def verify_archive(archive,manifest):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--inputs-root', type=Path, help='Use the exact separately hydrated source-input tree')
+    args = parser.parse_args()
     root=c.ROOT
+    inputs_root=Path(args.inputs_root).resolve() if args.inputs_root else root
     c.check_output(root/"generated")
     manifest=c.read(root/"generated/build-manifest.json")
-    if manifest["controlled_inputs"]!=c.controlled_inputs(root):
+    if manifest["controlled_inputs"]!=c.controlled_inputs(root,inputs_root):
         raise ValueError("Controlled inputs changed after build; rebuild and assure first")
     dist=root/"dist";dist.mkdir(exist_ok=True)
-    selected=[root/Path(name).relative_to('xgov-okf') for name in archive_members(manifest)]
+    selected={}
+    for name in archive_members(manifest):
+        relative=Path(name).relative_to('xgov-okf')
+        source=inputs_root/relative if relative.parts and relative.parts[0]=='source' else root/relative
+        selected[relative]=source
     archive=dist/"xgov-okf.tar.gz"
     with archive.open("wb") as raw, gzip.GzipFile(filename="",mode="wb",fileobj=raw,mtime=0) as zipped, tarfile.open(mode="w|",fileobj=zipped,format=tarfile.PAX_FORMAT) as tar:
-        for path in sorted(set(selected)):
-            name="xgov-okf/"+path.relative_to(root).as_posix()
+        for relative, path in sorted(selected.items(), key=lambda item:item[0].as_posix()):
+            name="xgov-okf/"+relative.as_posix()
             data=path.read_bytes()
             info=tarfile.TarInfo(name);info.size=len(data);info.mtime=0;info.mode=0o644
             tar.addfile(info,io.BytesIO(data))

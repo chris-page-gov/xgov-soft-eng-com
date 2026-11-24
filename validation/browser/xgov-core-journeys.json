@@ -1,0 +1,149 @@
+{
+  "schema": "okf-explorer-journeys.v1",
+  "bundle_descriptor": "okf-core-explorer.json",
+  "expected_identity": {
+    "schema": "okf-explorer-bundle.v0",
+    "id": "https://chris-page-gov.github.io/xgov-soft-eng-com/okf-core-explorer.json",
+    "version": "0.6.0",
+    "snapshot": "f7e776c0245d698c62ce7211beaa0d8e90c13f2f431ca82e8a6eb26705bc5bac"
+  },
+  "journeys": [
+    {
+      "id": "core-concept-reader-route",
+      "actions": [
+        {
+          "type": "goto",
+          "params": {
+            "view": "reader"
+          }
+        },
+        {
+          "type": "wait_for",
+          "selector": "input.search-input"
+        },
+        {
+          "type": "fill",
+          "selector": "input.search-input",
+          "value": "Send notifications and messages"
+        },
+        {
+          "type": "wait_for",
+          "selector": ".result-open:has(h2:text-is(\"Send notifications and messages\"))"
+        },
+        {
+          "type": "click",
+          "selector": ".result-open:has(h2:text-is(\"Send notifications and messages\"))"
+        },
+        {
+          "type": "wait_for",
+          "selector": "aside[aria-label=\"Record details\"] h2:text-is(\"Send notifications and messages\")"
+        }
+      ],
+      "assertions": [
+        {
+          "type": "visible",
+          "selector": "main"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "Send notifications and messages"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "capabilities/notifications.md"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "334 repositories match the experimental name/description rules."
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "Matches are suggestions, with evidence in each record."
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "Inspect the exact classification rules"
+        },
+        {
+          "type": "requested",
+          "includes": "/okf-core-explorer.json"
+        },
+        {
+          "type": "console_clean"
+        }
+      ]
+    },
+    {
+      "id": "core-source-taxonomy-traversal",
+      "actions": [
+        {
+          "type": "goto",
+          "params": {
+            "view": "reader"
+          }
+        },
+        {
+          "type": "wait_for",
+          "selector": "input.search-input"
+        },
+        {
+          "type": "fill",
+          "selector": "input.search-input",
+          "value": "Send notifications and messages"
+        },
+        {
+          "type": "wait_for",
+          "selector": ".result-open:has(h2:text-is(\"Send notifications and messages\"))"
+        },
+        {
+          "type": "click",
+          "selector": ".result-open:has(h2:text-is(\"Send notifications and messages\"))"
+        },
+        {
+          "type": "wait_for",
+          "selector": "aside[aria-label=\"Record details\"] h2:text-is(\"Send notifications and messages\")"
+        },
+        {
+          "type": "capture_attributes",
+          "id": "taxonomy-source-url",
+          "selector": "aside[aria-label=\"Record details\"] a:has-text(\"Inspect the exact classification rules\")",
+          "name": "href",
+          "max_items": 1,
+          "min_items": 1
+        },
+        {
+          "type": "click",
+          "selector": "aside[aria-label=\"Record details\"] a:has-text(\"Inspect the exact classification rules\")"
+        }
+      ],
+      "assertions": [
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "Send notifications and messages"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "Inspect the exact classification rules"
+        },
+        {
+          "type": "requested",
+          "includes": "/okf-core-explorer.json"
+        },
+        {
+          "type": "console_clean"
+        },
+        {
+          "type": "requested",
+          "includes": "/bundle/source/taxonomy.json"
+        }
+      ]
+    }
+  ]
+}

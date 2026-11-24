@@ -1,8 +1,9 @@
 # Semantic model
 
-The pack uses OKF 0.2 Markdown for its index and concept pages. This document
-defines its custom additive semantic profile. It does not claim canonical
-Bundle Wiki YAML-LD profile conformance.
+The active pack uses OKF core 0.3 Markdown for its index and 47 typed taxonomy
+concept pages. The versioned [XGov software discovery profile](../profiles/xgov-software/v2/index.md)
+defines the custom metadata extension and source-to-route mapping. This
+producer does not claim full Bundle Wiki profile conformance.
 
 All distinct repositories, observed accounts, languages and reported licence
 identifiers are represented. Subject/task coverage is bounded by authored
@@ -85,9 +86,11 @@ without redefining the external predicate's official label or asserting an
 identity; it does not invent a reverse triple. Logical routes remain stable
 and are distinct from physical Markdown storage paths.
 
-The descriptor snapshot_id and semantic manifest build_id identify the complete
-bundle. The semantic manifest source_snapshot_iri identifies only the frozen
-repository feed; its legacy snapshot field keeps that same source IRI for
-compatibility. History and SBOM-quality entities retain content hashes and an
-explicit sourceKind. Repository source_metrics expose the exact reported
+The large-corpus descriptor `snapshot` and `snapshot_id` both bind the complete
+bundle identity used by the Reader; `source_snapshot_sha256` separately records
+the frozen feed hash. The semantic manifest `build_id` identifies the complete
+bundle, while `source_snapshot_iri` identifies only the frozen repository feed;
+its legacy `snapshot` field keeps that same source IRI for compatibility.
+History and SBOM-quality entities retain content hashes and an explicit
+sourceKind. Repository `source_metrics` expose the exact reported
 stargazersCount, forksCount and openIssuesCount, without assigning quality.

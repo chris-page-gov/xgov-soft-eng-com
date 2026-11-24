@@ -76,7 +76,7 @@ loads; a missing or incorrect count still fails after the bounded wait.
 Failed receipts retain the journey's bounded error message for diagnosis.
 
 The Pages workflow runs all three suites after deployment in a separate
-contents-read job, with Ubuntu 24.04, Node 26.7.0, Playwright CLI 0.1.17 and
+contents-read job, with Ubuntu 24.04, Node 26.13.1, Playwright CLI 0.1.17 and
 runner-installed Chrome. It compares all 40 checks with the exact released
 build manifest, quality-file checksum, descriptor hash, snapshot and consumer
 identity. CLI exit codes alone never establish success. Validated JSON results
@@ -144,3 +144,28 @@ The initial local mobile check identified overflowing long evidence links in
 the Gemini report. The renderer now wraps long text; the browser check covers
 all six report pages at 390 pixels. These report checks supplement the
 existing facets, semantic and contributor journeys.
+
+## OKF core 0.3 source and extension journeys
+
+The migration candidate carries a separate core projection for all 47 typed
+taxonomy documents alongside the large source-backed metadata extension graph.
+The pinned 29 October release inputs are restored by the checksum-verifying
+hydrator and used by both the producer build and the independent Explorer
+acceptance. The metadata journey opens the API, local-development and release
+records; checks the source-reported licence and SBOM-reference boundary; and
+distinguishes available from provider-pending contributor-history observations.
+The release record is a source-backed missing-field control, not proof that an
+upstream licence or SBOM does not exist.
+
+The separate core journeys open the “Send notifications and messages” concept,
+check its experimental count and caveats, and capture the rendered taxonomy
+source link. That link opens a new browser tab, so the canonical page-scoped
+journey receipt records its exact URL while a separate local HTTP check verifies
+the linked taxonomy bytes. The core question makes no repository, licence or
+SBOM claim. These local receipts do not establish a deployed Pages journey.
+
+Search journey clicks target the visible `.result-open` button within the exact
+heading, while the ranked-result marker remains on its containing article. This
+keeps the test aligned with the actual accessible control.
+The metadata journey pins the complete generated bundle ID; the separate core
+journey pins the source-feed hash for its authored Markdown projection.

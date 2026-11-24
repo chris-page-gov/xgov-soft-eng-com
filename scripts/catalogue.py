@@ -21,6 +21,9 @@ import urllib.request
 import facets as facet_tools
 import explorer_projection
 import report_pages
+import okf_core
+import notification_walkthrough
+import core_walkthrough
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = "urn:okf:xgov:"
@@ -30,7 +33,7 @@ SKOS = "http://www.w3.org/2004/02/skos/core#"
 PROV = "http://www.w3.org/ns/prov#"
 DCAT = "http://www.w3.org/ns/dcat#"
 DCT = "http://purl.org/dc/terms/"
-PROFILE = "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/docs/semantic-model.md"
+PROFILE = "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/profiles/xgov-software/v2/index.md"
 SCHEMES=("domains","capabilities","content_types")
 
 
@@ -161,21 +164,79 @@ def matching_terms(row, concept, taxonomy):
     return sorted(set(hits))
 
 
-def controlled_inputs(root):
-    patterns = ["config/**/*", "scripts/**/*.py", "scripts/**/*.js", "tests/**/*.py", "schemas/**/*", "docs/**/*", "examples/public-sbom-pilot.json", "*.md", "okf.*.json", "pyproject.toml", "uv.lock", "requirements-assurance.txt", "package.json", "package-lock.json", ".npmrc", "LICENSE", ".gitignore", ".python-version", ".github/workflows/*", ".githooks/*", "source/README.md", "source/security-helper-inventory.json", "source/contributors-inventory.json", "source/history/index.json", "source/upstream/*", "source/sbom-review/*"]
+def controlled_inputs(root, inputs_root=None):
+    inputs_root = Path(inputs_root or root).resolve()
+    patterns = ["config/**/*", "scripts/**/*.py", "scripts/**/*.js", "tests/**/*.py", "schemas/**/*", "docs/**/*", "examples/public-sbom-pilot.json", "*.md", "okf.*.json", "pyproject.toml", "uv.lock", "requirements-assurance.txt", "package.json", "package-lock.json", ".npmrc", "LICENSE", ".gitignore", ".python-version", ".github/workflows/*", ".githooks/*", "source/README.md", "source/security-helper-inventory.json", "source/contributors-inventory.json", "source/published-inputs-2026-10-29.json", "source/history/index.json", "source/upstream/*", "source/sbom-review/*"]
     paths=[p for pattern in patterns for p in sorted(root.glob(pattern)) if p.is_file() and "__pycache__" not in p.parts and p.name!=".DS_Store"]
+    if inputs_root != Path(root).resolve():
+        paths = [p for p in paths if not p.relative_to(root).as_posix().startswith('source/')]
+        paths.extend(p for p in sorted(inputs_root.glob('source/**/*')) if p.is_file() and p.name != '.DS_Store')
     for p in paths:
         if any(part.casefold() in ('.consent','.sbom-pilot','.account-security','node_modules') for part in p.resolve().parts):raise ValueError('Private material cannot become a controlled public input')
-    return {p.relative_to(root).as_posix(): digest(p.read_bytes()) for p in paths}
+    return {p.relative_to(inputs_root if inputs_root != Path(root).resolve() and p.is_relative_to(inputs_root) else root).as_posix(): digest(p.read_bytes()) for p in paths}
+
+
+def validate_pinned_inputs(inputs_root, root):
+    """Require the isolated input tree to match the exact historical archive inventory."""
+    inputs_root = Path(inputs_root).resolve(strict=True)
+    if Path(inputs_root).is_symlink() or (inputs_root / 'source').is_symlink():
+        raise ValueError('Pinned source tree and root must not be symbolic links')
+    manifest_path = inputs_root / 'source/published-inputs-2026-10-29.json'
+    public_manifest = Path(root) / 'source/published-inputs-2026-10-29.json'
+    manifest_bytes = manifest_path.read_bytes()
+    if digest(manifest_bytes) != digest(public_manifest.read_bytes()):
+        raise ValueError('Pinned source manifest differs from the reviewed repository manifest')
+    manifest = json.loads(manifest_bytes)
+    if manifest.get('schema') != 'xgov-pinned-published-inputs.v1':
+        raise ValueError('Unsupported pinned source manifest')
+    release = manifest.get('source_release', {})
+    if (release.get('tag') != 'snapshot-40941783959-1'
+            or release.get('source_commit') != '58eb97ad52c50f9e3c869a57797a1d53e96636b4'
+            or release.get('archive_sha256') != 'da822774bcf48c3514324cbdd8aa68b8e5231a496f7f10169b827df4a4b4e8be'):
+        raise ValueError('Pinned source release identity differs')
+    expected = {}
+    for item in manifest.get('files', []):
+        path = item.get('path')
+        if (not isinstance(path, str) or not path.startswith('source/') or '..' in Path(path).parts
+                or Path(path).is_absolute() or path in expected):
+            raise ValueError('Pinned source manifest contains an unsafe or repeated path')
+        expected[path] = item
+    if len(expected) != 3356 or manifest.get('history_packages') != 3350:
+        raise ValueError('Pinned source manifest is incomplete')
+    actual_paths = {p.relative_to(inputs_root).as_posix() for p in (Path(inputs_root) / 'source').rglob('*')
+                    if p.is_file() and p.relative_to(inputs_root).as_posix() != manifest_path.relative_to(inputs_root).as_posix()}
+    if actual_paths != set(expected):
+        raise ValueError('Pinned source tree has missing or unlisted files')
+    for relative, item in expected.items():
+        path = inputs_root / relative
+        current = inputs_root
+        for part in Path(relative).parts:
+            current = current / part
+            if current.is_symlink():
+                raise ValueError('Pinned source entries cannot traverse symbolic links')
+        if not path.is_file() or not path.resolve().is_relative_to(inputs_root):
+            raise ValueError('Pinned source entries must be regular files')
+        raw = path.read_bytes()
+        if len(raw) != item.get('bytes') or digest(raw) != item.get('sha256'):
+            raise ValueError('Pinned source entry differs from its byte or SHA-256 binding')
+    receipt = read(Path(inputs_root) / 'source/current.json')
+    if receipt != manifest.get('source'):
+        raise ValueError('Pinned current receipt differs from its manifest')
+    history = read(Path(inputs_root) / 'source/history/index.json')
+    if len(history.get('repositories', {})) != manifest.get('history_packages'):
+        raise ValueError('Pinned history index count differs from its manifest')
+    return manifest
 
 
 def stale(receipt, hours, at=None):
     return ((at or dt.datetime.now(dt.timezone.utc)) - parse_date(receipt["retrieved_at"])).total_seconds() > hours * 3600
 
 
-def build(root, output, receipt, previous=None):
+def build(root, output, receipt, previous=None, inputs_root=None):
+    inputs_root = Path(inputs_root or root).resolve()
+    pinned_input_set = validate_pinned_inputs(inputs_root, root) if inputs_root != Path(root).resolve() else None
     cfg, tax = read(root / "config/catalogue.json"), read(root / "config/taxonomy.json")
-    raw_path = root / receipt["path"]
+    raw_path = inputs_root / receipt["path"]
     raw_bytes = raw_path.read_bytes()
     if digest(raw_bytes) != receipt["sha256"]:
         raise ValueError("Frozen source checksum mismatch")
@@ -185,23 +246,23 @@ def build(root, output, receipt, previous=None):
     quality_receipt=receipt.get("supplements",{}).get("sbom-quality")
     quality_report=None;quality_index={}
     if quality_receipt:
-        quality_bytes=(root/quality_receipt["path"]).read_bytes()
+        quality_bytes=(inputs_root/quality_receipt["path"]).read_bytes()
         if digest(quality_bytes)!=quality_receipt["sha256"]:raise ValueError("SBOM quality source checksum mismatch")
         quality_report=json.loads(quality_bytes);quality_index=facet_tools.quality_rows(quality_report)
     facet_specs=read(root/"config/facets.json")["facets"]
     facet_observed=max(parse_date(observed),parse_date(quality_receipt["retrieved_at"]) if quality_receipt else parse_date(observed))
-    history_index=read(root/'source/history/index.json') if (root/'source/history/index.json').exists() else {'repositories':{}}
+    history_index=read(inputs_root/'source/history/index.json') if (inputs_root/'source/history/index.json').exists() else {'repositories':{}}
     history_sources=[]
     for item in history_index['repositories'].values():
-        if not re.fullmatch(r'source/history/observations/[0-9a-f]{64}\.json',item['path']) or digest((root/item['path']).read_bytes())!=item['sha256']:raise ValueError('Invalid history source binding')
+        if not re.fullmatch(r'source/history/observations/[0-9a-f]{64}\.json',item['path']) or digest((inputs_root/item['path']).read_bytes())!=item['sha256']:raise ValueError('Invalid history source binding')
         history_sources.append({'path':item['path'],'sha256':item['sha256']})
     prior_summary={}
     if receipt.get('baseline_summary'):
-        baseline=receipt['baseline_summary'];data=(root/baseline['path']).read_bytes()
+        baseline=receipt['baseline_summary'];data=(inputs_root/baseline['path']).read_bytes()
         if digest(data)!=baseline['sha256']:raise ValueError('Metadata baseline checksum mismatch')
         prior_summary=json.loads(data)
     record_summary={}
-    inputs = controlled_inputs(root)
+    inputs = controlled_inputs(root, inputs_root)
     build_id = digest({"inputs": inputs, "receipt": receipt, "baseline_sha256": digest(previous or {})})
     output.mkdir(parents=True, exist_ok=True)
     record_nodes, records, edges, concepts, facets = [], [], [], {}, collections.defaultdict(collections.Counter)
@@ -221,20 +282,26 @@ def build(root, output, receipt, previous=None):
     predicates["domain-parent"] = (SKOS + "broader", "broader concept", "narrower concept", "config/taxonomy.json")
     for scheme in SCHEMES:
         scheme_id = iri("scheme", scheme)
-        concepts[scheme_id] = {"@id": scheme_id, "@type": SKOS + "ConceptScheme", SKOS + "prefLabel": scheme.capitalize()}
+        concepts[scheme_id] = {"@id": scheme_id, "@type": SKOS + "ConceptScheme", SKOS + "prefLabel": scheme.capitalize(), NS + 'coreRole': 'extension'}
         for c in tax.get(scheme,[]):
             ci = iri(scheme, c["id"])
             concepts[ci] = {"@id": ci, "@type": SKOS + "Concept", SKOS + "prefLabel": c["label"], SKOS + "altLabel": c["terms"], SKOS + "inScheme": ref(scheme_id), SKOS + "scopeNote": tax["policy"], NS + "route": route(scheme, c["id"])}
+    taxonomy_sha256 = digest((root / 'config/taxonomy.json').read_bytes())
+    for scheme in SCHEMES:
+        for taxonomy_index, rule in enumerate(tax.get(scheme, [])):
+            node = concepts[iri(scheme, rule['id'])]
+            node[NS + 'coreRole'] = 'concept'
+            node[NS + 'frontmatter'] = {'@value': okf_core.frontmatter(scheme, rule, node['@id'], taxonomy_sha256, taxonomy_index), '@type': okf_core.RDF_JSON}
     for row, positions in unique:
         identity = row["owner"] + "/" + row["name"]
         ri, rr = iri("repository", identity), route("repositories", identity)
         matches = classify(row, tax)
         history_item=history_index['repositories'].get(identity.casefold())
-        history_observation=read(root/history_item['path']) if history_item else None
+        history_observation=read(inputs_root/history_item['path']) if history_item else None
         activity=history_observation.get('profile') if history_observation else None
         actor_evidence={}
         licence = (row.get("license") or {}).get("spdxId") or "unknown"
-        n = {"@id": ri, "@type": NS + "Repository", SCHEMA + "name": identity, SCHEMA + "codeRepository": ref(row["url"]), PROV + "wasDerivedFrom": ref(snapshot), NS + "route": rr, NS + "archived": row["archived"], NS + "isFork": row.get("isFork"), NS + "sourceRows": positions}
+        n = {"@id": ri, "@type": NS + "Repository", SCHEMA + "name": identity, SCHEMA + "codeRepository": ref(row["url"]), PROV + "wasDerivedFrom": ref(snapshot), NS + "route": rr, NS + "coreRole": "extension", NS + "archived": row["archived"], NS + "isFork": row.get("isFork"), NS + "sourceRows": positions}
         if row.get("description"):
             n[SCHEMA + "description"] = row["description"]
         for source_key, target_key in (("createdAt", "created"), ("updatedAt", "metadataUpdated"), ("pushedAt", "codePushed"), ("stargazersCount", "stars"), ("forksCount", "forks"), ("openIssuesCount", "openIssues")):
@@ -259,7 +326,7 @@ def build(root, output, receipt, previous=None):
             target, tr = iri(kind, value), route(kind, value)
             if kind in ('historical_contributor','recent_contributor'):target,tr=iri('contributor',value),route('contributors',value)
             if target not in concepts:
-                concepts[target] = {"@id": target, "@type": NS + "HostingAccount" if kind == "account" else NS + "SbomReference" if kind == "sbom" else SKOS + "Concept", SKOS + "prefLabel": label, NS + "route": tr}
+                concepts[target] = {"@id": target, "@type": NS + "HostingAccount" if kind == "account" else NS + "SbomReference" if kind == "sbom" else SKOS + "Concept", SKOS + "prefLabel": label, NS + "route": tr, NS + "coreRole": "extension"}
                 if kind == "sbom":
                     concepts[target][SCHEMA+"contentUrl"] = ref(urllib.parse.urljoin(cfg["source_url"],value))
                     concepts[target][NS+"verificationStatus"] = "source-reported-reference-not-fetched-by-build"
@@ -282,7 +349,7 @@ def build(root, output, receipt, previous=None):
             n.setdefault(pred, []).append(ref(target))
         domains = [h["id"] for h in matches["domains"]] or ["unclassified"]
         capabilities = [h["id"] for h in matches["capabilities"]] or ["unclassified"]
-        rec = {"id": ri, "name": identity.casefold(), "title": identity, "route": rr, "concept_id": rr, "record_type": "Repository", "type": "Repository", "publisher": row["owner"].casefold(), "publisher_title": row["owner"], "publisher_concept_id": route("account", row["owner"]), "notes": row.get("description") or "", "description": row.get("description") or "", "url": row["url"], "open": rr, "resource": row["url"], "resource_count": 0, "formats": [row["language"]] if row.get("language") else [], "language": row.get("language") or "unknown", "license_id": licence, "license_title": (row.get("license") or {}).get("name") or "Unknown", "license_basis": "source-reported-unverified" if licence not in ("unknown", "NOASSERTION") else "unresolved", "archived": row["archived"], "is_fork": row.get("isFork"), "timestamp": row.get("pushedAt"), "metadata_modified": row.get("updatedAt"), "metadata_created": row.get("createdAt"), "domains": domains, "capabilities": capabilities, "topics": domains, "tags": capabilities, "classification_evidence": matches, "source_rows": positions, "provenance": {"source_sha256": receipt["sha256"], "observed_at": observed, "source_url": cfg["source_url"], "authority": "catalogue-metadata"}, "sbom_url": urllib.parse.urljoin(cfg["source_url"], row["sbom"]) if row.get("sbom") else None, "quality_gaps": [key for key in ("description", "language", "license", "isFork") if row.get(key) in (None, "")], "body": f"# {identity}\n\n{row.get('description') or 'No description supplied.'}\n\nCatalogue metadata only. Classification suggestions are unreviewed. Inspect the source repository before reuse."}
+        rec = {"id": ri, "name": identity.casefold(), "title": identity, "route": rr, "concept_id": rr, "record_type": "Repository", "type": "Repository", "core_role": "extension", "publisher": row["owner"].casefold(), "publisher_title": row["owner"], "publisher_concept_id": route("account", row["owner"]), "notes": row.get("description") or "", "description": row.get("description") or "", "url": row["url"], "open": rr, "resource": row["url"], "resource_count": 0, "formats": [row["language"]] if row.get("language") else [], "language": row.get("language") or "unknown", "license_id": licence, "license_title": (row.get("license") or {}).get("name") or "Unknown", "license_basis": "source-reported-unverified" if licence not in ("unknown", "NOASSERTION") else "unresolved", "archived": row["archived"], "is_fork": row.get("isFork"), "timestamp": row.get("pushedAt"), "metadata_modified": row.get("updatedAt"), "metadata_created": row.get("createdAt"), "domains": domains, "capabilities": capabilities, "topics": domains, "tags": capabilities, "classification_evidence": matches, "source_rows": positions, "provenance": {"source_sha256": receipt["sha256"], "observed_at": observed, "source_url": cfg["source_url"], "authority": "catalogue-metadata"}, "sbom_url": urllib.parse.urljoin(cfg["source_url"], row["sbom"]) if row.get("sbom") else None, "quality_gaps": [key for key in ("description", "language", "license", "isFork") if row.get(key) in (None, "")], "body": f"# {identity}\n\n{row.get('description') or 'No description supplied.'}\n\nCatalogue metadata only. Classification suggestions are unreviewed. Inspect the source repository before reuse."}
         records.append(rec)
         record_nodes.append(n)
         rec["sbom"] = "present" if row.get("sbom") else "not-reported"
@@ -393,7 +460,7 @@ def build(root, output, receipt, previous=None):
     write(output / "data/accounts.json", publishers)
     manifest = {"title": "Experimental cross-government software catalogue", "generated_at": observed, "counts": dict(counts), "indexes": {"overview": "data/overview.json", "search": "data/search/manifest.json", "facets": "data/facets.json"}, "chunks": {"datasets": chunk_paths, "resources": [], "publishers": ["data/accounts.json"], "relationships": edge_paths}}
     write(output / "data/manifest.json", manifest)
-    descriptor = {"schema": "okf-explorer-large-corpus.v1", "kind": "okf-large-corpus", "okf_version": "0.2", "title": "Experimental cross-government software OKF+", "description": "Source-reported repository metadata with explicit gaps and unreviewed domain and task suggestions.", "version": tomllib.loads((root/'pyproject.toml').read_text())['project']['version'], "publication_state": "exploratory", "status": "local-experiment", "profile": PROFILE, "snapshot_id": build_id, "generated_at": observed, "counts": dict(counts), "entrypoints": {"data_manifest": "data/manifest.json", "overview_index": "data/overview.json", "search_manifest": "data/search/manifest.json", "markdown_index": "index.md"}, "source": {"url": cfg["source_url"], "source_sha256": receipt["sha256"], "observed_at": observed}, "semantic_descriptor": "semantic/manifest.json", "vocabulary": {"record_singular": "repository", "record_plural": "repositories", "publisher_singular": "hosting account", "publisher_plural": "hosting accounts", "format_plural": "languages"}, "warnings": warnings}
+    descriptor = {"id": "https://chris-page-gov.github.io/xgov-soft-eng-com/okf-explorer.json", "schema": "okf-explorer-large-corpus.v1", "kind": "okf-large-corpus", "okf_version": okf_core.CORE_VERSION, "title": "Experimental cross-government software OKF+", "description": "Source-reported repository metadata with explicit gaps and unreviewed domain and task suggestions.", "version": tomllib.loads((root/'pyproject.toml').read_text())['project']['version'], "publication_state": "exploratory", "status": "local-experiment", "profile": PROFILE, "snapshot": receipt["sha256"], "snapshot_id": build_id, "generated_at": observed, "counts": dict(counts), "entrypoints": {"data_manifest": "data/manifest.json", "overview_index": "data/overview.json", "search_manifest": "data/search/manifest.json", "markdown_index": "index.md"}, "source": {"url": cfg["source_url"], "source_sha256": receipt["sha256"], "observed_at": observed}, "semantic_descriptor": "semantic/manifest.json", "vocabulary": {"record_singular": "repository", "record_plural": "repositories", "publisher_singular": "hosting account", "publisher_plural": "hosting accounts", "format_plural": "languages"}, "warnings": warnings}
     report_links = report_pages.generate(root, output)
     if report_links:
         descriptor['related_links'] = report_links
@@ -403,21 +470,56 @@ def build(root, output, receipt, previous=None):
     descriptor['entrypoints']['ai_evaluation']='evaluation.json'
     write(output/'evaluation.json',{'schema':'xgov-ai-evaluation-discovery.v1','build_id':build_id,'source_snapshot_iri':snapshot,'instructions':'https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/docs/ai-evaluation.md','release_assets':['xgov-okf.tar.gz','xgov-ai-test-pack.zip','SHA256SUMS'],'release_index':'https://github.com/chris-page-gov/xgov-soft-eng-com/releases','pairing_policy':'Use the archive SHA-256 in the test-pack manifest. Never substitute a different or live snapshot.','browser_evidence':'https://github.com/chris-page-gov/xgov-soft-eng-com/tree/main/validation/browser'})
     descriptor["entrypoints"].update(presentation="data/presentation.json",facet_definitions="data/facet-definitions.json")
-    descriptor["extensions"]={"okf-explorer-presentation.v1":{"mode":"external","entrypoint":"presentation"}}
+    descriptor["extensions"]={**descriptor.get("extensions", {}), "okf-explorer-presentation.v1":{"mode":"external","entrypoint":"presentation"}}
     write(output/"okf-explorer.json",descriptor)
-    (output / "index.md").write_text('---\nokf_version: "0.2"\n---\n# Experimental cross-government software OKF+\n\n'+f'{len(records):,} distinct repositories from {len(facets["publisher"])} hosting accounts.\n\n'+"\n".join("- "+w for w in warnings)+"\n\n[Domains and tasks](concepts/index.md) · [Source quality](quality.json) · [Semantic graph](semantic/manifest.json)\n")
+    (output / "index.md").write_text('---\nokf_version: "0.3"\n---\n# Experimental cross-government software OKF+\n\n'+f'{len(records):,} distinct repositories from {len(facets["publisher"])} hosting accounts.\n\n'+"\n".join("- "+w for w in warnings)+"\n\n[Typed OKF core concepts](okf-core-explorer.json) · [Core taxonomy question and visual source trail](walkthrough/core-taxonomy.html) · [Notification software evidence walkthrough](walkthrough/notification-software.html) · [Domains and tasks](concepts/index.md) · [Source quality](quality.json) · [Semantic graph](semantic/manifest.json)\n")
     links = []
+    core_documents = []
+    (output / "source").mkdir(exist_ok=True)
+    (output / "source/taxonomy.json").write_bytes((root / "config/taxonomy.json").read_bytes())
     for scheme in SCHEMES:
-        for c in tax.get(scheme,[]):
+        for taxonomy_index, c in enumerate(tax.get(scheme, [])):
             p = output / "concepts" / scheme / (c["id"]+".md")
             p.parent.mkdir(parents=True, exist_ok=True)
             count=next((r["count"] for r in facet_payload[{"domains":"domain","capabilities":"capability","content_types":"content_type"}[scheme]] if r["value"]==c["id"]),0)
-            p.write_text('---\ntype: Concept\ntitle: '+json.dumps(c["label"])+ '\nstatus: experimental\n---\n# '+c["label"]+f'\n\n{count:,} repositories match the experimental name/description rules.\n\nTerms: '+", ".join(c["terms"])+".\n\nMatches are suggestions, with evidence in each record. A zero count does not establish absence.\n")
+            metadata = concepts[iri(scheme, c["id"])][NS + 'frontmatter']['@value']
+            p.write_text(okf_core.markdown(metadata, count, c["terms"]))
+            core_documents.append({'source_path': p.relative_to(output).as_posix(),
+                                   'semantic_route': route(scheme, c['id']),
+                                   'frontmatter': metadata,
+                                   'source_sha256': digest(p.read_bytes()),
+                                   'taxonomy_index': taxonomy_index})
             links.append(f'- [{c["label"]}]({scheme}/{c["id"]}.md)')
     (output / "concepts/index.md").write_text("# Domains and tasks\n\n"+"\n".join(links)+"\n")
-    (output / "README.md").write_text("# Generated catalogue\n\nRebuild with `python scripts/catalogue.py build`. Do not edit these files by hand.\n")
+    (output / "README.md").write_text(
+        "# Generated catalogue\n\nRegenerate this directory from the declared source inputs; "
+        "do not edit generated files by hand. The typed concepts are available through "
+        "[the OKF core reader projection](okf-core-explorer.json), and the worked question is in "
+        "[the core taxonomy walkthrough](walkthrough/core-taxonomy.html) and the "
+        "[notification software evidence walkthrough](walkthrough/notification-software.html).\n")
+    core_descriptor = okf_core.export(
+        output, core_documents,
+        tomllib.loads((root / 'pyproject.toml').read_text())['project']['version'], receipt['sha256'])
+    write(output / "okf-core-explorer.json", core_descriptor)
+    core_taxonomy_walkthrough = core_walkthrough.generate(output, core_descriptor)
+    walkthrough = None
+    if all(identity.casefold() in {record['name'].casefold() for record in records}
+           for identity in notification_walkthrough.TARGETS) and (inputs_root / 'source/current.json').exists():
+        walkthrough = notification_walkthrough.generate(output, records, inputs_root)
+    descriptor['entrypoints']['okf_core_reader'] = 'okf-core-explorer.json'
+    descriptor['entrypoints']['core_taxonomy_walkthrough'] = core_taxonomy_walkthrough['path']
+    if walkthrough:
+        descriptor['entrypoints']['notification_walkthrough'] = walkthrough['path']
+    descriptor['extensions']['okf-core.v0.3'] = {
+        'reader_projection': 'okf_core_reader', 'typed_markdown_concepts': len(core_documents),
+        'core_reference_pairs': 0, 'metadata_extension_records': len(records),
+        'metadata_extension_assertions': len(edges), 'human_verification_recorded': False}
+    if walkthrough:
+        descriptor['extensions']['xgov-notification-walkthrough.v1'] = walkthrough
+    descriptor['extensions']['xgov-core-taxonomy-walkthrough.v1'] = core_taxonomy_walkthrough
+    write(output / 'okf-explorer.json', descriptor)
     explorer_projection.project(output,records,concepts,edges,build_id,observed,PROFILE)
-    write(output / "build-manifest.json", {"schema": "xgov-build.v1", "build_id": build_id, "baseline_sha256":digest(previous or {}), "generated_at": observed, "source": receipt, "history_sources":history_sources, "controlled_inputs": inputs, "outputs": {p.relative_to(output).as_posix(): digest(p.read_bytes()) for p in sorted(output.rglob("*")) if p.is_file() and p.name!='.DS_Store'}})
+    write(output / "build-manifest.json", {"schema": "xgov-build.v1", "build_id": build_id, "baseline_sha256":digest(previous or {}), "generated_at": observed, "source": receipt, "published_input_set": pinned_input_set.get('source_release') if pinned_input_set else {'scope': 'checked-in baseline'}, "history_sources":history_sources, "controlled_inputs": inputs, "outputs": {p.relative_to(output).as_posix(): digest(p.read_bytes()) for p in sorted(output.rglob("*")) if p.is_file() and p.name!='.DS_Store'}})
     return dict(counts)
 
 
@@ -460,8 +562,8 @@ def build_search(output, records, facets, size):
     write(output/"data/search/manifest.json",{"schema":"okf-static-search.v2","token_min_length":2,"prefix_min_length":3,"lexicon_shard_length":2,"result_limit":200,"result_doc_chunk_size":size,"weights":{"title":16,"publisher":8,"description":5,"topics":3,"tags":3},"field_masks":{"title":1,"publisher":2,"description":8,"topics":16,"tags":32},"counts":{"documents":len(records),"tokens":len(postings),"postings":sum(len(v) for v in postings.values())},"entrypoints":{"lexicon":{s:f"data/search/lexicon/{s}.json" for s in lex},"prefixes":{s:f"data/search/prefixes/{s}.json" for s in lex},"postings":[f"data/search/postings/{s}.json" for s in lex],"result_docs":paths,"facets":"data/facets.json","doc_map":"data/search/doc-map.json","sort_values":"data/search/sort-values.json","filter_postings":{key:f"data/search/filters/{key}.json" for key in filter_values}}})
 
 
-def load_receipt(root):
-    return read(root / "source/current.json")
+def load_receipt(root, inputs_root=None):
+    return read(Path(inputs_root or root) / "source/current.json")
 
 
 def records_from(output):
@@ -484,7 +586,8 @@ def remove_build_tree(path):
                 metadata.unlink(missing_ok=True)
 
 
-def promote(root, receipt, baseline=None):
+def promote(root, receipt, baseline=None, inputs_root=None):
+    inputs_root = Path(inputs_root or root).resolve()
     if (root/"generated/build-manifest.json").exists():
         old_inputs=read(root/"generated/build-manifest.json")["controlled_inputs"]
         new_inputs=controlled_inputs(root)
@@ -495,7 +598,7 @@ def promote(root, receipt, baseline=None):
     parent=root/".build";parent.mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory(dir=parent) as name:
         candidate=Path(name)/"generated"
-        build(root,candidate,receipt,baseline)
+        build(root,candidate,receipt,baseline,inputs_root)
         check_output(candidate)
         old=root/".build/previous-generated"
         if old.exists():remove_build_tree(old)
@@ -505,7 +608,8 @@ def promote(root, receipt, baseline=None):
             if old.exists():os.replace(old,root/"generated")
             raise
         if old.exists():remove_build_tree(old)
-    write(root/"source/current.json",receipt)
+    if inputs_root == Path(root).resolve():
+        write(root/"source/current.json",receipt)
 
 
 def check_output(output):
@@ -533,6 +637,8 @@ def check_output(output):
     if len(records)!=len({r['id'] for r in records}):raise ValueError("Duplicate repository identity")
     if len(seen)!=read(output/"quality.json")["counts"]["relationships"]:raise ValueError("Assertion total mismatch")
     explorer_projection.validate(output,records,all_edges)
+    import check_core_projection
+    check_core_projection.check(ROOT, output)
     return {"records":len(records),"assertions":len(seen),"outputs":len(manifest["outputs"])}
 
 
@@ -622,6 +728,7 @@ def search(records, query, taxonomy, filters=None, include_inferred=True):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root",type=Path,default=ROOT)
+    parser.add_argument("--inputs-root",type=Path,help="Use a separately hydrated, checksum-pinned input tree")
     sub=parser.add_subparsers(dest="command",required=True)
     sub.add_parser("refresh",help="Download, validate, build and promote the public feed")
     sub.add_parser("build",help="Rebuild from frozen inputs, without network access")
@@ -634,25 +741,25 @@ def main():
         q.add_argument("--"+name,action="append");f.add_argument("--"+name,action="append")
     q.add_argument("--source-only",action="store_true",help="Do not expand queries through inferred concepts")
     q.add_argument("--json",action="store_true")
-    args=parser.parse_args();root=args.root.resolve()
+    args=parser.parse_args();root=args.root.resolve();inputs_root=(args.inputs_root or root).resolve()
     try:
         if args.command=="refresh":result=fetch(root)
         elif args.command=="build":
-            receipt=load_receipt(root)
-            promote(root,receipt,read(root/receipt["baseline_path"]) if receipt.get("baseline_path") else {})
+            receipt=load_receipt(root,inputs_root)
+            promote(root,receipt,read(inputs_root/receipt["baseline_path"]) if receipt.get("baseline_path") else {},inputs_root)
             result=check_output(root/"generated")
         elif args.command=="check":
             result=check_output(root/"generated")
-            receipt=load_receipt(root)
-            baseline=read(root/receipt["baseline_path"]) if receipt.get("baseline_path") else {}
+            receipt=load_receipt(root,inputs_root)
+            baseline=read(inputs_root/receipt["baseline_path"]) if receipt.get("baseline_path") else {}
             with tempfile.TemporaryDirectory() as name:
-                output=Path(name)/"generated";build(root,output,load_receipt(root),baseline)
+                output=Path(name)/"generated";build(root,output,load_receipt(root,inputs_root),baseline,inputs_root)
                 expected={p.relative_to(output).as_posix():digest(p.read_bytes()) for p in output.rglob("*") if p.is_file() and p.name!=".DS_Store"}
                 actual={p.relative_to(root/"generated").as_posix():digest(p.read_bytes()) for p in (root/"generated").rglob("*") if p.is_file() and p.name!=".DS_Store"}
                 if expected!=actual:raise ValueError("Generated outputs or documentation lockstep are stale; run build after reviewing source and documentation changes")
             result["deterministic_lockstep"]="passed"
         elif args.command=="status":
-            receipt=load_receipt(root);cfg=read(root/"config/catalogue.json")
+            receipt=load_receipt(root,inputs_root);cfg=read(root/"config/catalogue.json")
             last=read(root/"source/last-check.json") if (root/"source/last-check.json").exists() else {}
             result={"source":receipt,"last_check":last,"retrieval_stale":stale({"retrieved_at":last.get("checked_at",receipt["retrieved_at"])},cfg["stale_after_hours"]),"upstream_record_freshness":"not-independently-verified","publication":"configured-github-releases-and-pages-remote-state-not-checked","scheduler":"configured-daily-1643-UTC-remote-state-not-checked"}
         else:

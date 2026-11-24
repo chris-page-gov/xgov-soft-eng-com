@@ -114,6 +114,10 @@ def project(output, records, concepts, edges, snapshot, observed, profile):
     write(output / "data/search/manifest.json", search)
     manifest = read(output / "data/manifest.json")
     descriptor = read(output / "okf-explorer.json")
+    # The large-corpus Reader binds `snapshot` and `snapshot_id` to the
+    # complete generated bundle identity. Keep the feed hash separate.
+    descriptor["source_snapshot_sha256"] = descriptor["source"]["source_sha256"]
+    descriptor["snapshot"] = snapshot
     manifest["snapshot"] = snapshot
 
     locations = collections.defaultdict(dict)

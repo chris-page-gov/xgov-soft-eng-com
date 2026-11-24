@@ -106,7 +106,10 @@ def validate_local(root):
         raise ValueError('PR checkout must not persist credentials')
     for required in ('  validate:', '    types: [opened, reopened, synchronize, edited, ready_for_review]',
                      'permissions:\n  contents: read', 'OKF_PR_TITLE: ${{ github.event.pull_request.title }}',
-                     'pip install --require-hashes -r requirements-assurance.txt'):
+                     'pip install --require-hashes -r requirements-assurance.txt',
+                     'uv sync --locked --group assurance', 'uv run --locked python scripts/hydrate_published_inputs.py',
+                     'uv run --locked python scripts/check_migration_parity.py',
+                     'xgov-metadata-journeys.json', 'xgov-core-journeys.json'):
         if required not in validation:
             raise ValueError('Missing validation workflow invariant: ' + required)
     lock = tomllib.loads((root / 'uv.lock').read_text())

@@ -1,25 +1,27 @@
 {
-  "schema": "okf-repository-semantic-contract.v1",
+  "schema": "okf-repository-semantic-contract.v2",
   "repository": {
     "name": "xgov-soft-eng-com",
     "role": "large-corpus-producer",
-    "root_index": "README.md"
+    "root_index": "generated/index.md"
   },
   "okf_core": {
-    "version": "0.2",
-    "specification": "https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md",
+    "version": "0.3",
+    "specification": "https://github.com/open-knowledge-format/open-knowledge-format/blob/527e81aff55992be21507e97004286789126f88c/SPEC.md",
     "status": "migration"
   },
   "semantic_layer": {
-    "profile": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/docs/semantic-model.md",
+    "profile": "https://github.com/chris-page-gov/xgov-soft-eng-com/blob/main/profiles/xgov-software/v2/index.md",
     "state": "generated-json-ld-graph",
     "authoritative_inputs": [
       "source/current.json",
       "source/snapshots/*.json",
+      "source/published-inputs-2026-10-29.json",
+      "source/history/index.json",
+      "source/history/observations/*.json",
       "config/*.json",
       "schemas/*.json",
-      "source/history/index.json",
-      "source/history/observations/*.json"
+      "profiles/xgov-software/v2/index.md"
     ],
     "outputs": [
       {
@@ -38,6 +40,31 @@
         "generated": true
       },
       {
+        "path": "generated/okf-core-explorer.json",
+        "role": "explorer-runtime",
+        "generated": true
+      },
+      {
+        "path": "generated/concepts/**/*.md",
+        "role": "semantic-yaml-ld",
+        "generated": true
+      },
+      {
+        "path": "generated/source/taxonomy.json",
+        "role": "explorer-runtime",
+        "generated": true
+      },
+      {
+        "path": "generated/walkthrough/**",
+        "role": "semantic-validation",
+        "generated": true
+      },
+      {
+        "path": "generated/index.md",
+        "role": "semantic-yaml-ld",
+        "generated": true
+      },
+      {
         "path": "generated/data/assertions-*.json.gz",
         "role": "relationship-runtime",
         "generated": true
@@ -46,7 +73,7 @@
     "context_policy": "pinned-local-contexts-no-browser-remote-expansion",
     "identity_policy": "absolute-semantic-iri-plus-validated-local-route",
     "limitations": [
-      "Custom experimental profile; no canonical Bundle Wiki v1 conformance claim.",
+    "Producer-specific experimental profile; the shared contract schema does not establish full Bundle Wiki v2 conformance.",
       "Rules describe names and descriptions, not repository code; labels are unreviewed.",
       "Historical and recent contributor relationships describe available GitHub default-branch statistics, not ownership or maintainership.",
       "Semantic manifest snapshot retains its source-feed IRI for compatibility; build_id identifies the complete bundle. Predicate usage labels are local presentation metadata."
@@ -77,13 +104,24 @@
     ]
   },
   "tooling": {
-    "setup": [],
+    "setup": [
+      "uv sync --locked"
+    ],
     "build": [
-      "uv run --locked python scripts/catalogue.py build"
+      "uv run --locked python scripts/hydrate_published_inputs.py --output $RUNNER_TEMP/xgov-published-inputs",
+      "uv run --locked python scripts/catalogue.py --inputs-root $RUNNER_TEMP/xgov-published-inputs build"
     ],
     "check": [
-      "uv run --locked python scripts/catalogue.py check",
-      "uv run --locked python -m unittest discover -s tests -v"
+      "uv run --locked python scripts/hydrate_published_inputs.py --output $RUNNER_TEMP/xgov-published-inputs --copy-archive-to $RUNNER_TEMP/xgov-published-inputs.tar.gz",
+      "uv run --locked python scripts/catalogue.py --inputs-root $RUNNER_TEMP/xgov-published-inputs check",
+      "uv run --locked python -m unittest discover -s tests -v",
+      "uv run --locked python scripts/check_core_projection.py",
+      "uv run --locked python scripts/check_migration_parity.py --reference-archive $RUNNER_TEMP/xgov-published-inputs.tar.gz",
+      "uv run --locked python scripts/archive.py --inputs-root $RUNNER_TEMP/xgov-published-inputs",
+      "uv run --locked --group assurance python scripts/assure.py",
+      "uv run --locked python scripts/check_repository_protection.py --local",
+      "pnpm --dir .ci/okf-explorer/apps/okf-explorer acceptance:bundle -- --bundle-root generated --journeys validation/browser/xgov-metadata-journeys.json --output $RUNNER_TEMP/xgov-explorer-metadata-acceptance.json --port 4292",
+      "pnpm --dir .ci/okf-explorer/apps/okf-explorer acceptance:bundle -- --bundle-root generated --journeys validation/browser/xgov-core-journeys.json --output $RUNNER_TEMP/xgov-explorer-core-acceptance.json --port 4293"
     ]
   },
   "reader": {

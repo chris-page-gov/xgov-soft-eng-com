@@ -1,0 +1,225 @@
+{
+  "schema": "okf-explorer-journeys.v1",
+  "bundle_descriptor": "okf-explorer.json",
+  "expected_identity": {
+    "schema": "okf-explorer-large-corpus.v1",
+    "id": "https://chris-page-gov.github.io/xgov-soft-eng-com/okf-explorer.json",
+    "version": "0.6.0",
+    "snapshot": "7f9ecf92a1beebbdc85fd04dfb8b802fddf7f131fb343aa0e8c8779552da608b"
+  },
+  "journeys": [
+    {
+      "id": "notify-api-evidence-and-record-traversal",
+      "actions": [
+        {
+          "type": "goto",
+          "params": {
+            "view": "reader"
+          }
+        },
+        {
+          "type": "wait_for",
+          "selector": "input.search-input"
+        },
+        {
+          "type": "fill",
+          "selector": "input.search-input",
+          "value": "notifications-api"
+        },
+        {
+          "type": "wait_for",
+          "selector": ".result-open:has(h2:text-is(\"alphagov/notifications-api\"))"
+        },
+        {
+          "type": "click",
+          "selector": ".result-open:has(h2:text-is(\"alphagov/notifications-api\"))"
+        },
+        {
+          "type": "wait_for",
+          "selector": "aside[aria-label=\"Record details\"] h2:text-is(\"alphagov/notifications-api\")"
+        },
+        {
+          "type": "wait_for",
+          "selector": "button[role=tab]:text-is(\"Evidence\")"
+        },
+        {
+          "type": "click",
+          "selector": "button[role=tab]:text-is(\"Evidence\")"
+        }
+      ],
+      "assertions": [
+        {
+          "type": "visible",
+          "selector": "main"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "alphagov/notifications-api"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "GOV.UK Notify API"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "Resources (0)"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "Relationships (69)"
+        },
+        {
+          "type": "requested",
+          "includes": "/data/search/manifest.json"
+        },
+        {
+          "type": "requested",
+          "includes": "/data/manifest.json"
+        },
+        {
+          "type": "not_requested",
+          "includes": "sbom/alphagov/notifications-api"
+        },
+        {
+          "type": "console_clean"
+        }
+      ]
+    },
+    {
+      "id": "notify-release-source-evidence-boundary",
+      "actions": [
+        {
+          "type": "goto",
+          "params": {
+            "view": "reader"
+          }
+        },
+        {
+          "type": "wait_for",
+          "selector": "input.search-input"
+        },
+        {
+          "type": "fill",
+          "selector": "input.search-input",
+          "value": "notifications-release"
+        },
+        {
+          "type": "wait_for",
+          "selector": ".result-open:has(h2:text-is(\"alphagov/notifications-release\"))"
+        },
+        {
+          "type": "click",
+          "selector": ".result-open:has(h2:text-is(\"alphagov/notifications-release\"))"
+        },
+        {
+          "type": "wait_for",
+          "selector": "aside[aria-label=\"Record details\"] h2:text-is(\"alphagov/notifications-release\")"
+        },
+        {
+          "type": "wait_for",
+          "selector": "button[role=tab]:text-is(\"Evidence\")"
+        },
+        {
+          "type": "click",
+          "selector": "button[role=tab]:text-is(\"Evidence\")"
+        }
+      ],
+      "assertions": [
+        {
+          "type": "visible",
+          "selector": "main"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "alphagov/notifications-release"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "Release app for GOVUK Notify"
+        },
+        {
+          "type": "text",
+          "selector": "body",
+          "includes": "Resources (0)"
+        },
+        {
+          "type": "not_requested",
+          "includes": "sbom/alphagov/notifications-release"
+        },
+        {
+          "type": "console_clean"
+        }
+      ]
+    },
+    {
+      "id": "notify-api-source-reported-licence-qualification",
+      "actions": [
+        {
+          "type": "goto",
+          "params": {
+            "view": "reader"
+          }
+        },
+        {
+          "type": "wait_for",
+          "selector": "input.search-input"
+        },
+        {
+          "type": "fill",
+          "selector": "input.search-input",
+          "value": "notifications-api"
+        },
+        {
+          "type": "wait_for",
+          "selector": ".result-open:has(h2:text-is(\"alphagov/notifications-api\"))"
+        },
+        {
+          "type": "click",
+          "selector": ".result-open:has(h2:text-is(\"alphagov/notifications-api\"))"
+        },
+        {
+          "type": "wait_for",
+          "selector": "aside[aria-label=\"Record details\"] h2:text-is(\"alphagov/notifications-api\")"
+        },
+        {
+          "type": "click",
+          "selector": "aside[aria-label=\"Record details\"] summary:text-is(\"Overview\")"
+        }
+      ],
+      "assertions": [
+        {
+          "type": "text",
+          "selector": "aside[aria-label=\"Record details\"]",
+          "includes": "MIT"
+        },
+        {
+          "type": "text",
+          "selector": "aside[aria-label=\"Record details\"]",
+          "includes": "source-reported-unverified"
+        },
+        {
+          "type": "text",
+          "selector": "aside[aria-label=\"Record details\"]",
+          "includes": "GOV.UK Notify API"
+        },
+        {
+          "type": "not_requested",
+          "includes": "sbom/alphagov/notifications-api"
+        },
+        {
+          "type": "console_clean"
+        },
+        {
+          "type": "requested",
+          "includes": "/bundle/data/record-locator/60.json"
+        }
+      ]
+    }
+  ]
+}

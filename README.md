@@ -1,5 +1,5 @@
 ---
-okf_version: "0.2"
+okf_version: "0.3"
 ---
 # Cross-government software discovery OKF+
 
@@ -104,7 +104,10 @@ Python 3.12 or later is required. Build and search have no third-party runtime
 dependencies. With uv installed:
 
 ```sh
-uv run --locked python scripts/catalogue.py build
+uv run --locked python scripts/hydrate_published_inputs.py \
+  --output .build/xgov-published-inputs
+uv run --locked python scripts/catalogue.py \
+  --inputs-root .build/xgov-published-inputs build
 uv run --locked python scripts/catalogue.py search "accessibility" --archived false
 uv run --locked python scripts/catalogue.py search --domain health --language Python
 uv run --locked python scripts/catalogue.py search --organisation alphagov --licence MIT
@@ -114,7 +117,8 @@ uv run --locked python scripts/catalogue.py facets --facet content_type
 uv run --locked python scripts/catalogue.py search --history-coverage available
 uv run --locked python scripts/catalogue.py search --language Python --sbom present --offset 200 --limit 200 --json
 uv run --locked python scripts/catalogue.py status
-uv run --locked python scripts/catalogue.py check
+uv run --locked python scripts/catalogue.py \
+  --inputs-root .build/xgov-published-inputs check
 uv run --locked python -m unittest discover -s tests -v
 ```
 
@@ -123,10 +127,16 @@ inferred concepts. Unknown licences, missing languages and unknown fork status
 remain visible. Archived repositories are included unless filtered out.
 A licence filter reflects a reported identifier, not permission to reuse code.
 
-Outputs include `generated/okf-explorer.json`, lazy search and record shards,
-OKF 0.2 Markdown concept pages, RDF JSON-LD, evidence assertions, quality and
+Outputs include `generated/okf-explorer.json`, a separate
+`generated/okf-core-explorer.json` projection for all 47 typed OKF core 0.3
+Markdown concepts, lazy search and record shards, RDF JSON-LD, evidence assertions, quality and
 change reports and checksums. See [browser acceptance](docs/browser-acceptance.md)
 for the tested consumer version, journeys and limitations.
+
+The [OKF 0.3 migration guide](docs/okf-03-migration.md) explains the pinned
+29 October source archive, the separate metadata extension graph and two
+independent worked questions: the [core taxonomy walkthrough](generated/walkthrough/core-taxonomy.html)
+and the [notification services evidence walkthrough](generated/walkthrough/notification-software.html).
 
 ## Daily updates
 
